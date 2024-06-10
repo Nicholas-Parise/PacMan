@@ -1286,7 +1286,7 @@ int main()
 
     Ghost bGhost;
     bGhost.setScatter(29,24);
-    /* */
+    /*
     float BlueX = 0;
     float BlueY = 0;
     int BlueRow = 13;
@@ -1304,6 +1304,7 @@ int main()
     bool BlueDead = false;
     bool BlueScared = false;
     string BlueState = "Chase";
+    */
     bool BlueFail = false;
     vector<vector<int>> Blue_solution(870);
     vector<int> Blue_PathCol;
@@ -1321,23 +1322,6 @@ int main()
 
     Ghost pGhost;
     pGhost.setScatter(2,1);
-    /*
-    float PinkX = 0;
-    float PinkY = 0;
-    int PinkRow = 13;
-    int PinkCol = 15;
-    int Pink_OldRow = -1;
-    int Pink_OldCol = -1;
-    int Pink_PathPlace = 1;
-    int PinkPlace = 0;
-    const int ScatterPinkRow = 2;
-    const int ScatterPinkCol = 1;
-    string CurrentPinkDir = "a";
-    bool PinkScatter = true;
-    bool PinkDead = false;
-    bool PinkScared = false;
-    string PinkState = "Chase";
-    */
     vector<vector<int>> Pink_solution(870);
     vector<int> Pink_PathCol;
     vector<int> Pink_PathRow;
@@ -1398,10 +1382,6 @@ int main()
 
 
     int feetTimer = 0;
-    int BlueGhostFeetTimer = 0;
-    int OrangeGhostFeetTimer = 0;
-    int PinkGhostFeetTimer = 0;
-
 
 
     string GameState = "Game";
@@ -1689,30 +1669,6 @@ int main()
     sf::Texture PinkGTexture1;
     PinkGTexture1.loadFromFile("Assets/Sprite/PinkGhostRight.png");
 
-    ////
-
-    sf::Texture ScaredGhostTexture1;
-    ScaredGhostTexture1.loadFromFile("Assets/Sprite/ScaredGhost1.png");
-
-    sf::Texture ScaredGhostTexture2;
-    ScaredGhostTexture2.loadFromFile("Assets/Sprite/ScaredGhost2.png");
-
-
-    sf::Texture ScaredGhostWhiteTexture1;
-    ScaredGhostWhiteTexture1.loadFromFile("Assets/Sprite/ScaredGhostWhite1.png");
-
-    sf::Texture ScaredGhostWhiteTexture2;
-    ScaredGhostWhiteTexture2.loadFromFile("Assets/Sprite/ScaredGhostWhite2.png");
-
-
-    sf::Texture scaredTextures[4];
-    scaredTextures[0] = ScaredGhostTexture1;
-    scaredTextures[1] = ScaredGhostTexture2;
-    scaredTextures[2] = ScaredGhostWhiteTexture1;
-    scaredTextures[3] = ScaredGhostWhiteTexture2;
-
-    ///
-
 
     sf::Texture DeadGhostTexture;
     DeadGhostTexture.loadFromFile("Assets/Sprite/eyes.png");
@@ -1729,7 +1685,21 @@ int main()
     texture10.loadFromFile("Assets/Sprite/Berry_Sprite_Sheet.png");
 
 
+    // textureRedSheet.loadFromImage(image);
+    sf::Texture textureRedSheet;
+    textureRedSheet.loadFromFile("Assets/Sprite/RedGhostSpriteSheet.png");
 
+
+
+    ////
+
+    sf::Texture scaredTextures[4];
+    scaredTextures[0].loadFromFile("Assets/Sprite/ScaredGhost1.png");
+    scaredTextures[1].loadFromFile("Assets/Sprite/ScaredGhost2.png");
+    scaredTextures[2].loadFromFile("Assets/Sprite/ScaredGhostWhite1.png");
+    scaredTextures[3].loadFromFile("Assets/Sprite/ScaredGhostWhite2.png");
+
+    ////
 
     sf::Image RedSheetimage;
     RedSheetimage.loadFromFile("Assets/Sprite/RedGhostSpriteSheet.png");
@@ -1744,43 +1714,10 @@ int main()
     redTextures[6].loadFromImage(RedSheetimage, sf::IntRect(GhostRight2));
     redTextures[7].loadFromImage(RedSheetimage, sf::IntRect(GhostDown2));
 
-
-
-    // textureRedSheet.loadFromImage(image);
-    sf::Texture textureRedSheet;
-    textureRedSheet.loadFromFile("Assets/Sprite/RedGhostSpriteSheet.png");
-
-///////
+    ///////
 
     sf::Image OrangeSheetimage;
     OrangeSheetimage.loadFromFile("Assets/Sprite/OrangeGhostSpriteSheet.png");
-
-/*
-    sf::Texture OrangeGhostDown1;
-    OrangeGhostDown1.loadFromImage(OrangeSheetimage, sf::IntRect(GhostDown1));
-
-    sf::Texture OrangeGhostDown2;
-    OrangeGhostDown2.loadFromImage(OrangeSheetimage, sf::IntRect(GhostDown2));
-
-
-    sf::Texture OrangeGhostLeft1;
-    OrangeGhostLeft1.loadFromImage(OrangeSheetimage, sf::IntRect(GhostLeft1));
-
-    sf::Texture OrangeGhostLeft2;
-    OrangeGhostLeft2.loadFromImage(OrangeSheetimage, sf::IntRect(GhostLeft2));
-
-    sf::Texture OrangeGhostRight1;
-    OrangeGhostRight1.loadFromImage(OrangeSheetimage, sf::IntRect(GhostRight1));
-
-    sf::Texture OrangeGhostRight2;
-    OrangeGhostRight2.loadFromImage(OrangeSheetimage, sf::IntRect(GhostRight2));
-
-    sf::Texture OrangeGhostUp1;
-    OrangeGhostUp1.loadFromImage(OrangeSheetimage, sf::IntRect(GhostUp1));
-
-    sf::Texture OrangeGhostUp2;
-    OrangeGhostUp2.loadFromImage(OrangeSheetimage, sf::IntRect(GhostUp2));
-*/
 
     sf::Texture orangeTextures[8];
     orangeTextures[0].loadFromImage(OrangeSheetimage, sf::IntRect(GhostLeft1));
@@ -1793,38 +1730,21 @@ int main()
     orangeTextures[7].loadFromImage(OrangeSheetimage, sf::IntRect(GhostDown2));
 
 
-
-
-////////
+    ////////
 
     sf::Image BlueSheetimage;
     BlueSheetimage.loadFromFile("Assets/Sprite/BlueGhostSpriteSheet.png");
 
+    sf::Texture blueTextures[8];
+    blueTextures[0].loadFromImage(BlueSheetimage, sf::IntRect(GhostLeft1));
+    blueTextures[1].loadFromImage(BlueSheetimage, sf::IntRect(GhostUp1));
+    blueTextures[2].loadFromImage(BlueSheetimage, sf::IntRect(GhostRight1));
+    blueTextures[3].loadFromImage(BlueSheetimage, sf::IntRect(GhostDown1));
+    blueTextures[4].loadFromImage(BlueSheetimage, sf::IntRect(GhostLeft2));
+    blueTextures[5].loadFromImage(BlueSheetimage, sf::IntRect(GhostUp2));
+    blueTextures[6].loadFromImage(BlueSheetimage, sf::IntRect(GhostRight2));
+    blueTextures[7].loadFromImage(BlueSheetimage, sf::IntRect(GhostDown2));
 
-    sf::Texture BlueGhostDown1;
-    BlueGhostDown1.loadFromImage(BlueSheetimage, sf::IntRect(GhostDown1));
-
-    sf::Texture BlueGhostDown2;
-    BlueGhostDown2.loadFromImage(BlueSheetimage, sf::IntRect(GhostDown2));
-
-
-    sf::Texture BlueGhostLeft1;
-    BlueGhostLeft1.loadFromImage(BlueSheetimage, sf::IntRect(GhostLeft1));
-
-    sf::Texture BlueGhostLeft2;
-    BlueGhostLeft2.loadFromImage(BlueSheetimage, sf::IntRect(GhostLeft2));
-
-    sf::Texture BlueGhostRight1;
-    BlueGhostRight1.loadFromImage(BlueSheetimage, sf::IntRect(GhostRight1));
-
-    sf::Texture BlueGhostRight2;
-    BlueGhostRight2.loadFromImage(BlueSheetimage, sf::IntRect(GhostRight2));
-
-    sf::Texture BlueGhostUp1;
-    BlueGhostUp1.loadFromImage(BlueSheetimage, sf::IntRect(GhostUp1));
-
-    sf::Texture BlueGhostUp2;
-    BlueGhostUp2.loadFromImage(BlueSheetimage, sf::IntRect(GhostUp2));
 
     /////
     sf::Image PinkSheetimage;
@@ -1840,32 +1760,16 @@ int main()
     pinkTextures[6].loadFromImage(PinkSheetimage, sf::IntRect(GhostRight2));
     pinkTextures[7].loadFromImage(PinkSheetimage, sf::IntRect(GhostDown2));
 
-
     //////
-
 
     sf::Image EyeSheetimage;
     EyeSheetimage.loadFromFile("Assets/Sprite/EyeSpriteSheet.png");
 
-
-    sf::Texture EyeLeft;
-    EyeLeft.loadFromImage(EyeSheetimage, sf::IntRect(GhostLeft1));
-
-    sf::Texture EyetUp;
-    EyetUp.loadFromImage(EyeSheetimage, sf::IntRect(GhostUp1));
-
-    sf::Texture EyeRight;
-    EyeRight.loadFromImage(EyeSheetimage, sf::IntRect(GhostRight1));
-
-    sf::Texture EyeDown;
-    EyeDown.loadFromImage(EyeSheetimage, sf::IntRect(GhostDown1));
-
-
     sf::Texture eyeTextures[4];
-    eyeTextures[0] = EyeLeft;
-    eyeTextures[1] = EyetUp;
-    eyeTextures[2] = EyeRight;
-    eyeTextures[3] = EyeDown;
+    eyeTextures[0].loadFromImage(EyeSheetimage, sf::IntRect(GhostLeft1));
+    eyeTextures[1].loadFromImage(EyeSheetimage, sf::IntRect(GhostUp1));
+    eyeTextures[2].loadFromImage(EyeSheetimage, sf::IntRect(GhostRight1));
+    eyeTextures[3].loadFromImage(EyeSheetimage, sf::IntRect(GhostDown1));
 
     //////////
 
@@ -2060,9 +1964,9 @@ int main()
     RedGhost.setPosition(sf::Vector2f(18.78571429*rGhost.row+(18.78571429/2), 18.61290323*rGhost.col+(18.61290323/2)));
 
     sf::Sprite BlueGhost;
-    BlueGhost.setTexture(BlueGhostUp1);
+    BlueGhost.setTexture(blueTextures[1]);
     BlueGhost.setOrigin(15,15);
-    BlueGhost.setPosition(sf::Vector2f(18.78571429*BlueRow+(18.78571429/2), 18.61290323*BlueCol+(18.61290323/2)));
+    BlueGhost.setPosition(sf::Vector2f(18.78571429*bGhost.row+(18.78571429/2), 18.61290323*bGhost.col+(18.61290323/2)));
 
     sf::Sprite OrangeGhost;
     OrangeGhost.setTexture(orangeTextures[1]);
@@ -2743,8 +2647,8 @@ int main()
         oGhost.col = TempRowCol[1];
 
         TempRowCol = ClossestTile(BlueGhost.getPosition().x,BlueGhost.getPosition().y, Tiles);
-        BlueRow = TempRowCol[0];
-        BlueCol = TempRowCol[1];
+        bGhost.row = TempRowCol[0];
+        bGhost.col = TempRowCol[1];
 
         TempRowCol = ClossestTile(PinkGhost.getPosition().x,PinkGhost.getPosition().y, Tiles);
         pGhost.row = TempRowCol[0];
@@ -2797,35 +2701,40 @@ int main()
 
 
         //Blue
-        if(PacRow != oldPacRow || PacCol != oldPacCol || Blue_OldCol != BlueCol || Blue_OldRow != BlueRow)
-        {
 
+        ///TODO add the real blue algorithm
 
-            Blue_OldRow = BlueRow;
-            Blue_OldCol = BlueCol;
+         if(PacRow != oldPacRow || PacCol != oldPacCol || bGhost.changedPosition()){
+            bGhost.updateOldRC();
+
             Blue_PathCol.clear();
             Blue_PathRow.clear();
 
+            solutionRow =  PacRow;
+            solutionCol = PacCol;
 
+            //rGhost.col
+            //rGhost.row
 
-
-            if(BlueDead == true)
-            {
-
-                solvemaze(BlueCol,BlueRow,GhostHomeRow,GhostHomeCol, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
-                //  printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
+            switch(bGhost.state){
+            case CHASE:
+                solvemaze(bGhost.col,bGhost.row,solutionRow,solutionCol, bGhost.dirToString(), Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
+                break;
+            case SCATTER:
+                solvemaze(bGhost.col,bGhost.row,bGhost.scatterRow,bGhost.scatterCol, bGhost.dirToString(), Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
+                break;
+            case SCARED:
+                ScaredSolver(bGhost.col,bGhost.row, bGhost.dirToString(), Blue_solution, Blue_PathCol, Blue_PathRow, GameMatrix);
+                break;
+            case DEAD:
+                solvemaze(bGhost.col,bGhost.row,GhostHomeRow,GhostHomeCol, bGhost.dirToString(), Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
+                break;
             }
-            else
-            {
+            // printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
+        }
 
-                if(BlueScared == true)
-                {
 
-                    ScaredSolver(BlueCol, BlueRow, CurrentBlueDir, Blue_solution, Blue_PathCol, Blue_PathRow, GameMatrix);
-
-                }
-                else if(BlueScatter == false)
-                {
+/*
 
 
                     PacBlueDistanceY = PacCol-rGhost.col;
@@ -2899,17 +2808,7 @@ int main()
                     //  solvemaze(BlueCol,BlueRow,solutionRow,solutionCol, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
                     //  printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
                 }
-                else if(BlueScatter == true)
-                {
-
-                    solvemaze(BlueCol,BlueRow,ScatterBlueRow,ScatterBlueCol, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
-                    //  printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
-                }
-            }
-        }
-
-
-
+                */
 
 
         //Orange
@@ -3190,26 +3089,12 @@ int main()
             PacManX = 0;
             PacManY = 0;
 
-
-            BlueX = 0;
-            BlueY = 0;
-            BlueDead = false;
-            BlueScared = false;
-            BlueScatter = true;
-            CurrentBlueDir = "a";
-
             rGhost.reset();
             oGhost.reset();
             pGhost.reset();
+            rGhost.reset();
 
             GameState = "Scatter";
-
-
-            RedGhost.setTexture(redTextures[1]);
-            OrangeGhost.setTexture(orangeTextures[1]);
-            BlueGhost.setTexture(BlueGhostLeft1);
-            PinkGhost.setTexture(pinkTextures[1]);
-
 
             PacMan.setPosition(sf::Vector2f(253.607, 325));
 
@@ -3381,7 +3266,7 @@ int main()
         }
 
 
-        if(BlueGhost.getPosition().x<20 && CurrentBlueDir == "Left")
+        if(BlueGhost.getPosition().x<20 && bGhost.direction == LEFT)
         {
 
             BlueGhost.setPosition(522,269.887096835);
@@ -3391,7 +3276,7 @@ int main()
             }
         }
 
-        if(BlueGhost.getPosition().x>512 && CurrentBlueDir == "Right")
+        if(BlueGhost.getPosition().x>512 && bGhost.direction == RIGHT)
         {
 
             BlueGhost.setPosition(10,269.887096835);
@@ -3451,13 +3336,12 @@ int main()
             OrangeGhost.setTexture(orangeTextures[1]);
         }
 
-        if(OutOfTheCloset(BlueRow, BlueCol, Blue_PathCol, Blue_PathRow, GhostHomeRow, GhostHomeCol, BlueDead))
+        if(OutOfTheCloset(bGhost.row, bGhost.col, Blue_PathCol, Blue_PathRow, GhostHomeRow, GhostHomeCol, bGhost.state == DEAD))
         {
 
-            BlueScared = false;
-            BlueDead = false;
-            BlueGhost.setTexture(BlueGhostUp1);
-            CurrentBlueDir = "A";
+            bGhost.state = SCATTER;
+            bGhost.direction = NONE;
+            BlueGhost.setTexture(blueTextures[1]);
         }
 
         if(OutOfTheCloset(pGhost.row, pGhost.col, Pink_PathCol, Pink_PathRow, GhostHomeRow, GhostHomeCol, pGhost.state == DEAD))
@@ -3472,128 +3356,17 @@ int main()
 
 
 
-
-
-//Red
+        //Red
         rGhost.followPath(Red_PathCol[1],Red_PathRow[1],GhostSpeed,DeadSpeed);
 
-
-
-//Orange
-
+        //Orange
         oGhost.followPath(Orange_PathCol[1],Orange_PathRow[1],GhostSpeed,DeadSpeed);
 
+        //Blue
+        bGhost.followPath(Blue_PathCol[1],Blue_PathRow[1],GhostSpeed,DeadSpeed);
 
-
-//Blue
-        if((BlueRow+1) == Blue_PathCol[1] && BlueCol == Blue_PathRow[1] && CurrentBlueDir != "Left")
-        {
-
-            if(BlueDead == false)
-            {
-                BlueX = GhostSpeed;
-
-                if(BlueScared == false)
-                {
-                    BlueGhost.setTexture(BlueGhostRight1);
-                }
-
-
-            }
-            else
-            {
-                BlueX = DeadSpeed;
-            }
-
-            BlueY = 0;
-            CurrentBlueDir = "Right";
-            //cout<<"Right"<<endl;
-
-            //  BlueGhost.setPosition((18.78571429*(BlueRow+1))+(18.78571429/2),BlueGhost.getPosition().y);
-
-        }
-        else  if((BlueRow-1) == Blue_PathCol[1] && BlueCol == Blue_PathRow[1] && CurrentBlueDir != "Right")
-        {
-
-            if(BlueDead == false)
-            {
-                BlueX = GhostSpeed*-1;
-
-                if(BlueScared == false)
-                {
-                    BlueGhost.setTexture(BlueGhostLeft1);
-                }
-
-
-            }
-            else
-            {
-                BlueX = DeadSpeed*-1;
-            }
-
-            BlueY = 0;
-            CurrentBlueDir = "Left";
-            //cout<<"Left"<<endl;
-            //  BlueGhost.setPosition((18.78571429*(BlueRow-1))+(18.78571429/2),BlueGhost.getPosition().y);
-
-        }
-        else if((BlueCol-1) == Blue_PathRow[1] && BlueRow == Blue_PathCol[1] && CurrentBlueDir != "Down")
-        {
-
-            BlueX = 0;
-            if(BlueDead == false)
-            {
-                BlueY = GhostSpeed*-1;
-
-                if(BlueScared == false)
-                {
-                    BlueGhost.setTexture(BlueGhostUp1);
-                }
-
-
-            }
-            else
-            {
-                BlueY = DeadSpeed*-1;
-            }
-
-            CurrentBlueDir = "Up";
-            //cout<<"Up"<<endl;
-            //   BlueGhost.setPosition(BlueGhost.getPosition().x,(18.61290323*(BlueCol-1))+(18.61290323/2));
-
-        }
-        else if((BlueCol+1) == Blue_PathRow[1] && BlueRow == Blue_PathCol[1] && CurrentBlueDir != "Up")
-        {
-
-            BlueX = 0;
-
-            if(BlueDead == false)
-            {
-                BlueY = GhostSpeed;
-
-                if(BlueScared == false)
-                {
-                    BlueGhost.setTexture(BlueGhostDown1);
-                }
-
-
-            }
-            else
-            {
-                BlueY = DeadSpeed;
-            }
-
-            CurrentBlueDir = "Down";
-            //cout<<"Down"<<endl;
-            //  BlueGhost.setPosition(BlueGhost.getPosition().x,(18.61290323*(BlueCol+1))+(18.61290323/2));
-        }
-
-
-//Pink
-
-
+        //Pink
         pGhost.followPath(Pink_PathCol[1],Pink_PathRow[1],GhostSpeed,DeadSpeed);
-
 
 
         // --Dot Hittest--
@@ -3640,7 +3413,6 @@ int main()
                 {
                     rGhost.state = SCARED;
                     rGhost.direction = NONE;
-                    RedGhost.setTexture(ScaredGhostTexture1);
                     ScareStart = true;
                     ScaredTimer = 0;
                 }
@@ -3650,7 +3422,6 @@ int main()
                 {
                     oGhost.state = SCARED;
                     oGhost.direction = NONE;
-                    OrangeGhost.setTexture(ScaredGhostTexture1);
                     ScareStart = true;
                     ScaredTimer = 0;
                 }
@@ -3659,18 +3430,16 @@ int main()
                 {
                     pGhost.state = SCARED;
                     pGhost.direction = NONE;
-                    PinkGhost.setTexture(ScaredGhostTexture1);
                     ScareStart = true;
                     ScaredTimer = 0;
                 }
 
-                if(BlueDead == false)
+                if(bGhost.state != DEAD)
                 {
-                    BlueScared = true;
-                    BlueGhost.setTexture(ScaredGhostTexture1);
+                    bGhost.state = SCARED;
+                    bGhost.direction = NONE;
                     ScareStart = true;
                     ScaredTimer = 0;
-                    CurrentBlueDir = "a";
                 }
             }
         }
@@ -3691,36 +3460,24 @@ int main()
 
 
         rGhost.scaredStop(powerUpTimer);
-        if(rGhost.state != SCARED)
-        {
-            GhostScared = false;
-        }
 
         oGhost.scaredStop(powerUpTimer);
-        if(oGhost.state != SCARED)
-        {
-            GhostScared = false;
-        }
 
         pGhost.scaredStop(powerUpTimer);
-        if(pGhost.state != SCARED)
+
+        bGhost.scaredStop(powerUpTimer);
+
+        if(rGhost.state != SCARED || oGhost.state != SCARED || pGhost.state != SCARED || bGhost.state != SCARED)
         {
             GhostScared = false;
         }
-
-        if(PowerStop(powerUpTimer, BlueGhost, ScaredGhostTexture1, ScaredGhostWhiteTexture1, BlueScared, BlueDead) == true)
-        {
-
-            //  BlueGhost.setTexture(BlueGhostUp1);
-            BlueScared = false;
-            GhostScared = false;
-        }
-
 
 
 
         if(PacDead == false && DEBUG == false)
         {
+            /// TODO this hit test crap, its so innefficent
+
             if(PacMan.getGlobalBounds().intersects(RedGhost.getGlobalBounds()))
             {
 
@@ -3786,36 +3543,29 @@ int main()
             if(PacMan.getGlobalBounds().intersects(BlueGhost.getGlobalBounds()))
             {
 
-                if(BlueDead == false)
-                {
-                    if(BlueScared == true)
+                 if(bGhost.state == SCARED){
+                    score +=10;
+
+                    if(Sound_Ef == true)
                     {
-                        score +=10;
-
-                        if(Sound_Ef == true)
-                        {
-                            Yay.play();
-                        }
-
-                        BlueDead = true;
-                        BlueGhost.setTexture(DeadGhostTexture);
+                        Yay.play();
                     }
-                    else
+
+                    bGhost.state = DEAD;
+
+
+                }else if(bGhost.state != DEAD){
+
+                    BackG_Pizza.pause();
+                    BackG_Subwooder.pause();
+                    BackG_Sweden.pause();
+
+                    if(Sound_Ef == true)
                     {
-
-                        BackG_Pizza.pause();
-                        BackG_Subwooder.pause();
-                        BackG_Sweden.pause();
-
-
-
-                        if(Sound_Ef == true)
-                        {
-                            Dead.play();
-                        }
-
-                        PacDead = true;
+                        Dead.play();
                     }
+
+                    PacDead = true;
                 }
             }
 
@@ -3850,18 +3600,17 @@ int main()
             }
         }
 
+
         if(PacMan.getGlobalBounds().intersects(Berry.getGlobalBounds()))
         {
 
             Berry.setPosition(1000,1000);
             score +=10;
 
-
             if(Sound_Ef == true)
             {
                 Fortnite_Clap.play();
             }
-
         }
 
 
@@ -3883,22 +3632,22 @@ int main()
 
             GameState = "Chase";
             cout<<"Chase"<<endl;
-            BlueScatter = false;
 
             rGhost.state = CHASE;
             oGhost.state = CHASE;
             pGhost.state = CHASE;
+            bGhost.state = CHASE;
         }
         else if(GameStateTimer == 60*25|| GameStateTimer  == 60*50|| GameStateTimer  == 60*75)
         {
 
             GameState = "Scatter";
             cout<<"Scatter"<<endl;
-            BlueScatter = true;
 
             rGhost.state = SCATTER;
             oGhost.state = SCATTER;
             pGhost.state = SCATTER;
+            bGhost.state = SCATTER;
         }
 
 
@@ -3963,24 +3712,17 @@ int main()
             PacManX = 0;
             PacManY = 0;
 
-            BlueX = 0;
-            BlueY = 0;
-            BlueDead = false;
-            BlueScared = false;
-            BlueScatter = true;
-            CurrentBlueDir = "a";
-
-
             rGhost.reset();
             oGhost.reset();
             pGhost.reset();
+            bGhost.reset();
 
 
             GameState = "Scatter";
 
             RedGhost.setTexture(redTextures[1]);
             OrangeGhost.setTexture(orangeTextures[1]);
-            BlueGhost.setTexture(BlueGhostUp1);
+            BlueGhost.setTexture(blueTextures[1]);
             PinkGhost.setTexture(pinkTextures[1]);
 
 
@@ -4018,23 +3760,16 @@ int main()
             PacLife[PacLives].setPosition(1000,1000);
 
 
-            BlueX = 0;
-            BlueY = 0;
-            BlueDead = false;
-            BlueScared = false;
-            BlueScatter = true;
-            CurrentBlueDir = "a";
-
-
             rGhost.reset();
             oGhost.reset();
             pGhost.reset();
+            bGhost.reset();
 
             GameState = "Scatter";
 
             RedGhost.setTexture(redTextures[1]);
             OrangeGhost.setTexture(orangeTextures[1]);
-            BlueGhost.setTexture(BlueGhostUp1);
+            BlueGhost.setTexture(blueTextures[1]);
             PinkGhost.setTexture(pinkTextures[1]);
 
 
@@ -4170,152 +3905,21 @@ int main()
 
 
 
+        // set the textures of the ghosts
 
-        feetTimer+=2;
-
-        BlueGhostFeetTimer+=2;
-        OrangeGhostFeetTimer+=2;
-        PinkGhostFeetTimer+=2;
-
-
-        if(feetTimer >= 20)
-        {
+        if(feetTimer >= 20){
             feetTimer = 0;
+        }else{
+            feetTimer+=2;
         }
-        if(OrangeGhostFeetTimer==20)
-        {
-            OrangeGhostFeetTimer = 0;
-        }
-        if(BlueGhostFeetTimer==20)
-        {
-            BlueGhostFeetTimer = 0;
-        }
-        if(PinkGhostFeetTimer==20)
-        {
-            PinkGhostFeetTimer = 0;
-        }
-
-
-        //////////////////
 
         RedGhost.setTexture(rGhost.textureSwitcher(redTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
 
-
-        ////
-
-         OrangeGhost.setTexture(oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
-
-
-        ///////////
-
+        OrangeGhost.setTexture(oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
 
         PinkGhost.setTexture(pGhost.textureSwitcher(pinkTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
 
-
-        //////
-
-        if(BlueScared == false)
-        {
-
-            if(BlueX>0)
-            {
-                if(PinkGhostFeetTimer<10)
-                {
-                    BlueGhost.setTexture(BlueGhostRight1);
-                }
-                else if(PinkGhostFeetTimer>10)
-                {
-                    BlueGhost.setTexture(BlueGhostRight2);
-                }
-            }
-            else if(BlueX<0)
-            {
-                if(PinkGhostFeetTimer<10)
-                {
-                    BlueGhost.setTexture(BlueGhostLeft1);
-                }
-                else if(PinkGhostFeetTimer>10)
-                {
-                    BlueGhost.setTexture(BlueGhostLeft2);
-                }
-            }
-            else
-            {
-                if(BlueY>0)
-                {
-                    if(PinkGhostFeetTimer<10)
-                    {
-                        BlueGhost.setTexture(BlueGhostDown1);
-                    }
-                    else if(PinkGhostFeetTimer>10)
-                    {
-                        BlueGhost.setTexture(BlueGhostDown2);
-                    }
-                }
-                else if(BlueY<0)
-                {
-                    if(PinkGhostFeetTimer<10)
-                    {
-                        BlueGhost.setTexture(BlueGhostUp1);
-                    }
-                    else if(PinkGhostFeetTimer>10)
-                    {
-                        BlueGhost.setTexture(BlueGhostUp2);
-                    }
-                }
-            }
-        }
-        else
-        {
-            if(BlueDead == false)
-            {
-                if(powerUpTimer <480 || (powerUpTimer > 510 && powerUpTimer < 540) || powerUpTimer >570)
-                {
-
-                    if(OrangeGhostFeetTimer<10)
-                    {
-                        BlueGhost.setTexture(ScaredGhostTexture1);
-                    }
-                    else if(OrangeGhostFeetTimer>10)
-                    {
-                        BlueGhost.setTexture(ScaredGhostTexture2);
-                    }
-                }
-                else if((powerUpTimer > 480 && powerUpTimer < 510) || (powerUpTimer > 540&& powerUpTimer < 570))
-                {
-
-                    if(OrangeGhostFeetTimer<10)
-                    {
-                        BlueGhost.setTexture(ScaredGhostWhiteTexture1);
-                    }
-                    else if(OrangeGhostFeetTimer>10)
-                    {
-                        BlueGhost.setTexture(ScaredGhostWhiteTexture2);
-                    }
-                }
-            }
-            else
-            {
-                if(BlueX>0)
-                {
-                    BlueGhost.setTexture(EyeRight);
-                }
-                else if(BlueX<0)
-                {
-                    BlueGhost.setTexture(EyeLeft);
-                }
-                else if(BlueY>0)
-                {
-                    BlueGhost.setTexture(EyeDown);
-                }
-                else if(BlueY<0)
-                {
-                    BlueGhost.setTexture(EyetUp);
-                }
-            }
-
-        }
-
+        BlueGhost.setTexture(bGhost.textureSwitcher(blueTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
 
 
 
@@ -4358,7 +3962,7 @@ int main()
                 PacMan.move(PacManX,PacManY);
                 RedGhost.move(rGhost.xSpeed, rGhost.ySpeed);
                 OrangeGhost.move(oGhost.xSpeed, oGhost.ySpeed);
-                BlueGhost.move(BlueX, BlueY);
+                BlueGhost.move(bGhost.xSpeed, bGhost.ySpeed);
                 PinkGhost.move(pGhost.xSpeed, pGhost.ySpeed);
             }
         }

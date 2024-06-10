@@ -181,6 +181,8 @@ sf::Texture &Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *sca
         }
     }
 
+    // so it's not null
+    return ghostTextures[0];
 }
 
 
