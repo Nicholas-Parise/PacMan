@@ -1,14 +1,5 @@
-#include <string>
-#include <SFML/Graphics.hpp>
-#include <iostream>
+#include "Entity.h"
 
-enum Directions{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    NONE
-};
 
 enum States{
     CHASE,
@@ -17,29 +8,21 @@ enum States{
     DEAD
 };
 
-class Ghost
-{
+class Ghost: public Entity{
     public:
         Ghost();
         virtual ~Ghost();
         void reset();
-        void setScatter(int r, int c);
-        void setSpeed(int x, int y);
-        void followPath(int PathRow, int PathCol, float speed, float deadSpeed);
-        bool changedPosition();
-        void updateOldRC();
-        std::string dirToString();
-        void scaredStop(int powerUpTimer);
-        sf::Texture &textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);
-        bool isOppositeDirection(Directions a, Directions b);
 
-        float xSpeed;
-        float ySpeed;
-        int row;
-        int col;
-        int oldRow;
-        int oldCol;
-        int pathIndex;
+        void setScatter(int r, int c);
+
+        void changeState(States s);
+        void followPath(int PathRow, int PathCol, float speed, float deadSpeed);
+        void scaredStop(int powerUpTimer);
+        bool isOppositeDirection(Directions a, Directions b);
+        //sf::Texture &textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);
+        void textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);
+
 
         int scatterRow;
         int scatterCol;
@@ -48,9 +31,7 @@ class Ghost
        // vector<int> PathCol;
        // vector<int> PathRow;
 
-        Directions direction;
         States state;
-
 
     protected:
 

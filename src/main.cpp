@@ -9,14 +9,14 @@
 #include <sstream>
 #include <fstream>
 #include "ghost.h"
+#include "Player.h"
 
 using namespace std;
 
-#define SIZEX 28
-#define SIZEY 31
+const int SIZEX = 28;
+const int SIZEY = 31;
 
-const bool DEBUG = true;
-
+const bool DEBUG = false;
 
 //startx,starty,boxsizex,boxsizex
 #define Bry_Cherry 0,0,12,12
@@ -655,9 +655,9 @@ vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::Recta
 {
 
     int place = 0;
-    int FinalPlace = 0;
-    int row = 0;
-    int col = 0;
+    int FinalPlace = -1;
+    int row = 1;
+    int col = 1;
 
     for(int i = 0; i<28*31; i++)
     {
@@ -669,8 +669,10 @@ vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::Recta
             break;
         }
     }
+    if(FinalPlace != -1){
     col = FinalPlace/28;
     row = FinalPlace%28;
+    }
 
     vector<int> RowColArray = {row,col};
 
@@ -867,8 +869,7 @@ bool isNode(std::vector<string> AvallibleDir)
 
 
 
-bool OutOfTheCloset(int GhostRow, int GhostCol, vector<int> &PathCol, vector<int> &PathRow, int HouseRow, int HouseCol, bool GhostDead)
-{
+bool OutOfTheCloset(int GhostRow, int GhostCol, vector<int> &PathCol, vector<int> &PathRow, int HouseRow, int HouseCol, bool GhostDead){
 
     //Makes it go down
     if(GhostCol == HouseCol && GhostRow == HouseRow && GhostDead == true)
@@ -899,6 +900,7 @@ bool OutOfTheCloset(int GhostRow, int GhostCol, vector<int> &PathCol, vector<int
 
 
     }
+
 
     //Makes it go Up
     if(GhostCol == HouseCol+3 && GhostRow == HouseRow)
@@ -1158,36 +1160,6 @@ void BerryPlace(sf::Sprite &Berry, int Berrytimer)
 }
 
 
-bool PowerStop(int powerUpTimer, sf::Sprite &Ghost, sf::Texture &textureOrig, sf::Texture &textureWhite, bool GhostScared, bool GhostDead)
-{
-
-
-    if(powerUpTimer <480 || powerUpTimer == 510 || powerUpTimer == 570)
-    {
-
-        //   if(GhostScared == true && GhostDead == false)
-        Ghost.setTexture(textureOrig);
-    }
-
-    if(powerUpTimer == 480 || powerUpTimer == 540)
-    {
-
-        if(GhostScared == true && GhostDead == false)
-            Ghost.setTexture(textureWhite);
-    }
-
-
-    if(powerUpTimer > 600 && GhostDead == false && GhostScared == true)
-    {
-
-        return true;
-
-    }
-
-
-    return false;
-}
-
 
 void PlaceLives(std::vector<sf::Sprite> &PacLife)
 {
@@ -1286,26 +1258,6 @@ int main()
 
     Ghost bGhost;
     bGhost.setScatter(29,24);
-    /*
-    float BlueX = 0;
-    float BlueY = 0;
-    int BlueRow = 13;
-    int BlueCol = 14;
-    int Blue_OldRow = -1;
-    int Blue_OldCol = -1;
-    int Blue_PathPlace = 1;
-    int BluePlace = 0;
-    const int ScatterBlueRow = 29;
-    const int ScatterBlueCol = 24;
-    int PacBlueDistanceX = 0;
-    int PacBlueDistanceY = 0;
-    string CurrentBlueDir = "a";
-    bool BlueScatter = true;
-    bool BlueDead = false;
-    bool BlueScared = false;
-    string BlueState = "Chase";
-    */
-    bool BlueFail = false;
     vector<vector<int>> Blue_solution(870);
     vector<int> Blue_PathCol;
     vector<int> Blue_PathRow;
@@ -1327,11 +1279,19 @@ int main()
     vector<int> Pink_PathRow;
 
 
+    Ghost *ghosts[4];
+    ghosts[0] = &rGhost;
+    ghosts[1] = &bGhost;
+    ghosts[2] = &oGhost;
+    ghosts[3] = &pGhost;
+
+
     int solutionRow = 14;
-    int PacLives = 3;
     int solutionCol = 17;
     int StartRow = 13;
     int StartCol = 11;
+
+    int PacLives = 3;
     int dotsEaten = 0;
     int PowerUpEaten = 0;
     int score = 0;
@@ -1657,25 +1617,9 @@ int main()
     sf::Texture PacTexture2;
     PacTexture2.loadFromFile("Assets/Sprite/PacMan_closed.png");
 
-    sf::Texture RedGTexture1;
-    RedGTexture1.loadFromFile("Assets/Sprite/RedGhostRight.png");
-
-    sf::Texture OrangeGTexture1;
-    OrangeGTexture1.loadFromFile("Assets/Sprite/OrangeGhostRight.png");
-
-    sf::Texture BlueGTexture1;
-    BlueGTexture1.loadFromFile("Assets/Sprite/BlueGhostRight.png");
-
-    sf::Texture PinkGTexture1;
-    PinkGTexture1.loadFromFile("Assets/Sprite/PinkGhostRight.png");
-
-
-    sf::Texture DeadGhostTexture;
-    DeadGhostTexture.loadFromFile("Assets/Sprite/eyes.png");
 
     sf::Texture PauseTexture;
     PauseTexture.loadFromFile("Assets/Sprite/pause.png");
-
 
 
     sf::Texture texture9;
@@ -1683,12 +1627,6 @@ int main()
 
     sf::Texture texture10;
     texture10.loadFromFile("Assets/Sprite/Berry_Sprite_Sheet.png");
-
-
-    // textureRedSheet.loadFromImage(image);
-    sf::Texture textureRedSheet;
-    textureRedSheet.loadFromFile("Assets/Sprite/RedGhostSpriteSheet.png");
-
 
 
     ////
@@ -1779,9 +1717,6 @@ int main()
 
     sf::Texture texture12;
     texture12.loadFromFile("Assets/Sprite/Pac-Death-SpriteSheet.png");
-
-    sf::Texture texture13;
-    texture13.loadFromFile("Assets/Sprite/eyes.png");
 
     sf::Texture texture14;
     texture14.loadFromFile("Assets/Sprite/pause.png");
@@ -1956,27 +1891,6 @@ int main()
     PacMan.setTexture(PacTexture2);
     PacMan.setOrigin(15,15);
     PacMan.setPosition(sf::Vector2f(253.607, 325));
-
-
-    sf::Sprite RedGhost;
-    RedGhost.setTexture(redTextures[1]);
-    RedGhost.setOrigin(15,15);
-    RedGhost.setPosition(sf::Vector2f(18.78571429*rGhost.row+(18.78571429/2), 18.61290323*rGhost.col+(18.61290323/2)));
-
-    sf::Sprite BlueGhost;
-    BlueGhost.setTexture(blueTextures[1]);
-    BlueGhost.setOrigin(15,15);
-    BlueGhost.setPosition(sf::Vector2f(18.78571429*bGhost.row+(18.78571429/2), 18.61290323*bGhost.col+(18.61290323/2)));
-
-    sf::Sprite OrangeGhost;
-    OrangeGhost.setTexture(orangeTextures[1]);
-    OrangeGhost.setOrigin(15,15);
-    OrangeGhost.setPosition(sf::Vector2f(18.78571429*oGhost.row+(18.78571429/2), 18.61290323*oGhost.col+(18.61290323/2)));
-
-    sf::Sprite PinkGhost;
-    PinkGhost.setTexture(pinkTextures[1]);
-    PinkGhost.setOrigin(15,15);
-    PinkGhost.setPosition(sf::Vector2f(18.78571429*pGhost.row+(18.78571429/2), 18.61290323*pGhost.col+(18.61290323/2)));
 
 
     sf::Sprite Paused;
@@ -2638,19 +2552,19 @@ int main()
 
         //  cout<<PacRow<<" "<<PacCol<<endl;
 
-        TempRowCol = ClossestTile(RedGhost.getPosition().x,RedGhost.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(rGhost.sprite.getPosition().x,rGhost.sprite.getPosition().y, Tiles);
         rGhost.row = TempRowCol[0];
         rGhost.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(OrangeGhost.getPosition().x,OrangeGhost.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(oGhost.sprite.getPosition().x,oGhost.sprite.getPosition().y, Tiles);
         oGhost.row = TempRowCol[0];
         oGhost.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(BlueGhost.getPosition().x,BlueGhost.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(bGhost.sprite.getPosition().x,bGhost.sprite.getPosition().y, Tiles);
         bGhost.row = TempRowCol[0];
         bGhost.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(PinkGhost.getPosition().x,PinkGhost.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(pGhost.sprite.getPosition().x,pGhost.sprite.getPosition().y, Tiles);
         pGhost.row = TempRowCol[0];
         pGhost.col = TempRowCol[1];
 
@@ -2701,9 +2615,6 @@ int main()
 
 
         //Blue
-
-        ///TODO add the real blue algorithm
-
          if(PacRow != oldPacRow || PacCol != oldPacCol || bGhost.changedPosition()){
             bGhost.updateOldRC();
 
@@ -2712,6 +2623,29 @@ int main()
 
             solutionRow =  PacRow;
             solutionCol = PacCol;
+
+            if(CurrentPacDir == "Up"){
+                solutionCol-=2;
+            }
+            if(CurrentPacDir == "Down")
+            {
+                solutionCol+=2;
+            }
+            if(CurrentPacDir == "Left")
+            {
+                solutionRow-=2;
+            }
+            if(CurrentPacDir == "Right")
+            {
+                solutionRow+=2;
+            }
+
+            int tempSolutionRow = solutionRow - rGhost.row;
+            int tempSolutionCol = solutionCol - rGhost.col;
+
+            solutionRow = solutionRow + (tempSolutionRow*-1);
+            solutionCol = solutionCol + (tempSolutionCol*-1);
+
 
             //rGhost.col
             //rGhost.row
@@ -2732,83 +2666,6 @@ int main()
             }
             // printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
         }
-
-
-/*
-
-
-                    PacBlueDistanceY = PacCol-rGhost.col;
-                    PacBlueDistanceX = PacRow-rGhost.row;
-
-
-
-                    //  PacBlueDistanceY = PacCol-BlueCol;
-                    //PacBlueDistanceX = PacRow-BlueRow;
-
-                    BlueFail = false;
-
-                    if(rGhost.row > PacRow)
-                    {
-                        if(rGhost.col >PacCol)
-                        {
-
-                            //    if(BlueRow > PacRow) {
-                            //      if(BlueCol >PacCol) {
-
-
-                            if(!solvemaze(BlueCol,BlueRow,solutionRow-PacBlueDistanceX,solutionCol+PacBlueDistanceY, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix))
-                            {
-                                BlueFail = true;
-                            }
-
-                            // shape.setPosition(sf::Vector2f(18.78571429*solutionRow+(PacBlueDistanceX*PacBlueDistanceX)+(18.78571429/2), 18.61290323*solutionCol+(PacBlueDistanceY*PacBlueDistanceY)+(18.61290323/2)));
-                        }
-                        else
-                        {
-                            if(!solvemaze(BlueCol,BlueRow,solutionRow-PacBlueDistanceX,solutionCol+PacBlueDistanceY, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix))
-                            {
-                                BlueFail = true;
-                            }
-
-                            //   shape.setPosition(sf::Vector2f(18.78571429*solutionRow-(PacBlueDistanceX*PacBlueDistanceX)+(18.78571429/2), 18.61290323*solutionCol-(PacBlueDistanceY*PacBlueDistanceY)+(18.61290323/2)));
-                        }
-
-                    }
-                    else
-                    {
-
-                        // if(RedCol >PacCol) {
-                        if(BlueCol >PacCol)
-                        {
-
-                            if(!solvemaze(BlueCol,BlueRow,solutionRow+PacBlueDistanceX,solutionCol-PacBlueDistanceY, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix))
-                            {
-                                BlueFail = true;
-                            }
-
-                            // shape.setPosition(sf::Vector2f(18.78571429*solutionRow+(PacBlueDistanceX*PacBlueDistanceX)+(18.78571429/2), 18.61290323*solutionCol-(PacBlueDistanceY*PacBlueDistanceY)+(18.61290323/2)));
-
-                        }
-                        else
-                        {
-                            if(!solvemaze(BlueCol,BlueRow,solutionRow-PacBlueDistanceX,solutionCol-PacBlueDistanceY, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix))
-                            {
-                                BlueFail = true;
-                            }
-                            //    shape.setPosition(sf::Vector2f(18.78571429*solutionRow-(PacBlueDistanceX*PacBlueDistanceX)+(18.78571429/2), 18.61290323*solutionCol-(PacBlueDistanceY*PacBlueDistanceY)+(18.61290323/2)));
-                        }
-                    }
-
-                    if(BlueFail == true)
-                    {
-                        solvemaze(BlueCol,BlueRow,solutionRow,solutionCol, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
-                        cout<<"Unless..."<<endl;
-                    }
-
-                    //  solvemaze(BlueCol,BlueRow,solutionRow,solutionCol, CurrentBlueDir, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
-                    //  printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
-                }
-                */
 
 
         //Orange
@@ -2982,9 +2839,6 @@ int main()
 
 
 
-
-
-
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
 
@@ -3097,14 +2951,6 @@ int main()
             GameState = "Scatter";
 
             PacMan.setPosition(sf::Vector2f(253.607, 325));
-
-            RedGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            BlueGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            OrangeGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            PinkGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
 
             GameStateTimer = -1;
 
@@ -3221,90 +3067,24 @@ int main()
 
 
 
-
-        if(RedGhost.getPosition().x<20 && rGhost.direction == LEFT)
-        {
-
-            RedGhost.setPosition(522,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
+        // red teleporter
+        if(rGhost.teleporter() && Sound_Ef){
+            XP_Tele.play();
         }
 
-        if(RedGhost.getPosition().x>512 && rGhost.direction == RIGHT)
-        {
-
-            RedGhost.setPosition(10,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
+        // orange teleporter
+        if(oGhost.teleporter() && Sound_Ef){
+            XP_Tele.play();
         }
 
-
-
-
-        if(OrangeGhost.getPosition().x<20 && oGhost.direction == LEFT)
-        {
-
-            OrangeGhost.setPosition(522,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
+        // blue teleporter
+        if(bGhost.teleporter() && Sound_Ef){
+            XP_Tele.play();
         }
 
-        if(OrangeGhost.getPosition().x>512 && oGhost.direction == RIGHT)
-        {
-
-            OrangeGhost.setPosition(10,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
-        }
-
-
-        if(BlueGhost.getPosition().x<20 && bGhost.direction == LEFT)
-        {
-
-            BlueGhost.setPosition(522,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
-        }
-
-        if(BlueGhost.getPosition().x>512 && bGhost.direction == RIGHT)
-        {
-
-            BlueGhost.setPosition(10,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
-        }
-
-
-        if(PinkGhost.getPosition().x<20 && pGhost.direction == LEFT)
-        {
-
-            PinkGhost.setPosition(522,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
-        }
-
-        if(PinkGhost.getPosition().x>512 && pGhost.direction == RIGHT)
-        {
-
-            PinkGhost.setPosition(10,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
+        // pink teleporter
+        if(pGhost.teleporter() && Sound_Ef){
+            XP_Tele.play();
         }
 
 
@@ -3324,16 +3104,12 @@ int main()
 
             rGhost.state = SCATTER;
             rGhost.direction = NONE;
-
-            RedGhost.setTexture(redTextures[1]);
         }
 
         if(OutOfTheCloset(oGhost.row, oGhost.col, Orange_PathCol, Orange_PathRow, GhostHomeRow, GhostHomeCol, oGhost.state == DEAD)){
 
             oGhost.state = SCATTER;
             oGhost.direction = NONE;
-
-            OrangeGhost.setTexture(orangeTextures[1]);
         }
 
         if(OutOfTheCloset(bGhost.row, bGhost.col, Blue_PathCol, Blue_PathRow, GhostHomeRow, GhostHomeCol, bGhost.state == DEAD))
@@ -3341,16 +3117,12 @@ int main()
 
             bGhost.state = SCATTER;
             bGhost.direction = NONE;
-            BlueGhost.setTexture(blueTextures[1]);
         }
 
         if(OutOfTheCloset(pGhost.row, pGhost.col, Pink_PathCol, Pink_PathRow, GhostHomeRow, GhostHomeCol, pGhost.state == DEAD))
         {
-
             pGhost.state = SCATTER;
             pGhost.direction = NONE;
-
-            PinkGhost.setTexture(pinkTextures[1]);
         }
 
 
@@ -3404,43 +3176,18 @@ int main()
 
                 GhostScared = true;
 
+                ScareStart = true;
+                ScaredTimer = 0;
+
                 PowerUpEaten ++;
                 score +=25;
 
-                GameState = "Chase";
+                GameState = "Scared";
 
-                if(rGhost.state != DEAD)
-                {
-                    rGhost.state = SCARED;
-                    rGhost.direction = NONE;
-                    ScareStart = true;
-                    ScaredTimer = 0;
-                }
-
-
-                if(oGhost.state != DEAD)
-                {
-                    oGhost.state = SCARED;
-                    oGhost.direction = NONE;
-                    ScareStart = true;
-                    ScaredTimer = 0;
-                }
-
-                if(pGhost.state != DEAD)
-                {
-                    pGhost.state = SCARED;
-                    pGhost.direction = NONE;
-                    ScareStart = true;
-                    ScaredTimer = 0;
-                }
-
-                if(bGhost.state != DEAD)
-                {
-                    bGhost.state = SCARED;
-                    bGhost.direction = NONE;
-                    ScareStart = true;
-                    ScaredTimer = 0;
-                }
+                rGhost.changeState(SCARED);
+                oGhost.changeState(SCARED);
+                bGhost.changeState(SCARED);
+                pGhost.changeState(SCARED);
             }
         }
 
@@ -3474,128 +3221,37 @@ int main()
 
 
 
-        if(PacDead == false && DEBUG == false)
-        {
-            /// TODO this hit test crap, its so innefficent
+        // ghost pacman hittest
+        if(PacDead == false && DEBUG == false){
 
-            if(PacMan.getGlobalBounds().intersects(RedGhost.getGlobalBounds()))
-            {
+            for(int i = 0; i<4; i++){
 
-                if(rGhost.state == SCARED){
-                    score +=10;
+                if(PacMan.getGlobalBounds().intersects((ghosts[i])->sprite.getGlobalBounds())){
 
-                    if(Sound_Ef == true)
-                    {
-                        Yay.play();
+                    if(ghosts[i]->state == SCARED){
+                        score +=10;
+
+                        if(Sound_Ef == true)
+                        {
+                            Yay.play();
+                        }
+
+                        ghosts[i]->changeState(DEAD);
+
+
+                    }else if(ghosts[i]->state != DEAD){
+
+                        BackG_Pizza.pause();
+                        BackG_Subwooder.pause();
+                        BackG_Sweden.pause();
+
+                        if(Sound_Ef == true)
+                        {
+                            Dead.play();
+                        }
+
+                        PacDead = true;
                     }
-
-                    rGhost.state = DEAD;
-
-                    RedGhost.setTexture(DeadGhostTexture);
-
-                }else if(rGhost.state != DEAD){
-
-                    BackG_Pizza.pause();
-                    BackG_Subwooder.pause();
-                    BackG_Sweden.pause();
-
-                    if(Sound_Ef == true)
-                    {
-                        Dead.play();
-                    }
-
-                    PacDead = true;
-                }
-            }
-
-
-            if(PacMan.getGlobalBounds().intersects(OrangeGhost.getGlobalBounds()))
-            {
-
-                if(oGhost.state == SCARED){
-                    score +=10;
-
-                    if(Sound_Ef == true)
-                    {
-                        Yay.play();
-                    }
-
-                    oGhost.state = DEAD;
-
-                    OrangeGhost.setTexture(DeadGhostTexture);
-
-                }else if(oGhost.state != DEAD){
-
-                    BackG_Pizza.pause();
-                    BackG_Subwooder.pause();
-                    BackG_Sweden.pause();
-
-                    if(Sound_Ef == true)
-                    {
-                        Dead.play();
-                    }
-
-                    PacDead = true;
-                }
-            }
-
-
-            if(PacMan.getGlobalBounds().intersects(BlueGhost.getGlobalBounds()))
-            {
-
-                 if(bGhost.state == SCARED){
-                    score +=10;
-
-                    if(Sound_Ef == true)
-                    {
-                        Yay.play();
-                    }
-
-                    bGhost.state = DEAD;
-
-
-                }else if(bGhost.state != DEAD){
-
-                    BackG_Pizza.pause();
-                    BackG_Subwooder.pause();
-                    BackG_Sweden.pause();
-
-                    if(Sound_Ef == true)
-                    {
-                        Dead.play();
-                    }
-
-                    PacDead = true;
-                }
-            }
-
-            if(PacMan.getGlobalBounds().intersects(PinkGhost.getGlobalBounds()))
-            {
-
-                if(pGhost.state == SCARED){
-                    score +=10;
-
-                    if(Sound_Ef == true)
-                    {
-                        Yay.play();
-                    }
-
-                    pGhost.state = DEAD;
-
-                    PinkGhost.setTexture(DeadGhostTexture);
-
-                }else if(pGhost.state != DEAD){
-
-                    BackG_Pizza.pause();
-                    BackG_Subwooder.pause();
-                    BackG_Sweden.pause();
-
-                    if(Sound_Ef == true)
-                    {
-                        Dead.play();
-                    }
-
-                    PacDead = true;
                 }
             }
         }
@@ -3633,21 +3289,22 @@ int main()
             GameState = "Chase";
             cout<<"Chase"<<endl;
 
-            rGhost.state = CHASE;
-            oGhost.state = CHASE;
-            pGhost.state = CHASE;
-            bGhost.state = CHASE;
+            rGhost.changeState(CHASE);
+            oGhost.changeState(CHASE);
+            bGhost.changeState(CHASE);
+            pGhost.changeState(CHASE);
         }
+
         else if(GameStateTimer == 60*25|| GameStateTimer  == 60*50|| GameStateTimer  == 60*75)
         {
 
             GameState = "Scatter";
             cout<<"Scatter"<<endl;
 
-            rGhost.state = SCATTER;
-            oGhost.state = SCATTER;
-            pGhost.state = SCATTER;
-            bGhost.state = SCATTER;
+            rGhost.changeState(SCATTER);
+            oGhost.changeState(SCATTER);
+            bGhost.changeState(SCATTER);
+            pGhost.changeState(SCATTER);
         }
 
 
@@ -3720,25 +3377,9 @@ int main()
 
             GameState = "Scatter";
 
-            RedGhost.setTexture(redTextures[1]);
-            OrangeGhost.setTexture(orangeTextures[1]);
-            BlueGhost.setTexture(blueTextures[1]);
-            PinkGhost.setTexture(pinkTextures[1]);
-
-
             PacMan.setPosition(sf::Vector2f(253.607, 325));
 
-            RedGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            BlueGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            OrangeGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            PinkGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-
             GameStateTimer = -1;
-
         }
 
 
@@ -3767,22 +3408,7 @@ int main()
 
             GameState = "Scatter";
 
-            RedGhost.setTexture(redTextures[1]);
-            OrangeGhost.setTexture(orangeTextures[1]);
-            BlueGhost.setTexture(blueTextures[1]);
-            PinkGhost.setTexture(pinkTextures[1]);
-
-
             PacMan.setPosition(sf::Vector2f(253.607, 325));
-
-            RedGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            BlueGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            OrangeGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
-            PinkGhost.setPosition(sf::Vector2f((18.78571429*13)+(18.78571429/2), (18.61290323*15)+(18.61290323/2)));
-
 
             GameStateTimer = -1;
 
@@ -3804,8 +3430,6 @@ int main()
                     BackG_Sweden.play();
                 }
             }
-
-
         }
 
 
@@ -3849,8 +3473,6 @@ int main()
         PowerPelletAni(PowerUp, Pwr_ani_frame, glowTimer);
 
 
-
-
         if(TitlePacTimer == 10)
         {
 
@@ -3882,7 +3504,6 @@ int main()
         BerryPlace(Berry, Berrytimer);
 
 
-
         if(GameOver == true)
         {
 
@@ -3894,33 +3515,28 @@ int main()
             {
                 GameOver = false;
 
-
                 if(Music == true)
                 {
                     BackG_Wii.play();
                 }
-
             }
         }
 
 
-
         // set the textures of the ghosts
-
         if(feetTimer >= 20){
             feetTimer = 0;
         }else{
             feetTimer+=2;
         }
 
-        RedGhost.setTexture(rGhost.textureSwitcher(redTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
+        rGhost.textureSwitcher(redTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
 
-        OrangeGhost.setTexture(oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
+        oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
 
-        PinkGhost.setTexture(pGhost.textureSwitcher(pinkTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
+        pGhost.textureSwitcher(pinkTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
 
-        BlueGhost.setTexture(bGhost.textureSwitcher(blueTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer));
-
+        bGhost.textureSwitcher(blueTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
 
 
 
@@ -3960,10 +3576,10 @@ int main()
             if(PacDead == false)
             {
                 PacMan.move(PacManX,PacManY);
-                RedGhost.move(rGhost.xSpeed, rGhost.ySpeed);
-                OrangeGhost.move(oGhost.xSpeed, oGhost.ySpeed);
-                BlueGhost.move(bGhost.xSpeed, bGhost.ySpeed);
-                PinkGhost.move(pGhost.xSpeed, pGhost.ySpeed);
+                rGhost.sprite.move(rGhost.xSpeed, rGhost.ySpeed);
+                oGhost.sprite.move(oGhost.xSpeed, oGhost.ySpeed);
+                bGhost.sprite.move(bGhost.xSpeed, bGhost.ySpeed);
+                pGhost.sprite.move(pGhost.xSpeed, pGhost.ySpeed);
             }
         }
 
@@ -4010,17 +3626,16 @@ int main()
                 }
 
 
-                window.draw(RedGhost);
-                window.draw(OrangeGhost);
-                window.draw(BlueGhost);
-                window.draw(PinkGhost);
+                window.draw(rGhost.sprite);
+                window.draw(oGhost.sprite);
+                window.draw(bGhost.sprite);
+                window.draw(pGhost.sprite);
 
 
                 if(PacDead == false)
                     window.draw(PacMan);
 
 
-                //    window.draw(shape);
                 window.draw(scoreDis);
 
                 window.draw(Berry);
@@ -4041,9 +3656,6 @@ int main()
             {
 
                 window.draw(Menu);
-
-
-
 
                 for(int i = 0; i<3; i++)
                 {
