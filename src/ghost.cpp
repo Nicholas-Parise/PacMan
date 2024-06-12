@@ -13,14 +13,15 @@ Ghost::Ghost(){
 
 
 void Ghost::reset(){
+
     xSpeed = 0;
     ySpeed = 0;
-    row = 13;
-    col = 15;
     oldRow = -1;
     oldCol = -1;
-
     direction = NONE;
+
+    row = 13;
+    col = 15;
     state = SCATTER;
 
     sprite.setPosition(sf::Vector2f(18.78571429*row+(18.78571429/2), 18.61290323*col+(18.61290323/2)));
@@ -102,11 +103,6 @@ void Ghost::followPath(int PathRow, int PathCol, float speed, float deadSpeed){
 }
 
 
-
-
-
-
-
 void Ghost::scaredStop(int powerUpTimer) {
 
     if(this->state == SCARED){
@@ -115,65 +111,6 @@ void Ghost::scaredStop(int powerUpTimer) {
         }
     }
 }
-
-
-
-/*
-sf::Texture &Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer){
-
-    sf::Texture *textures;
-    int offset = 0;
-
-    switch(state){
-        case SCARED:
-            textures = scaredTextures;
-            offset = 1;
-            break;
-        case DEAD:
-            textures = eyeTextures;
-            offset = 0;
-            break;
-        default:
-        case CHASE:
-        case SCATTER:
-            textures = ghostTextures;
-            offset = 4;
-            break;
-    };
-
-    if(FeetTimer<10) {
-        offset = 0;
-    }
-
-
-    if(this->state != SCARED){
-        switch(direction){
-
-            case LEFT:
-                return textures[0+offset];
-            case UP:
-                return textures[1+offset];
-            case RIGHT:
-                return textures[2+offset];
-            case DOWN:
-                return textures[3+offset];
-        };
-
-    }else{
-        if(powerUpTimer <480 || (powerUpTimer > 510 && powerUpTimer < 540) || powerUpTimer >570) {
-
-            return textures[0+offset];
-
-        } else if((powerUpTimer > 480 && powerUpTimer < 510) || (powerUpTimer > 540&& powerUpTimer < 570)) {
-
-            return textures[2+offset];
-        }
-    }
-
-    // so it's not null
-    return ghostTextures[0];
-}
-*/
 
 
 void Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer){

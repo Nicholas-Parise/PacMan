@@ -60,3 +60,13 @@ std::string Entity::dirToString(){
         return "Left";
 }
 
+
+
+void Entity::reset(){
+    xSpeed = 0;
+    ySpeed = 0;
+    oldRow = -1;
+    oldCol = -1;
+    direction = NONE;
+}
+

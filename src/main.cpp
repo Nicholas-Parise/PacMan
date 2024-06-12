@@ -16,7 +16,7 @@ using namespace std;
 const int SIZEX = 28;
 const int SIZEY = 31;
 
-const bool DEBUG = false;
+const bool DEBUG = true;
 
 //startx,starty,boxsizex,boxsizex
 #define Bry_Cherry 0,0,12,12
@@ -111,7 +111,7 @@ int SmallestDistance(int Start, int Solution)
 
 
 
-int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDirection, vector<vector<int>> &solution, vector<int> &PathCol, vector<int> &PathRow, vector<vector<int>> maze)
+int solvemaze(int r, int c, int solutionCol, int solutionRow, Directions CurrentDirection, vector<vector<int>> &solution, vector<int> &PathCol, vector<int> &PathRow, vector<vector<int>> maze)
 {
 
     //if destination is reached, maze is solved
@@ -227,25 +227,25 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
 
 
 //cout<<"Can Go: ";
-        if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection !="Down")
+        if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection != DOWN)
         {
             CanGoUp = true;
 //cout<<"Up ";
         }
 
-        if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !="Right")
+        if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection != RIGHT)
         {
             CanGoLeft = true;
 //cout<<"Left ";
         }
 
-        if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !="Up")
+        if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection != UP)
         {
             CanGoDown = true;
 //cout<<"Down ";
         }
 
-        if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !="Left")
+        if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection != LEFT)
         {
             CanGoRight = true;
 //cout<<"Right ";
@@ -262,14 +262,14 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
         if(CanGoUp == true && lowest == 0)
         {
 //cout<<"Up ";
-            if(solvemaze((r-1), c, solutionCol, solutionRow,"Up",solution,PathCol,PathRow,maze))
+            if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow,maze))
                 return 1;
 
         }
         else if(CanGoLeft == true && lowest == 1)
         {
 //cout<<"Left ";
-            if(solvemaze(r, (c-1), solutionCol, solutionRow,"Left",solution,PathCol,PathRow,maze))
+            if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow,maze))
                 return 1;
 
 //        } else if(CanGoDown == true && lowest == 3) {
@@ -278,7 +278,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
         {
 
 //cout<<"Down ";
-            if(solvemaze((r+1), c, solutionCol, solutionRow,"Down",solution,PathCol,PathRow,maze))
+            if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow,maze))
                 return 1;
 
             //  } else if(CanGoRight == true && lowest == 0) {
@@ -286,7 +286,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
         else if(CanGoRight == true && lowest == 3)
         {
 //cout<<"Right ";
-            if(solvemaze(r, (c+1), solutionCol, solutionRow,"Right",solution,PathCol,PathRow,maze))
+            if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow,maze))
                 return 1;
 
         }
@@ -299,7 +299,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
             if(CanGoUp == true && SecondLowest == 0)
             {
 //cout<<"Up ";
-                if(solvemaze((r-1), c, solutionCol, solutionRow,"Up",solution,PathCol,PathRow,maze))
+                if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow,maze))
                     return 1;
 
             }
@@ -307,7 +307,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
             {
 
 //cout<<"Left "<<c-1;
-                if(solvemaze(r, (c-1), solutionCol, solutionRow,"Left",solution,PathCol,PathRow,maze))
+                if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow,maze))
                     return 1;
 
                 //} else if(CanGoDown == true && SecondLowest == 3) {
@@ -316,7 +316,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
             else if(CanGoDown == true && SecondLowest == 2)
             {
 //cout<<"Down ";
-                if(solvemaze((r+1), c, solutionCol, solutionRow,"Down",solution,PathCol,PathRow,maze))
+                if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow,maze))
                     return 1;
 
                 // } else if(CanGoRight == true && SecondLowest == 0) {
@@ -326,7 +326,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
             {
 
 //cout<<"Right "<<c+1;
-                if(solvemaze(r, (c+1), solutionCol, solutionRow,"Right",solution,PathCol,PathRow,maze))
+                if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow,maze))
                     return 1;
 
             }
@@ -341,14 +341,14 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                 {
 
 //cout<<"Up ";
-                    if(solvemaze((r-1), c, solutionCol, solutionRow,"Up",solution,PathCol,PathRow,maze))
+                    if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow,maze))
                         return 1;
 
                 }
                 else if(CanGoLeft == true && ThridLowest == 1)
                 {
 //cout<<"Left "<<c-1;
-                    if(solvemaze(r, (c-1), solutionCol, solutionRow,"Left",solution,PathCol,PathRow,maze))
+                    if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow,maze))
                         return 1;
 
                     //  } else if(CanGoDown == true && ThridLowest == 3) {
@@ -358,7 +358,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                 {
 
 //cout<<"Down ";
-                    if(solvemaze((r+1), c, solutionCol, solutionRow,"Down",solution,PathCol,PathRow,maze))
+                    if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow,maze))
                         return 1;
 
 //               } else if(CanGoRight == true && ThridLowest == 0) {
@@ -367,7 +367,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                 else if(CanGoRight == true && ThridLowest == 3)
                 {
 //cout<<"Right "<<c+1;
-                    if(solvemaze(r, (c+1), solutionCol, solutionRow,"Right",solution,PathCol,PathRow,maze))
+                    if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow,maze))
                         return 1;
                 }
                 else
@@ -379,14 +379,14 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                     if(CanGoUp == true && Highest == 0)
                     {
 //cout<<"Up ";
-                        if(solvemaze((r-1), c, solutionCol, solutionRow,"Up",solution,PathCol,PathRow,maze))
+                        if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow,maze))
                             return 1;
 
                     }
                     else if(CanGoLeft == true && Highest == 1)
                     {
 //cout<<"Left ";
-                        if(solvemaze(r, (c-1), solutionCol, solutionRow,"Left",solution,PathCol,PathRow,maze))
+                        if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow,maze))
                             return 1;
 
                         // } else if(CanGoDown == true && Highest == 3) {
@@ -395,7 +395,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                     {
 
 //cout<<"Down ";
-                        if(solvemaze((r+1), c, solutionCol, solutionRow,"Down",solution,PathCol,PathRow,maze))
+                        if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow,maze))
                             return 1;
 
                         //  } else if(CanGoRight == true && Highest == 0) {
@@ -404,7 +404,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                     else if(CanGoRight == true && Highest == 3)
                     {
 //cout<<"Right ";
-                        if(solvemaze(r, (c+1), solutionCol, solutionRow,"Right",solution,PathCol,PathRow,maze))
+                        if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow,maze))
                             return 1;
 
                     }
@@ -417,7 +417,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                         {
 
                             //cout<<"Right ";
-                            if(solvemaze(r, c+1, solutionCol, solutionRow,"Right",solution,PathCol,PathRow,maze))
+                            if(solvemaze(r, c+1, solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow,maze))
                                 return 1;
                         }
 
@@ -425,7 +425,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                         {
 
                             //cout<<"Left ";
-                            if(solvemaze(r, c-1, solutionCol, solutionRow,"Left",solution,PathCol,PathRow,maze))
+                            if(solvemaze(r, c-1, solutionCol, solutionRow,LEFT,solution,PathCol,PathRow,maze))
                                 return 1;
                         }
 
@@ -433,7 +433,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                         {
 
                             //cout<<"Up ";
-                            if(solvemaze(r-1, c, solutionCol, solutionRow,"Up",solution,PathCol,PathRow,maze))
+                            if(solvemaze(r-1, c, solutionCol, solutionRow,UP,solution,PathCol,PathRow,maze))
                                 return 1;
                         }
 
@@ -441,7 +441,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
                         {
 
                             //cout<<"Down ";
-                            if(solvemaze(r+1, c, solutionCol, solutionRow,"Down",solution,PathCol,PathRow,maze))
+                            if(solvemaze(r+1, c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow,maze))
                                 return 1;
                         }
                     }
@@ -458,33 +458,33 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
 
 
         //going up
-        if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection !="Down")
+        if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection !=DOWN)
         {
             //cout<<"Up ";
-            if(solvemaze(r-1, c, solutionCol, solutionRow,"Up",solution,PathCol,PathRow,maze))
+            if(solvemaze(r-1, c, solutionCol, solutionRow,UP,solution,PathCol,PathRow,maze))
                 return 1;
         }
         //going left
-        if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !="Right")
+        if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !=RIGHT)
         {
             //cout<<"Left ";
-            if(solvemaze(r, c-1, solutionCol, solutionRow,"Left",solution,PathCol,PathRow,maze))
+            if(solvemaze(r, c-1, solutionCol, solutionRow,LEFT,solution,PathCol,PathRow,maze))
                 return 1;
         }
 
         //going down
-        if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !="Up")
+        if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !=UP)
         {
             //cout<<"Down ";
-            if(solvemaze(r+1, c, solutionCol, solutionRow,"Down",solution,PathCol,PathRow,maze))
+            if(solvemaze(r+1, c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow,maze))
                 return 1;
         }
 
         //going right
-        if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !="Left")
+        if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !=LEFT)
         {
             //cout<<"Right ";
-            if(solvemaze(r, c+1, solutionCol, solutionRow,"Right",solution,PathCol,PathRow,maze))
+            if(solvemaze(r, c+1, solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow,maze))
                 return 1;
         }
 
@@ -502,7 +502,7 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, string CurrentDire
 
 
 
-int ScaredSolver(int r, int c, string CurrentDirection,vector<vector<int>> &solution,vector<int> &PathCol, vector<int> &PathRow,vector<vector<int>> maze)
+int ScaredSolver(int r, int c, Directions CurrentDirection,vector<vector<int>> &solution,vector<int> &PathCol, vector<int> &PathRow,vector<vector<int>> maze)
 {
 
     solution[r][c] = 1;
@@ -519,22 +519,22 @@ int ScaredSolver(int r, int c, string CurrentDirection,vector<vector<int>> &solu
     int RandNumber = 0;
 
 
-    if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection !="Down")
+    if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection !=DOWN)
     {
         CanGoUp = true;
     }
 
-    if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !="Right")
+    if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !=RIGHT)
     {
         CanGoLeft = true;
     }
 
-    if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !="Up")
+    if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !=UP)
     {
         CanGoDown = true;
     }
 
-    if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !="Left")
+    if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !=LEFT)
     {
         CanGoRight = true;
     }
@@ -679,10 +679,7 @@ vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::Recta
     return RowColArray;
 }
 
-
-vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, string currentDur, bool &Stop)
-{
-
+vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, Directions currentDur, bool &Stop){
 
     std::vector<string> AvallibleDir;
 
@@ -692,11 +689,9 @@ vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, string
     if(Col >0)
     {
         //Above
-        if(GameMatrix[Col-1][Row] == 1)
-        {
+        if(GameMatrix[Col-1][Row] == 1){
 
-            if(currentDur == "Up")
-            {
+            if(currentDur == UP){
                 Stop = true;
             }
         }
@@ -707,11 +702,9 @@ vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, string
     }
 
     //below
-    if(GameMatrix[Col+1][Row] == 1)
-    {
+    if(GameMatrix[Col+1][Row] == 1){
 
-        if(currentDur == "Down")
-        {
+        if(currentDur == DOWN){
             Stop = true;
         }
     }
@@ -725,7 +718,7 @@ vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, string
     if(GameMatrix[Col][Row-1] == 1)
     {
 
-        if(currentDur == "Left")
+        if(currentDur == LEFT)
         {
             Stop = true;
         }
@@ -740,7 +733,7 @@ vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, string
     if(GameMatrix[Col][Row+1] == 1)
     {
 
-        if(currentDur == "Right")
+        if(currentDur == RIGHT)
         {
             Stop = true;
         }
@@ -1011,20 +1004,6 @@ void PowerPelletAni(std::vector<sf::CircleShape> &PowerUp,int &Pwr_ani_frame, in
     }
 }
 
-void PacAni(sf::Sprite &PacMan, sf::Texture &texture2, sf::Texture &texture3, int &timer)
-{
-
-    if(timer == 10)
-        PacMan.setTexture(texture3);
-
-
-    if(timer == 20)
-    {
-
-        PacMan.setTexture(texture2);
-        timer = 0;
-    }
-}
 
 bool PacDeathAni(sf::Sprite &PacDeath, sf::Sprite PacMan, int death_ani_Timer)
 {
@@ -1237,17 +1216,22 @@ int main()
     //GameState = "Frightened";
 
 
+
+    Player pacman;
+    /*
     float PacManX = 0;
     float PacManY = 0;
     int PacRow = 14;
     int PacCol = 17;
     int oldPacRow = -1;
     int oldPacCol = -1;
+    string CurrentPacDir = "Left";
+    */
     bool stopPacMan;
     bool PacCloseToCenter = false;
-    string CurrentPacDir = "Left";
     bool PacDead = false;
     int pacTimer = 0;
+
 
     Ghost rGhost;
     rGhost.setScatter(23,1);
@@ -1887,11 +1871,12 @@ int main()
 
 
 ////
+    /*
     sf::Sprite PacMan;
     PacMan.setTexture(PacTexture2);
     PacMan.setOrigin(15,15);
     PacMan.setPosition(sf::Vector2f(253.607, 325));
-
+    */
 
     sf::Sprite Paused;
     Paused.setTexture(PauseTexture);
@@ -2546,9 +2531,9 @@ int main()
         //////Path Finding
 
 
-        TempRowCol = ClossestTile(PacMan.getPosition().x,PacMan.getPosition().y, Tiles);
-        PacRow = TempRowCol[0];
-        PacCol = TempRowCol[1];
+        TempRowCol = ClossestTile(pacman.sprite.getPosition().x,pacman.sprite.getPosition().y, Tiles);
+        pacman.row = TempRowCol[0];
+        pacman.col = TempRowCol[1];
 
         //  cout<<PacRow<<" "<<PacCol<<endl;
 
@@ -2572,8 +2557,8 @@ int main()
 
 
 
-        solutionRow =  PacRow;
-        solutionCol = PacCol;
+        solutionRow = pacman.row;
+        solutionCol = pacman.col;
 
 
          for(int x = 0; x<SIZEX; x++)
@@ -2589,7 +2574,7 @@ int main()
 
 
         //Red
-        if(PacRow != oldPacRow || PacCol != oldPacCol || rGhost.changedPosition()){
+        if(pacman.changedPosition()|| rGhost.changedPosition()){
             rGhost.updateOldRC();
 
             Red_PathCol.clear();
@@ -2598,16 +2583,16 @@ int main()
             switch(rGhost.state){
 
             case CHASE:
-                solvemaze(rGhost.col,rGhost.row,solutionRow,solutionCol, rGhost.dirToString(), Red_solution,Red_PathCol,Red_PathRow,GameMatrix);
+                solvemaze(rGhost.col,rGhost.row,solutionRow,solutionCol, rGhost.direction, Red_solution,Red_PathCol,Red_PathRow,GameMatrix);
                 break;
             case SCATTER:
-                solvemaze(rGhost.col,rGhost.row,rGhost.scatterRow,rGhost.scatterCol, rGhost.dirToString(), Red_solution,Red_PathCol,Red_PathRow,GameMatrix);
+                solvemaze(rGhost.col,rGhost.row,rGhost.scatterRow,rGhost.scatterCol, rGhost.direction, Red_solution,Red_PathCol,Red_PathRow,GameMatrix);
                 break;
             case SCARED:
-                ScaredSolver(rGhost.col,rGhost.row, rGhost.dirToString(), Red_solution, Red_PathCol, Red_PathRow, GameMatrix);
+                ScaredSolver(rGhost.col,rGhost.row, rGhost.direction, Red_solution, Red_PathCol, Red_PathRow, GameMatrix);
                 break;
             case DEAD:
-                solvemaze(rGhost.col,rGhost.row,GhostHomeRow,GhostHomeCol, rGhost.dirToString(), Red_solution,Red_PathCol,Red_PathRow,GameMatrix);
+                solvemaze(rGhost.col,rGhost.row,GhostHomeRow,GhostHomeCol, rGhost.direction, Red_solution,Red_PathCol,Red_PathRow,GameMatrix);
                 break;
             }
             // printsolution(solutionRow,solutionCol,StartRow,StartCol,Red_solution,GameMatrix);
@@ -2615,27 +2600,27 @@ int main()
 
 
         //Blue
-         if(PacRow != oldPacRow || PacCol != oldPacCol || bGhost.changedPosition()){
+         if(pacman.changedPosition() || bGhost.changedPosition()){
             bGhost.updateOldRC();
 
             Blue_PathCol.clear();
             Blue_PathRow.clear();
 
-            solutionRow =  PacRow;
-            solutionCol = PacCol;
+            solutionRow =  pacman.row;
+            solutionCol = pacman.col;
 
-            if(CurrentPacDir == "Up"){
+            if(pacman.direction == UP){
                 solutionCol-=2;
             }
-            if(CurrentPacDir == "Down")
+            if(pacman.direction == DOWN)
             {
                 solutionCol+=2;
             }
-            if(CurrentPacDir == "Left")
+            if(pacman.direction == LEFT)
             {
                 solutionRow-=2;
             }
-            if(CurrentPacDir == "Right")
+            if(pacman.direction == RIGHT)
             {
                 solutionRow+=2;
             }
@@ -2652,16 +2637,16 @@ int main()
 
             switch(bGhost.state){
             case CHASE:
-                solvemaze(bGhost.col,bGhost.row,solutionRow,solutionCol, bGhost.dirToString(), Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
+                solvemaze(bGhost.col,bGhost.row,solutionRow,solutionCol, bGhost.direction, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
                 break;
             case SCATTER:
-                solvemaze(bGhost.col,bGhost.row,bGhost.scatterRow,bGhost.scatterCol, bGhost.dirToString(), Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
+                solvemaze(bGhost.col,bGhost.row,bGhost.scatterRow,bGhost.scatterCol, bGhost.direction, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
                 break;
             case SCARED:
-                ScaredSolver(bGhost.col,bGhost.row, bGhost.dirToString(), Blue_solution, Blue_PathCol, Blue_PathRow, GameMatrix);
+                ScaredSolver(bGhost.col,bGhost.row, bGhost.direction, Blue_solution, Blue_PathCol, Blue_PathRow, GameMatrix);
                 break;
             case DEAD:
-                solvemaze(bGhost.col,bGhost.row,GhostHomeRow,GhostHomeCol, bGhost.dirToString(), Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
+                solvemaze(bGhost.col,bGhost.row,GhostHomeRow,GhostHomeCol, bGhost.direction, Blue_solution,Blue_PathCol,Blue_PathRow,GameMatrix);
                 break;
             }
             // printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
@@ -2669,17 +2654,17 @@ int main()
 
 
         //Orange
-         if(PacRow != oldPacRow || PacCol != oldPacCol || oGhost.changedPosition()){
+         if(pacman.changedPosition() || oGhost.changedPosition()){
             oGhost.updateOldRC();
 
             Orange_PathCol.clear();
             Orange_PathRow.clear();
 
-            OrangePacDistance = pow(PacRow-oGhost.row,2) + pow(PacCol-oGhost.col,2);
+            OrangePacDistance = pow(pacman.row-oGhost.row,2) + pow(pacman.col-oGhost.col,2);
 
             if(OrangePacDistance<80){
-                solutionRow =  PacRow;
-                solutionCol = PacCol;
+                solutionRow =  pacman.row;
+                solutionCol = pacman.col;
             }else{
                 solutionRow =  oGhost.scatterRow;
                 solutionCol = oGhost.scatterCol;
@@ -2688,48 +2673,44 @@ int main()
             switch(oGhost.state){
 
             case CHASE:
-                solvemaze(oGhost.col,oGhost.row,solutionRow,solutionCol, oGhost.dirToString(), Orange_solution,Orange_PathCol,Orange_PathRow,GameMatrix);
+                solvemaze(oGhost.col,oGhost.row,solutionRow,solutionCol, oGhost.direction, Orange_solution,Orange_PathCol,Orange_PathRow,GameMatrix);
                 break;
             case SCATTER:
-                solvemaze(oGhost.col,oGhost.row,oGhost.scatterRow,oGhost.scatterCol, oGhost.dirToString(), Orange_solution,Orange_PathCol,Orange_PathRow,GameMatrix);
+                solvemaze(oGhost.col,oGhost.row,oGhost.scatterRow,oGhost.scatterCol, oGhost.direction, Orange_solution,Orange_PathCol,Orange_PathRow,GameMatrix);
                 break;
             case SCARED:
-                ScaredSolver(oGhost.col,oGhost.row, oGhost.dirToString(), Orange_solution, Orange_PathCol, Orange_PathRow, GameMatrix);
+                ScaredSolver(oGhost.col,oGhost.row, oGhost.direction, Orange_solution, Orange_PathCol, Orange_PathRow, GameMatrix);
                 break;
             case DEAD:
-                solvemaze(oGhost.col,oGhost.row,GhostHomeRow,GhostHomeCol, oGhost.dirToString(), Orange_solution,Orange_PathCol,Orange_PathRow,GameMatrix);
+                solvemaze(oGhost.col,oGhost.row,GhostHomeRow,GhostHomeCol, oGhost.direction, Orange_solution,Orange_PathCol,Orange_PathRow,GameMatrix);
                 break;
             }
             // printsolution(solutionRow,solutionCol,StartRow,StartCol,Orange_solution,GameMatrix);
         }
 
 
-
-
-
-
         //Pink
-         if(PacRow != oldPacRow || PacCol != oldPacCol || pGhost.changedPosition()){
+         if(pacman.changedPosition() || pGhost.changedPosition()){
             oGhost.updateOldRC();
 
             Pink_PathCol.clear();
             Pink_PathRow.clear();
 
-            solutionRow =  PacRow;
-            solutionCol = PacCol;
+            solutionRow = pacman.row;
+            solutionCol = pacman.col;
 
-            if(CurrentPacDir == "Up"){
+            if(pacman.direction == UP){
                 solutionCol-=4;
             }
-            if(CurrentPacDir == "Down")
+            if(pacman.direction == DOWN)
             {
                 solutionCol+=4;
             }
-            if(CurrentPacDir == "Left")
+            if(pacman.direction == LEFT)
             {
                 solutionRow-=4;
             }
-            if(CurrentPacDir == "Right")
+            if(pacman.direction == RIGHT)
             {
                 solutionRow+=4;
             }
@@ -2738,30 +2719,23 @@ int main()
             switch(pGhost.state){
 
             case CHASE:
-                solvemaze(pGhost.col,pGhost.row,solutionRow,solutionCol, pGhost.dirToString(), Pink_solution,Pink_PathCol,Pink_PathRow,GameMatrix);
+                solvemaze(pGhost.col,pGhost.row,solutionRow,solutionCol, pGhost.direction, Pink_solution,Pink_PathCol,Pink_PathRow,GameMatrix);
                 break;
             case SCATTER:
-                solvemaze(pGhost.col,pGhost.row,pGhost.scatterRow,pGhost.scatterCol, pGhost.dirToString(), Pink_solution,Pink_PathCol,Pink_PathRow,GameMatrix);
+                solvemaze(pGhost.col,pGhost.row,pGhost.scatterRow,pGhost.scatterCol, pGhost.direction, Pink_solution,Pink_PathCol,Pink_PathRow,GameMatrix);
                 break;
             case SCARED:
-                ScaredSolver(pGhost.col,pGhost.row, pGhost.dirToString(), Pink_solution, Pink_PathCol, Pink_PathRow, GameMatrix);
+                ScaredSolver(pGhost.col,pGhost.row, pGhost.direction, Pink_solution, Pink_PathCol, Pink_PathRow, GameMatrix);
                 break;
             case DEAD:
-                solvemaze(pGhost.col,pGhost.row,GhostHomeRow,GhostHomeCol, pGhost.dirToString(), Pink_solution,Pink_PathCol,Pink_PathRow,GameMatrix);
+                solvemaze(pGhost.col,pGhost.row,GhostHomeRow,GhostHomeCol, pGhost.direction, Pink_solution,Pink_PathCol,Pink_PathRow,GameMatrix);
                 break;
             }
             // printsolution(solutionRow,solutionCol,StartRow,StartCol,Pink_solution,GameMatrix);
         }
 
 
-
-
-         if(PacRow != oldPacRow || PacCol != oldPacCol){
-            oldPacCol = PacCol;
-            oldPacRow = PacRow;
-        }
-
-
+        pacman.updateOldRC();
 
 
         if(DEBUG == true)
@@ -2832,10 +2806,7 @@ int main()
 
 
 
-        PacManAvallibleDir = WallTest(GameMatrix, PacRow, PacCol, CurrentPacDir,stopPacMan);
-
-        //  PacCloseToCenter = CenterOfTile(PacRow, PacCol, CurrentPacDir, PacMan,stopPacMan);
-
+        PacManAvallibleDir = WallTest(GameMatrix, pacman.row, pacman.col, pacman.direction, stopPacMan);
 
 
 
@@ -2940,8 +2911,8 @@ int main()
             score = 0;
             PowerUpEaten = 0;
             dotsEaten = 0;
-            PacManX = 0;
-            PacManY = 0;
+
+            pacman.reset();
 
             rGhost.reset();
             oGhost.reset();
@@ -2950,10 +2921,7 @@ int main()
 
             GameState = "Scatter";
 
-            PacMan.setPosition(sf::Vector2f(253.607, 325));
-
             GameStateTimer = -1;
-
 
             PlaceLives(PacLife);
 
@@ -2995,77 +2963,39 @@ int main()
 
 
 
-
-
         for(int i = 0; i<PacManAvallibleDir.size(); i++)
         {
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == "Left")
-            {
+            cout<<PacManAvallibleDir[i];
 
-                PacMan.setRotation(-180);
-                //  PacManX = -2.7857142857;
-                PacManX = -2;
-                PacManY = 0;
-                CurrentPacDir = "Left";
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == "Left"){
+
+                pacman.goDirection(LEFT);
 
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == "Right")
-            {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == "Right"){
 
-                PacMan.setRotation(0);
-                //PacManX = 2.7857142857;
-                PacManX = 2;
-                PacManY = 0;
-                CurrentPacDir = "Right";
-
+                pacman.goDirection(RIGHT);
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == "Up")
-            {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == "Up"){
 
-                PacMan.setRotation(-90);
-                //   PacManY = -2.6129032258;
-                PacManY = -2;
-                PacManX = 0;
-                CurrentPacDir = "Up";
+                pacman.goDirection(UP);
 
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == "Down")
-            {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == "Down"){
 
-                PacMan.setRotation(90);
-                //  PacManY = 2.6129032258;
-                PacManY = 2;
-                PacManX = 0;
-                CurrentPacDir = "Down";
-
+                pacman.goDirection(DOWN);
             }
         }
 
+        cout<<" "<<stopPacMan<<endl;
 
 
-        if(PacMan.getPosition().x<10)
-        {
 
-            PacMan.setPosition(522,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
+        if(pacman.teleporter() && Sound_Ef){
+            XP_Tele.play();
         }
-
-        if(PacMan.getPosition().x>522)
-        {
-
-            PacMan.setPosition(10,269.887096835);
-            if(Sound_Ef == true)
-            {
-                XP_Tele.play();
-            }
-        }
-
-
 
         // red teleporter
         if(rGhost.teleporter() && Sound_Ef){
@@ -3090,10 +3020,8 @@ int main()
 
         if(stopPacMan == true )
         {
-            //&& PacCloseToCenter == true
             stopPacMan = false;
-            PacManX = 0;
-            PacManY = 0;
+            pacman.setSpeed(0,0);
         }
 
 
@@ -3145,7 +3073,7 @@ int main()
 
         for (int i = 0; i < Dot.size(); i++)
         {
-            if(PacMan.getGlobalBounds().intersects(Dot[i].getGlobalBounds()))
+            if(pacman.sprite.getGlobalBounds().intersects(Dot[i].getGlobalBounds()))
             {
                 Dot[i].setPosition(Dot[i].getPosition().x+1000,Dot[i].getPosition().y);
 
@@ -3162,7 +3090,7 @@ int main()
 
         for (int i = 0; i < PowerUp.size(); i++)
         {
-            if(PacMan.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds()))
+            if(pacman.sprite.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds()))
             {
                 PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,PowerUp[i].getPosition().y);
 
@@ -3226,7 +3154,7 @@ int main()
 
             for(int i = 0; i<4; i++){
 
-                if(PacMan.getGlobalBounds().intersects((ghosts[i])->sprite.getGlobalBounds())){
+                if(pacman.sprite.getGlobalBounds().intersects((ghosts[i])->sprite.getGlobalBounds())){
 
                     if(ghosts[i]->state == SCARED){
                         score +=10;
@@ -3257,7 +3185,7 @@ int main()
         }
 
 
-        if(PacMan.getGlobalBounds().intersects(Berry.getGlobalBounds()))
+        if(pacman.sprite.getGlobalBounds().intersects(Berry.getGlobalBounds()))
         {
 
             Berry.setPosition(1000,1000);
@@ -3366,8 +3294,8 @@ int main()
             Berrytimer = 0;
             PowerUpEaten = 0;
             dotsEaten = 0;
-            PacManX = 0;
-            PacManY = 0;
+
+            pacman.reset();
 
             rGhost.reset();
             oGhost.reset();
@@ -3377,13 +3305,12 @@ int main()
 
             GameState = "Scatter";
 
-            PacMan.setPosition(sf::Vector2f(253.607, 325));
 
             GameStateTimer = -1;
         }
 
 
-        if(PacDeathAni(PacDeath, PacMan, death_ani_Timer)&& DEBUG == false)
+        if(PacDeathAni(PacDeath, pacman.sprite, death_ani_Timer)&& DEBUG == false)
         {
 
             PacDead = false;
@@ -3394,21 +3321,20 @@ int main()
 
             death_ani_Timer = 0;
 
-            PacManX = 0;
-            PacManY = 0;
 
             PacLives --;
             PacLife[PacLives].setPosition(1000,1000);
 
+            pacman.reset();
 
             rGhost.reset();
             oGhost.reset();
             pGhost.reset();
             bGhost.reset();
 
+
             GameState = "Scatter";
 
-            PacMan.setPosition(sf::Vector2f(253.607, 325));
 
             GameStateTimer = -1;
 
@@ -3487,18 +3413,13 @@ int main()
         }
 
 
-        if(pacTimer == 10)
-        {
 
-            PacMan.setTexture(PacTexture2);
 
-        }
-        else if(pacTimer == 20)
-        {
+        pacman.textureSwitcher(PacTexture1,PacTexture2);
 
-            PacMan.setTexture(PacTexture1);
-            pacTimer = 0;
-        }
+        //pacTimer
+
+
 
 
         BerryPlace(Berry, Berrytimer);
@@ -3562,10 +3483,7 @@ int main()
             }
 
 
-            if(PacManX !=0 || PacManY !=0)
-            {
-                pacTimer++;
-            }
+            pacman.updateAniTimer();
 
 
             if(GhostScared == false)
@@ -3575,7 +3493,7 @@ int main()
 
             if(PacDead == false)
             {
-                PacMan.move(PacManX,PacManY);
+                pacman.sprite.move(pacman.xSpeed,pacman.ySpeed);
                 rGhost.sprite.move(rGhost.xSpeed, rGhost.ySpeed);
                 oGhost.sprite.move(oGhost.xSpeed, oGhost.ySpeed);
                 bGhost.sprite.move(bGhost.xSpeed, bGhost.ySpeed);
@@ -3633,7 +3551,7 @@ int main()
 
 
                 if(PacDead == false)
-                    window.draw(PacMan);
+                    window.draw(pacman.sprite);
 
 
                 window.draw(scoreDis);

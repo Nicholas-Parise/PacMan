@@ -21,6 +21,7 @@ class Entity
         void updateOldRC();
         bool teleporter();
         std::string dirToString();
+        void reset();
 
         float xSpeed;
         float ySpeed;
