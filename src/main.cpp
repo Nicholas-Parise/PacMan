@@ -3,13 +3,15 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <cstring>
+#include <fstream>
 #include <cmath>
 #include <vector>
 #include <algorithm>
 #include <sstream>
-#include <fstream>
+
 #include "ghost.h"
 #include "Player.h"
+#include "Settings.h"
 
 using namespace std;
 
@@ -654,7 +656,6 @@ bool isSpriteHover(sf::FloatRect Button, sf::Vector2f mp)
 vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::RectangleShape> Tiles)
 {
 
-    int place = 0;
     int FinalPlace = -1;
     int row = 1;
     int col = 1;
@@ -1190,7 +1191,7 @@ int main()
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    sf::RenderWindow window(sf::VideoMode(522, 620), "Pac Man", sf::Style::Default,settings);
+    sf::RenderWindow window(sf::VideoMode(522, 620), "PacMan", sf::Style::Default,settings);
     window.setFramerateLimit(60);
     sf::View view(sf::FloatRect(0.f, 0.f, window.getSize().x, window.getSize().y));
 
@@ -1209,28 +1210,11 @@ int main()
 
     srand (time(NULL));
 
-    //GameState = "Menu";
-    //GameState = "Game";
-    //GameState = "Scatter";
-    //GameState = "Chase";
-    //GameState = "Frightened";
-
-
 
     Player pacman;
-    /*
-    float PacManX = 0;
-    float PacManY = 0;
-    int PacRow = 14;
-    int PacCol = 17;
-    int oldPacRow = -1;
-    int oldPacCol = -1;
-    string CurrentPacDir = "Left";
-    */
+    int PacLives = 3;
     bool stopPacMan;
-    bool PacCloseToCenter = false;
     bool PacDead = false;
-    int pacTimer = 0;
 
 
     Ghost rGhost;
@@ -1255,12 +1239,14 @@ int main()
     vector<int> Orange_PathRow;
 
 
-
     Ghost pGhost;
     pGhost.setScatter(2,1);
     vector<vector<int>> Pink_solution(870);
     vector<int> Pink_PathCol;
     vector<int> Pink_PathRow;
+
+
+    Settings setting;
 
 
     Ghost *ghosts[4];
@@ -1275,7 +1261,7 @@ int main()
     int StartRow = 13;
     int StartCol = 11;
 
-    int PacLives = 3;
+
     int dotsEaten = 0;
     int PowerUpEaten = 0;
     int score = 0;
@@ -1285,24 +1271,18 @@ int main()
     bool ScareStart = false;
     int GameStateTimer = 0;
     int highscore = 0;
-    string CurrentDirection = "A";
 
     int Pwr_ani_frame = 0;
     int glowTimer = 0;
 
-    int Track = 1;
     bool InMenu = true;
     bool GamePaused = false;
     bool InSettings = false;
     int PauseTimer = 0;
-    int lives = 2;
     int Berrytimer = 0;
     bool GameOver = false;
     int powerUpTimer = 0;
     bool GhostScared = false;
-    bool Music = false;
-    bool Sound_Ef = false;
-    bool Master_Vol = true;
     int TitlePacTimer = 0;
     int Level = 0;
     bool freeLife = true;
@@ -1335,115 +1315,6 @@ int main()
     string Settings_Text = "Master Audio: \n\n\n Music: \n\n\n Sound Effects: \n\n\n\n Music Track:";
     string scoreShow;
     string HSString;
-
-    string Setting1, Setting2, Setting3, Setting4;
-
-
-
-
-    int FileLine = 0;
-    string editstring;
-    char escape = '1';
-    int interval = 0;
-
-    ifstream readFile;
-    readFile.open("Assets/Other/Settings.txt");
-
-    if(readFile.is_open())
-    {
-
-        while(!readFile.eof())
-        {
-
-            escape = '1';
-            interval = 0;
-
-            readFile >> editstring;
-
-            while(escape != ':')
-            {
-
-                escape = editstring[interval];
-                interval++;
-            }
-
-            if(FileLine == 0)
-            {
-
-                if(editstring[interval] == 't')
-                {
-
-                    Master_Vol = true;
-                }
-                else
-                {
-
-                    Master_Vol = false;
-                }
-            }
-
-            if(FileLine == 1)
-            {
-
-                if(editstring[interval] == 't')
-                {
-
-                    Music = true;
-                }
-                else
-                {
-
-                    Music = false;
-                }
-            }
-            if(FileLine == 2)
-            {
-
-                if(editstring[interval] == 't')
-                {
-
-                    Sound_Ef = true;
-                }
-                else
-                {
-
-                    Sound_Ef = false;
-                }
-            }
-            if(FileLine == 3)
-            {
-
-                if(editstring[interval] == '1')
-                {
-
-                    Track = 1;
-
-                }
-                else if(editstring[interval] == '2')
-                {
-
-                    Track = 2;
-
-                }
-                else if(editstring[interval] == '3')
-                {
-
-                    Track = 3;
-                }
-            }
-
-            if(FileLine == 3)
-            {
-                break;
-            }
-
-
-            FileLine++;
-        }
-
-    }
-
-
 
     vector <int> TempRowCol;
 
@@ -1723,35 +1594,22 @@ int main()
     sf::Texture texture20;
     texture20.loadFromFile("Assets/Buttons/Help_2.png");
 
-    sf::Texture texture21;
-    texture21.loadFromFile("Assets/Buttons/Yes_1.png");
 
-    sf::Texture texture22;
-    texture22.loadFromFile("Assets/Buttons/Yes_2.png");
+    sf::Texture YNtextures[4];
+    YNtextures[0].loadFromFile("Assets/Buttons/Yes_1.png");
+    YNtextures[1].loadFromFile("Assets/Buttons/Yes_2.png");
+    YNtextures[2].loadFromFile("Assets/Buttons/No_1.png");
+    YNtextures[3].loadFromFile("Assets/Buttons/No_2.png");
 
-    sf::Texture texture23;
-    texture23.loadFromFile("Assets/Buttons/No_1.png");
 
-    sf::Texture texture24;
-    texture24.loadFromFile("Assets/Buttons/No_2.png");
+    sf::Texture trackTextures[6];
+    trackTextures[0].loadFromFile("Assets/Buttons/1_1.png");
+    trackTextures[1].loadFromFile("Assets/Buttons/1_2.png");
+    trackTextures[2].loadFromFile("Assets/Buttons/2_1.png");
+    trackTextures[3].loadFromFile("Assets/Buttons/2_2.png");
+    trackTextures[4].loadFromFile("Assets/Buttons/3_1.png");
+    trackTextures[5].loadFromFile("Assets/Buttons/3_2.png");
 
-    sf::Texture texture25;
-    texture25.loadFromFile("Assets/Buttons/1_1.png");
-
-    sf::Texture texture26;
-    texture26.loadFromFile("Assets/Buttons/1_2.png");
-
-    sf::Texture texture27;
-    texture27.loadFromFile("Assets/Buttons/2_1.png");
-
-    sf::Texture texture28;
-    texture28.loadFromFile("Assets/Buttons/2_2.png");
-
-    sf::Texture texture29;
-    texture29.loadFromFile("Assets/Buttons/3_1.png");
-
-    sf::Texture texture30;
-    texture30.loadFromFile("Assets/Buttons/3_2.png");
 
     cout<<"done1"<<endl;
 
@@ -1853,7 +1711,7 @@ int main()
     sf::Sound Fortnite_Clap;
     Fortnite_Clap.setBuffer(sound15);
 
-    if(Music == true)
+    if(setting.Music)
     {
         BackG_Wii.play();
     }
@@ -1870,13 +1728,8 @@ int main()
     PowerSound.setVolume(30.f);
 
 
-////
-    /*
-    sf::Sprite PacMan;
-    PacMan.setTexture(PacTexture2);
-    PacMan.setOrigin(15,15);
-    PacMan.setPosition(sf::Vector2f(253.607, 325));
-    */
+    ////
+
 
     sf::Sprite Paused;
     Paused.setTexture(PauseTexture);
@@ -1884,7 +1737,6 @@ int main()
     Paused.setOrigin(25,31);
     Paused.setScale(1.f,1.f);
     Paused.setPosition(1000,1000);
-
 
 
     sf::IntRect rectSourceSprite(Bry_Apple);
@@ -1935,63 +1787,9 @@ int main()
     Help.setPosition(sf::Vector2f(522/2.f,488.f));
     Help.setScale(.6f,.6f);
 
-    sf::Sprite Track1;
-
-    if(Track == 1)
-    {
-        Track1.setTexture(texture26);
-    }
-    else
-    {
-        Track1.setTexture(texture25);
-    }
-    Track1.setOrigin(65,47);
-    Track1.setPosition(sf::Vector2f(1000,1000));
-    Track1.setScale(.6f,.6f);
-
-    sf::Sprite Track2;
-
-    if(Track == 2)
-    {
-        Track2.setTexture(texture28);
-    }
-    else
-    {
-        Track2.setTexture(texture27);
-    }
-    Track2.setOrigin(65,47);
-    Track2.setPosition(sf::Vector2f(1000,1000));
-    Track2.setScale(.6f,.6f);
-
-    sf::Sprite Track3;
-
-    if(Track == 3)
-    {
-        Track3.setTexture(texture30);
-    }
-    else
-    {
-        Track3.setTexture(texture29);
-    }
-    Track3.setOrigin(65,47);
-    Track3.setPosition(sf::Vector2f(1000,1000));
-    Track3.setScale(.6f,.6f);
-
-//----------------Sprite Vectors----------------
-
-    std::vector<sf::Sprite> YorN(3, sf::Sprite(texture21));
-
-    for(int i = 0; i<3; i++)
-    {
-
-        YorN[i].setScale(.7f,.7f);
-        YorN[i].setPosition(1000,1000);
-    }
-
 
     std::vector<sf::Sprite> PacLife(3, sf::Sprite(PacTexture1));
     PlaceLives(PacLife);
-
 
 
     //----------------Text----------------
@@ -2093,27 +1891,22 @@ int main()
 
             TitlePacMan.setPosition(worldPos.x,worldPos.y);
 
-
-
             ///////
 
-            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
+
+            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true){
 
                 Setting.setTexture(texture16);
 
-                if(Sound_Ef == true)
-                {
+                if(setting.Effect){
                     Button_select.play();
                 }
 
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
+                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
                     InSettings = true;
 
-                    if(Sound_Ef == true)
-                    {
+                    if(setting.Effect){
                         Button_click.play();
                     }
 
@@ -2123,19 +1916,12 @@ int main()
                     PreStart.setPosition(1000,1000);
 
                     Settings_text_sprite.setPosition(100, 10);
-                    Track1.setPosition(sf::Vector2f(150.f,450.f));
-                    Track2.setPosition(sf::Vector2f(250.f,450.f));
-                    Track3.setPosition(sf::Vector2f(350.f,450.f));
+
                     Return.setPosition(sf::Vector2f(522/2.f,550.f));
 
-                    for(int i = 0; i<3; i++)
-                    {
-                        YorN[i].setPosition(400,i*90+10);
-                    }
+                    setting.appear();
                 }
-            }
-            else
-            {
+            }else{
 
                 Setting.setTexture(texture15);
             }
@@ -2146,8 +1932,7 @@ int main()
 
                 Return.setTexture(texture18);
 
-                if(Sound_Ef == true)
-                {
+                if(setting.Effect){
                     Button_select.play();
                 }
 
@@ -2163,69 +1948,13 @@ int main()
                     Setting.setPosition(sf::Vector2f(522/2.f,388.f));
                     Help_text_sprite.setPosition(1000, 1000);
                     Settings_text_sprite.setPosition(1000, 1000);
-                    Track1.setPosition(sf::Vector2f(1000,1000));
-                    Track2.setPosition(sf::Vector2f(1000,1000));
-                    Track3.setPosition(sf::Vector2f(1000,1000));
 
-                    if(Sound_Ef == true)
-                    {
+                    if(setting.Effect){
                         Button_click.play();
                     }
 
-                    for(int i = 0; i<3; i++)
-                    {
-                        YorN[i].setPosition(1000,1000);
-                    }
-
-                    ofstream writeFile("Assets/Other/Settings.txt");
-
-                    if(Master_Vol == false)
-                    {
-                        Setting1 = "Master:f\n";
-                    }
-                    if(Master_Vol == true)
-                    {
-                        Setting1 =  "Master:t\n";
-                    }
-
-                    if(Music == false)
-                    {
-                        Setting2 =  "Music:f\n";
-                    }
-                    if(Music == true)
-                    {
-                        Setting2 =  "Music:t\n";
-                    }
-
-                    if(Sound_Ef == false)
-                    {
-                        Setting3 =  "SoundEf:f\n";
-                    }
-                    if(Sound_Ef == true)
-                    {
-                        Setting3 =  "SoundEf:t\n";
-                    }
-
-                    if(Track == 1)
-                    {
-                        Setting4 =  "Track:1";
-                    }
-                    if(Track == 2)
-                    {
-                        Setting4 =  "Track:2";
-                    }
-                    if(Track == 3)
-                    {
-                        Setting4 =  "Track:3";
-                    }
-
-                    writeFile<<Setting1;
-                    writeFile<<Setting2;
-                    writeFile<<Setting3;
-                    writeFile<<Setting4;
-                    writeFile.close();
-
-
+                    setting.saveSettings("Assets/Other/Settings.txt");
+                    setting.disappear();
                 }
             }
             else
@@ -2239,7 +1968,7 @@ int main()
             {
 
                 Help.setTexture(texture20);
-                if(Sound_Ef == true)
+                if(setting.Effect)
                 {
                     Button_select.play();
                 }
@@ -2249,7 +1978,7 @@ int main()
 
                     InSettings = true;
 
-                    if(Sound_Ef == true)
+                    if(setting.Effect)
                     {
                         Button_click.play();
                     }
@@ -2268,262 +1997,65 @@ int main()
                 Help.setTexture(texture19);
             }
 
-            if(isSpriteHover(YorN[0].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
 
 
-                if(Master_Vol == false)
-                {
-                    YorN[0].setTexture(texture24);
-                }
-                else
-                {
-                    YorN[0].setTexture(texture22);
-                }
+            // ---------------
 
-                if(Sound_Ef == true)
-                {
-                    Button_select.play();
-                }
+            for(int i = 0; i<3; i++){
 
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
+                if(isSpriteHover(setting.setYN[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y))){
 
-                    if(Sound_Ef == true)
-                    {
-                        Button_click.play();
+                    setting.hoverYN(i);
+
+                    if(setting.Effect){
+                        Button_select.play();
                     }
 
-                    if(Master_Vol == true)
-                    {
+                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
-                        Master_Vol = false;
-                        Music = false;
-                        Sound_Ef = false;
+                        if(setting.Effect){
+                            Button_click.play();
+                        }
 
-                        BackG_Wii.stop();
-                        YorN[0].setTexture(texture23);
-                        YorN[1].setTexture(texture23);
-                        YorN[2].setTexture(texture23);
-
+                        if(*setting.aOptions[i]){
+                            *setting.aOptions[i] = false;
+                            if(i == 0){
+                                *setting.aOptions[1] = false;
+                                *setting.aOptions[2] = false;
+                                BackG_Wii.stop();
+                            }
+                        }else{
+                            if(i == 0 || i > 0 && *setting.aOptions[0]){
+                                *setting.aOptions[i] = true;
+                            }
+                        }
                     }
-                    else
-                    {
-                        Master_Vol = true;
-                        YorN[0].setTexture(texture21);
+                }
+
+                //
+
+                if(isSpriteHover(setting.tracks[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y))){
+
+                    setting.hoverTrack(i);
+
+                    if(setting.Effect){
+                        Button_select.play();
                     }
-                }
-            }
-            else
-            {
 
-                if(Master_Vol == false)
-                {
-                    YorN[0].setTexture(texture23);
-                }
-                else
-                {
-                    YorN[0].setTexture(texture21);
-                }
-            }
+                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
-            if(isSpriteHover(YorN[1].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
+                        if(setting.Effect){
+                            Button_click.play();
+                        }
 
-                if(Music == false)
-                {
-                    YorN[1].setTexture(texture24);
-                }
-                else
-                {
-                    YorN[1].setTexture(texture22);
-                }
-                if(Sound_Ef == true)
-                {
-                    Button_select.play();
-                }
-
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
-
-                    if(Sound_Ef == true)
-                    {
-                        Button_click.play();
-                    }
-                    if(Master_Vol == true && Music == false)
-                    {
-
-                        YorN[1].setTexture(texture21);
-                        Music = true;
-                        BackG_Wii.play();
-
-                    }
-                    else if(Master_Vol == true && Music == true)
-                    {
-
-                        Music = false;
-                        BackG_Wii.stop();
-                        YorN[1].setTexture(texture23);
+                        setting.Track = i+1;
                     }
                 }
             }
-            else
-            {
-
-                if(Music == false)
-                {
-                    YorN[1].setTexture(texture23);
-                }
-                else
-                {
-                    YorN[1].setTexture(texture21);
-                }
-            }
-
-            if(isSpriteHover(YorN[2].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
-                if(Sound_Ef == true)
-                {
-                    Button_select.play();
-                }
-
-                if(Sound_Ef == false)
-                {
-                    YorN[2].setTexture(texture24);
-                }
-                else
-                {
-                    YorN[2].setTexture(texture22);
-                }
-
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
-
-                    if(Master_Vol == true)
-                    {
-                        Button_click.play();
-                    }
-                    if(Master_Vol == true && Sound_Ef == false)
-                    {
-
-                        YorN[2].setTexture(texture21);
-                        Sound_Ef = true;
-
-                    }
-                    else if(Master_Vol == true && Sound_Ef == true)
-                    {
-
-                        Sound_Ef = false;
-                        YorN[2].setTexture(texture23);
-                    }
-                }
-            }
-            else
-            {
-                if(Sound_Ef == false)
-                {
-                    YorN[2].setTexture(texture23);
-                }
-                else
-                {
-                    YorN[2].setTexture(texture21);
-                }
-            }
-
-            if(isSpriteHover(Track1.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
-
-                Track1.setTexture(texture26);
-
-                if(Sound_Ef == true)
-                {
-                    Button_select.play();
-                }
-
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
-
-                    Track = 1;
-                    Track2.setTexture(texture27);
-                    Track3.setTexture(texture29);
-                    if(Sound_Ef == true)
-                    {
-                        Button_click.play();
-                    }
-                }
-            }
-            else
-            {
-                if(Track != 1)
-                {
-                    Track1.setTexture(texture25);
-                }
-            }
-
-            if(isSpriteHover(Track2.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
-
-                Track2.setTexture(texture28);
-
-                if(Sound_Ef == true)
-                {
-                    Button_select.play();
-                }
-
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
-
-                    Track = 2;
-
-                    Track1.setTexture(texture25);
-                    Track3.setTexture(texture29);
-                    if(Sound_Ef == true)
-                    {
-                        Button_click.play();
-                    }
-                }
-            }
-            else
-            {
-
-                if(Track != 2)
-                {
-                    Track2.setTexture(texture27);
-                }
-            }
 
 
-            if(isSpriteHover(Track3.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
+            setting.textureSwitcher(trackTextures, YNtextures);
 
-                Track3.setTexture(texture30);
-
-                if(Sound_Ef == true)
-                {
-                    Button_select.play();
-                }
-
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
-                {
-
-                    Track = 3;
-
-                    Track1.setTexture(texture25);
-                    Track2.setTexture(texture27);
-                    if(Sound_Ef == true)
-                    {
-                        Button_click.play();
-                    }
-                }
-            }
-            else
-            {
-
-                if(Track != 3)
-                {
-                    Track3.setTexture(texture29);
-                }
-            }
         }
 
 
@@ -2830,24 +2362,17 @@ int main()
                 GamePaused = false;
                 Paused.setPosition(1000,1000);
 
-                if(Music == true)
-                {
-
-                    if(Track == 1)
-                    {
-
-                        BackG_Pizza.play();
-                    }
-                    if(Track == 2)
-                    {
-
-                        BackG_Subwooder.play();
-                    }
-
-                    if(Track == 3)
-                    {
-
-                        BackG_Sweden.play();
+                if(setting.Music){
+                    switch(setting.Track){
+                        case 1:
+                            BackG_Pizza.play();
+                            break;
+                        case 2:
+                            BackG_Subwooder.play();
+                            break;
+                        case 3:
+                            BackG_Sweden.play();
+                            break;
                     }
                 }
 
@@ -2861,7 +2386,7 @@ int main()
             cout<<"adsa"<<endl;
 
 
-            if(Sound_Ef == true)
+            if(setting.Effect)
             {
                 Mac_start.play();
             }
@@ -2883,7 +2408,6 @@ int main()
             PowerUpEaten = 0;
 
             Berrytimer = 0;
-            lives = 2;
             GhostScared = false;
 
             dotplace = 0;
@@ -2929,28 +2453,26 @@ int main()
 
             BackG_Wii.stop();
 
-            if(Sound_Ef == true)
+            if(setting.Effect)
             {
                 Button_click.play();
                 Mac_start.play();
             }
 
-            if(Music == true)
-            {
 
-                if(Track == 1)
-                {
-                    BackG_Pizza.play();
+                if(setting.Music){
+                    switch(setting.Track){
+                        case 1:
+                            BackG_Pizza.play();
+                            break;
+                        case 2:
+                            BackG_Subwooder.play();
+                            break;
+                        case 3:
+                            BackG_Sweden.play();
+                            break;
+                    }
                 }
-                if(Track == 2)
-                {
-                    BackG_Subwooder.play();
-                }
-                if(Track == 3)
-                {
-                    BackG_Sweden.play();
-                }
-            }
 
 
 
@@ -2965,8 +2487,6 @@ int main()
 
         for(int i = 0; i<PacManAvallibleDir.size(); i++)
         {
-
-            cout<<PacManAvallibleDir[i];
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == "Left"){
 
@@ -2989,31 +2509,28 @@ int main()
             }
         }
 
-        cout<<" "<<stopPacMan<<endl;
 
-
-
-        if(pacman.teleporter() && Sound_Ef){
+        if(pacman.teleporter() && setting.Effect){
             XP_Tele.play();
         }
 
         // red teleporter
-        if(rGhost.teleporter() && Sound_Ef){
+        if(rGhost.teleporter() && setting.Effect){
             XP_Tele.play();
         }
 
         // orange teleporter
-        if(oGhost.teleporter() && Sound_Ef){
+        if(oGhost.teleporter() && setting.Effect){
             XP_Tele.play();
         }
 
         // blue teleporter
-        if(bGhost.teleporter() && Sound_Ef){
+        if(bGhost.teleporter() && setting.Effect){
             XP_Tele.play();
         }
 
         // pink teleporter
-        if(pGhost.teleporter() && Sound_Ef){
+        if(pGhost.teleporter() && setting.Effect){
             XP_Tele.play();
         }
 
@@ -3080,7 +2597,7 @@ int main()
                 dotsEaten ++;
                 score +=5;
 
-                if(Sound_Ef == true)
+                if(setting.Effect)
                 {
                     Dot_Chomp.play();
                 }
@@ -3095,7 +2612,7 @@ int main()
                 PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,PowerUp[i].getPosition().y);
 
 
-                if(Sound_Ef == true)
+                if(setting.Effect)
                 {
                     PowerSound.play();
                 }
@@ -3159,7 +2676,7 @@ int main()
                     if(ghosts[i]->state == SCARED){
                         score +=10;
 
-                        if(Sound_Ef == true)
+                        if(setting.Effect)
                         {
                             Yay.play();
                         }
@@ -3173,7 +2690,7 @@ int main()
                         BackG_Subwooder.pause();
                         BackG_Sweden.pause();
 
-                        if(Sound_Ef == true)
+                        if(setting.Effect)
                         {
                             Dead.play();
                         }
@@ -3191,7 +2708,7 @@ int main()
             Berry.setPosition(1000,1000);
             score +=10;
 
-            if(Sound_Ef == true)
+            if(setting.Effect)
             {
                 Fortnite_Clap.play();
             }
@@ -3238,10 +2755,6 @@ int main()
 
 
 
-
-
-
-
         if(freeLife == true && score>highscore)
         {
 
@@ -3254,15 +2767,12 @@ int main()
 
 
 
-
-
-
         if(dotsEaten == 244 && PowerUpEaten==4)
         {
 
             cout<<"Next Level"<<endl;
 
-            if(Sound_Ef == true)
+            if(setting.Effect)
             {
                 Mac_start.play();
             }
@@ -3338,24 +2848,19 @@ int main()
 
             GameStateTimer = -1;
 
-
-            if(Music == true)
-            {
-
-                if(Track == 1)
-                {
-                    BackG_Pizza.play();
+                if(setting.Music){
+                    switch(setting.Track){
+                        case 1:
+                            BackG_Pizza.play();
+                            break;
+                        case 2:
+                            BackG_Subwooder.play();
+                            break;
+                        case 3:
+                            BackG_Sweden.play();
+                            break;
+                    }
                 }
-                if(Track == 2)
-                {
-                    BackG_Subwooder.play();
-
-                }
-                if(Track == 3)
-                {
-                    BackG_Sweden.play();
-                }
-            }
         }
 
 
@@ -3374,7 +2879,7 @@ int main()
             BackG_Sweden.stop();
 
 
-            if(Sound_Ef == true)
+            if(setting.Effect)
             {
                 XP_End.play();
             }
@@ -3436,7 +2941,7 @@ int main()
             {
                 GameOver = false;
 
-                if(Music == true)
+                if(setting.Music)
                 {
                     BackG_Wii.play();
                 }
@@ -3577,7 +3082,8 @@ int main()
 
                 for(int i = 0; i<3; i++)
                 {
-                    window.draw(YorN[i]);
+                    window.draw(setting.tracks[i]);
+                    window.draw(setting.setYN[i]);
                 }
 
                 window.draw(Setting);
@@ -3586,9 +3092,7 @@ int main()
                 window.draw(Help_text_sprite);
                 window.draw(Settings_text_sprite);
 
-                window.draw(Track1);
-                window.draw(Track2);
-                window.draw(Track3);
+
 
                 window.draw(StartImage);
                 window.draw(PreStart);
