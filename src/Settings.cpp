@@ -8,7 +8,6 @@ Settings::Settings()
     aOptions[0] = &Master;
     aOptions[1] = &Music;
     aOptions[2] = &Effect;
-
 }
 
 Settings::~Settings()
@@ -16,13 +15,20 @@ Settings::~Settings()
     //dtor
 }
 
+// this sets all the arrays to false to reset the hover texture each frame
+void Settings::resetHover(){
+    for(int i = 0; i<6; i++){
+        hoverOffsets[i] = 0;
+    }
+}
+
 
 void Settings::hoverYN(int index){
-
+    hoverOffsets[index] = 1;
 }
 
 void Settings::hoverTrack(int index){
-
+ hoverOffsets[index+3] = 1;
 }
 
 
@@ -67,19 +73,16 @@ void Settings::textureSwitcher(sf::Texture *trackTextures, sf::Texture *YNtextur
         if(Track == i+1){
             tracks[i].setTexture(trackTextures[i*2+1]);
         }else{
-            tracks[i].setTexture(trackTextures[i*2]);
+            tracks[i].setTexture(trackTextures[i*2+hoverOffsets[i+3]]);
         }
 
         if(*aOptions[i]){
-        setYN[i].setTexture(YNtextures[0]);
+            setYN[i].setTexture(YNtextures[hoverOffsets[i]]);
         }else{
-        setYN[i].setTexture(YNtextures[2]);
+            setYN[i].setTexture(YNtextures[2+hoverOffsets[i]]);
         }
 
     }
-
-
-
 }
 
 
@@ -117,9 +120,8 @@ void Settings::readInSettings(std::string filename){
             if(FileLine == 0)
             {
 
-                if(current == 't')
+                if(current == '1')
                 {
-
                     Master = true;
                 }
             }
@@ -127,7 +129,7 @@ void Settings::readInSettings(std::string filename){
             if(FileLine == 1)
             {
 
-                if(current == 't')
+                if(current == '1')
                 {
                     Music = true;
                 }
@@ -135,7 +137,7 @@ void Settings::readInSettings(std::string filename){
             if(FileLine == 2)
             {
 
-                if(current == 't')
+                if(current == '1')
                 {
                     Effect = true;
                 }
@@ -143,13 +145,8 @@ void Settings::readInSettings(std::string filename){
             if(FileLine == 3)
             {
                 Track = current - '0';
-            }
-
-            if(FileLine == 3)
-            {
                 break;
             }
-
 
             FileLine++;
         }
@@ -162,29 +159,9 @@ void Settings::saveSettings(std::string filename){
     std::string Setting1, Setting2, Setting3, Setting4;
     std::ofstream writeFile(filename);
 
-    if(Master){
-        Setting1 =  "Master:t\n";
-    }else{
-        Setting1 = "Master:f\n";
-    }
-
-    if(Music){
-        Setting2 =  "Music:t\n";
-    }else{
-        Setting2 =  "Music:f\n";
-    }
-
-    if(Effect){
-        Setting3 =  "SoundEf:t\n";
-    }else{
-        Setting3 =  "SoundEf:f\n";
-    }
-
-    Setting4 = "Track:"+Track;
-
-    writeFile<<Setting1;
-    writeFile<<Setting2;
-    writeFile<<Setting3;
-    writeFile<<Setting4;
+    writeFile<<"Master:"<<Master<<"\n";
+    writeFile<<"Music:"<<Music<<"\n";
+    writeFile<<"SoundEf:"<<Effect<<"\n";
+    writeFile<<"Track:"<<Track;
     writeFile.close();
 }

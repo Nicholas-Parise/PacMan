@@ -1,4 +1,4 @@
-Master:t
-Music:t
-SoundEf:t
-Track:3
+Master:1
+Music:1
+SoundEf:1
+Track:1

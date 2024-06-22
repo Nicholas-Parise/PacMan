@@ -12,13 +12,21 @@
 #include "ghost.h"
 #include "Player.h"
 #include "Settings.h"
+#include "GameStateManager.h"
+
 
 using namespace std;
+
+const bool DEBUG = false;
 
 const int SIZEX = 28;
 const int SIZEY = 31;
 
-const bool DEBUG = true;
+const int GhostHomeRow = 13;
+const int GhostHomeCol = 11;
+
+const int DeadSpeed = 4.5;      // Must be less than 18
+const double GhostSpeed = 1.5;  // Must be less than 18
 
 //startx,starty,boxsizex,boxsizex
 #define Bry_Cherry 0,0,12,12
@@ -30,17 +38,17 @@ const bool DEBUG = true;
 #define Bry_Bell 96,0,12,13
 #define Bry_Key 114,0,7,13
 
-#define Pac_wack1 0,2,13,9
-#define Pac_wack2 15,3,15,8
-#define Pac_wack3 31,5,15,6
-#define Pac_wack4 47,6,15,5
-#define Pac_wack5 63,7,15,5
-#define Pac_wack6 79,7,15,6
-#define Pac_wack7 96,8,13,6
-#define Pac_wack8 114,7,9,7
-#define Pac_wack9 132,7,5,7
-#define Pac_wack10 150,7,1,5
-#define Pac_wack11 161,5,11,11
+#define Pac_wack1 0,0,30,30
+#define Pac_wack2 34,0,30,30
+#define Pac_wack3 70,0,30,30
+#define Pac_wack4 107,0,30,30
+#define Pac_wack5 144,0,30,30
+#define Pac_wack6 180,0,30,30
+#define Pac_wack7 220,0,30,30
+#define Pac_wack8 257,0,30,30
+#define Pac_wack9 295,0,30,30
+#define Pac_wack10 332,0,30,30
+#define Pac_wack11 370,0,30,30
 
 #define GhostRight1 0,0,28,28
 #define GhostRight2 32,0,28,28
@@ -983,127 +991,26 @@ void SaveHS(int &highscore, int &score,string &HSString,sf::Text &NewHS)
 }
 
 
-void PowerPelletAni(std::vector<sf::CircleShape> &PowerUp,int &Pwr_ani_frame, int &glowTimer)
+void PowerPelletAni(std::vector<sf::CircleShape> &PowerUp, int &glowTimer)
 {
 
-    if(glowTimer == 2*Pwr_ani_frame)
+    if(glowTimer%2 == 0)
     {
-
-        for(int i = 0; i<PowerUp.size(); i++)
-        {
-            PowerUp[i].setOutlineThickness(-11+Pwr_ani_frame);
+        for(int i = 0; i<PowerUp.size(); i++){
+            PowerUp[i].setOutlineThickness(-11+(glowTimer/2));
         }
-
-        Pwr_ani_frame ++;
     }
 
     if (glowTimer > 24)
     {
-
-        Pwr_ani_frame = 1;
         glowTimer = 0;
     }
 }
 
 
-bool PacDeathAni(sf::Sprite &PacDeath, sf::Sprite PacMan, int death_ani_Timer)
-{
 
-    if(death_ani_Timer==5)
-    {
+void BerryPlace(sf::Sprite &Berry, int Berrytimer){
 
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack1));
-        PacDeath.setOrigin(7.5,4);
-    }
-
-
-    if(death_ani_Timer==10)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack2));
-        PacDeath.setOrigin(7.5,3);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==15)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack3));
-        PacDeath.setOrigin(7.5,2.5);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==20)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack4));
-        PacDeath.setOrigin(7.5,2.5);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==25)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack5));
-        PacDeath.setOrigin(7.5,2.5);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==30)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack6));
-        PacDeath.setOrigin(7.5,3);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==35)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack7));
-        PacDeath.setOrigin(6.5,3);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==40)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack8));
-        PacDeath.setOrigin(4.5,3.5);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==45)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack9));
-        PacDeath.setOrigin(2.5,3.5);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==50)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack10));
-        PacDeath.setOrigin(1,1);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-    if(death_ani_Timer==60)
-    {
-
-        PacDeath.setTextureRect(sf::IntRect(Pac_wack11));
-        PacDeath.setOrigin(5.5,5.5);
-        PacDeath.setPosition(PacMan.getPosition().x, PacMan.getPosition().y);
-    }
-
-    if(death_ani_Timer==75)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
-}
-
-
-void BerryPlace(sf::Sprite &Berry, int Berrytimer)
-{
-
-    //cout<<Berrytimer<<" ";
     if(Berrytimer == 1200)
     {
 
@@ -1214,7 +1121,7 @@ int main()
     Player pacman;
     int PacLives = 3;
     bool stopPacMan;
-    bool PacDead = false;
+    //bool PacDead = false;
 
 
     Ghost rGhost;
@@ -1248,6 +1155,8 @@ int main()
 
     Settings setting;
 
+    GameStateManager gsManager;
+
 
     Ghost *ghosts[4];
     ghosts[0] = &rGhost;
@@ -1265,36 +1174,15 @@ int main()
     int dotsEaten = 0;
     int PowerUpEaten = 0;
     int score = 0;
-    int ScaredTimer = 0;
-    const int GhostHomeRow = 13;
-    const int GhostHomeCol = 11;
-    bool ScareStart = false;
-    int GameStateTimer = 0;
     int highscore = 0;
 
-    int Pwr_ani_frame = 0;
-    int glowTimer = 0;
 
-    bool InMenu = true;
-    bool GamePaused = false;
-    bool InSettings = false;
-    int PauseTimer = 0;
-    int Berrytimer = 0;
     bool GameOver = false;
-    int powerUpTimer = 0;
     bool GhostScared = false;
-    int TitlePacTimer = 0;
     int Level = 0;
     bool freeLife = true;
 
 
-
-    int gameoverTimer = 0;
-    int death_ani_Timer = 0;
-
-    // Must be less than 18
-    const int DeadSpeed = 4.5;
-    const double GhostSpeed = 1.5;
 
 
 
@@ -1302,13 +1190,8 @@ int main()
     int dotplace = 0;
     int PowerUpplace = 0;
     bool TileChange = false;
-    bool MenuOnce = true;
-
 
     int feetTimer = 0;
-
-
-    string GameState = "Game";
 
 
     string Help_Text = "\t\t\t\t\t\t\t\t HELP \n \n \nMove is Arrow keys \nIf you eat all the dots on the board more will spawn. \nIf a ghost hits you and is not Blue, YOU. WILL. DIE! \nTo make a ghost blue you must eat a power pellet,\nthere are 4 accros the map.\nYou Have 3 lives,\nif you beat the High score You get a free life.\n\n\t\tBy. Nicholas Parise";
@@ -1566,12 +1449,25 @@ int main()
 
     //////////
 
+    sf::Image DeadSheetimage;
+    DeadSheetimage.loadFromFile("Assets/Sprite/Pac-Death-SpriteSheet.png");
+
+    sf::Texture deadTextures[11];
+    deadTextures[0].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack1));
+    deadTextures[1].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack2));
+    deadTextures[2].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack3));
+    deadTextures[3].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack4));
+    deadTextures[4].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack5));
+    deadTextures[5].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack6));
+    deadTextures[6].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack7));
+    deadTextures[7].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack8));
+    deadTextures[8].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack9));
+    deadTextures[9].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack10));
+    deadTextures[10].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack11));
+
 
     sf::Texture texture11;
     texture11.loadFromFile("Assets/Other/Solid_black.png");
-
-    sf::Texture texture12;
-    texture12.loadFromFile("Assets/Sprite/Pac-Death-SpriteSheet.png");
 
     sf::Texture texture14;
     texture14.loadFromFile("Assets/Sprite/pause.png");
@@ -1736,19 +1632,12 @@ int main()
     Paused.setPosition(sf::Vector2f(0, 0));
     Paused.setOrigin(25,31);
     Paused.setScale(1.f,1.f);
-    Paused.setPosition(1000,1000);
-
+    Paused.setPosition(261,288);
 
     sf::IntRect rectSourceSprite(Bry_Apple);
     sf::Sprite Berry(texture10,rectSourceSprite);
     Berry.setScale(2.f, 2.f);
     Berry.setPosition(1000,1000);
-
-
-    sf::IntRect rectSourceSprite2(Pac_wack11);
-    sf::Sprite PacDeath(texture12,rectSourceSprite2);
-    PacDeath.setScale(2.5f, 2.5f);
-    PacDeath.setPosition(1000,1000);
 
 
     sf::Sprite TitlePacMan;
@@ -1868,7 +1757,7 @@ int main()
                 SaveHS(highscore,score,HSString,NewHS);
                 window.close();
 
-                return 69;
+                return 0;
             }
 
             if (event.type == sf::Event::Resized)
@@ -1904,7 +1793,7 @@ int main()
 
                 if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
-                    InSettings = true;
+                    gsManager.changeState(GameStates::SETTINGS);
 
                     if(setting.Effect){
                         Button_click.play();
@@ -1939,7 +1828,7 @@ int main()
                 if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
                 {
 
-                    InSettings = false;
+                    gsManager.changeState(GameStates::MENU);
 
                     Return.setPosition(1000, 1000);
                     Help.setPosition(sf::Vector2f(522/2.f,488.f));
@@ -1976,7 +1865,7 @@ int main()
                 if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
                 {
 
-                    InSettings = true;
+                    gsManager.changeState(GameStates::HELP);
 
                     if(setting.Effect)
                     {
@@ -2000,6 +1889,8 @@ int main()
 
 
             // ---------------
+
+            setting.resetHover();
 
             for(int i = 0; i<3; i++){
 
@@ -2295,40 +2186,25 @@ int main()
                 }
             }
 
-            int RedPlace = 0;
 
             for(int i = 0; i<Pink_PathCol.size(); i++)
             {
-
-                RedPlace = Pink_PathRow[i]*28 + Pink_PathCol[i];
-                Tiles[RedPlace].setFillColor(sf::Color(255,105,180,128));
+                Tiles[Pink_PathRow[i]*28 + Pink_PathCol[i]].setFillColor(sf::Color(255,105,180,128));
             }
 
             for(int i = 0; i<Orange_PathCol.size(); i++)
             {
-
-                RedPlace = 0;
-                RedPlace +=Orange_PathRow[i]*28;
-                RedPlace +=Orange_PathCol[i];
-                Tiles[RedPlace].setFillColor(sf::Color(255,140,0,128));
+                Tiles[Orange_PathRow[i]*28 + Orange_PathCol[i]].setFillColor(sf::Color(255,140,0,128));
             }
 
             for(int i = 0; i<Blue_PathCol.size(); i++)
             {
-
-                RedPlace = 0;
-                RedPlace +=Blue_PathRow[i]*28;
-                RedPlace +=Blue_PathCol[i];
-                Tiles[RedPlace].setFillColor(sf::Color(0,0,255,128));
+                Tiles[Blue_PathRow[i]*28+Blue_PathCol[i]].setFillColor(sf::Color(0,0,255,128));
             }
 
             for(int i = 0; i<Red_PathCol.size(); i++)
             {
-
-                RedPlace = 0;
-                RedPlace +=Red_PathRow[i]*28;
-                RedPlace +=Red_PathCol[i];
-                Tiles[RedPlace].setFillColor(sf::Color(255,0,0,128));
+                Tiles[Red_PathRow[i]*28+Red_PathCol[i]].setFillColor(sf::Color(255,0,0,128));
             }
         }
 
@@ -2342,25 +2218,23 @@ int main()
 
 
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-        {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 
-            if(GamePaused == false && InMenu == false && PauseTimer >10)
-            {
+            if(gsManager.gState != GameStates::PAUSE && gsManager.gState != GameStates::MENU && gsManager.pauseTimer >10){
 
-                GamePaused = true;
-                Paused.setPosition(261,288);
+                gsManager.pauseTimer = 10;
+                gsManager.changeState(GameStates::PAUSE);
+
                 BackG_Pizza.pause();
                 BackG_Subwooder.pause();
                 BackG_Sweden.pause();
             }
 
-            else if(GamePaused == true && InMenu == false && PauseTimer > 50)
+            else if(gsManager.gState == GameStates::PAUSE && gsManager.pauseTimer > 30)
             {
 
-                PauseTimer = 0;
-                GamePaused = false;
-                Paused.setPosition(1000,1000);
+                gsManager.changeState(GameStates::GAME);
+                gsManager.pauseTimer = 0;
 
                 if(setting.Music){
                     switch(setting.Track){
@@ -2375,40 +2249,32 @@ int main()
                             break;
                     }
                 }
-
-
             }
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& InMenu == true && InSettings == false)
-        {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gsManager.gState == GameStates::MENU){
 
-            cout<<"adsa"<<endl;
+            cout<<"play"<<endl;
 
-
-            if(setting.Effect)
-            {
-                Mac_start.play();
-            }
-
-
-            MenuOnce = true;
-
-            GameOver = false;
-            InMenu = false;
-            gameoverTimer = 0;
+            gsManager.changeState(GameStates::GAME);
+            gsManager.reset();
 
             freeLife = true;
             PacLives = 3;
             Level = 0;
 
-            Berrytimer = 0;
-
-            dotsEaten = 0;
+            score = 0;
             PowerUpEaten = 0;
+            dotsEaten = 0;
 
-            Berrytimer = 0;
-            GhostScared = false;
+            pacman.reset();
+
+            rGhost.reset();
+            oGhost.reset();
+            pGhost.reset();
+            rGhost.reset();
+
+            PlaceLives(PacLife);
 
             dotplace = 0;
             PowerUpplace = 0;
@@ -2431,34 +2297,13 @@ int main()
             }
 
 
-            powerUpTimer = 601;
-            score = 0;
-            PowerUpEaten = 0;
-            dotsEaten = 0;
-
-            pacman.reset();
-
-            rGhost.reset();
-            oGhost.reset();
-            pGhost.reset();
-            rGhost.reset();
-
-            GameState = "Scatter";
-
-            GameStateTimer = -1;
-
-            PlaceLives(PacLife);
-
-
 
             BackG_Wii.stop();
-
             if(setting.Effect)
             {
                 Button_click.play();
                 Mac_start.play();
             }
-
 
                 if(setting.Music){
                     switch(setting.Track){
@@ -2473,20 +2318,11 @@ int main()
                             break;
                     }
                 }
-
-
-
-            // Setting.setPosition(1000, 1000);
-            //  Help.setPosition(1000, 1000);
-            // StartImage.setPosition(1000, 1000);
-            //  PreStart.setPosition(1000,1000);
-
         }
 
 
 
-        for(int i = 0; i<PacManAvallibleDir.size(); i++)
-        {
+        for(int i = 0; i<PacManAvallibleDir.size(); i++){
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == "Left"){
 
@@ -2543,8 +2379,6 @@ int main()
 
 
 
-
-
         if(OutOfTheCloset(rGhost.row, rGhost.col, Red_PathCol, Red_PathRow, GhostHomeRow, GhostHomeCol, rGhost.state == DEAD)){
 
             rGhost.state = SCATTER;
@@ -2588,46 +2422,35 @@ int main()
 
         // --Dot Hittest--
 
-        for (int i = 0; i < Dot.size(); i++)
-        {
-            if(pacman.sprite.getGlobalBounds().intersects(Dot[i].getGlobalBounds()))
-            {
+        for (int i = 0; i < Dot.size(); i++){
+            if(pacman.sprite.getGlobalBounds().intersects(Dot[i].getGlobalBounds())){
+
                 Dot[i].setPosition(Dot[i].getPosition().x+1000,Dot[i].getPosition().y);
 
                 dotsEaten ++;
                 score +=5;
 
-                if(setting.Effect)
-                {
+                if(setting.Effect){
                     Dot_Chomp.play();
                 }
             }
         }
 
 
-        for (int i = 0; i < PowerUp.size(); i++)
-        {
-            if(pacman.sprite.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds()))
-            {
-                PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,PowerUp[i].getPosition().y);
+        for (int i = 0; i < PowerUp.size(); i++){
+            if(pacman.sprite.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds())){
 
+                PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,PowerUp[i].getPosition().y);
 
                 if(setting.Effect)
                 {
                     PowerSound.play();
                 }
 
-                powerUpTimer = 0;
-
-                GhostScared = true;
-
-                ScareStart = true;
-                ScaredTimer = 0;
+                gsManager.GhostScared = true;
 
                 PowerUpEaten ++;
                 score +=25;
-
-                GameState = "Scared";
 
                 rGhost.changeState(SCARED);
                 oGhost.changeState(SCARED);
@@ -2638,26 +2461,14 @@ int main()
 
 
 
-        if(ScaredTimer > (60*8) && ScareStart == true)
-        {
+        rGhost.scaredStop(gsManager.powerUpTimer);
 
-            ScareStart = false;
+        oGhost.scaredStop(gsManager.powerUpTimer);
 
-        }
-        else
-        {
-            ScaredTimer++;
-        }
+        pGhost.scaredStop(gsManager.powerUpTimer);
 
+        bGhost.scaredStop(gsManager.powerUpTimer);
 
-
-        rGhost.scaredStop(powerUpTimer);
-
-        oGhost.scaredStop(powerUpTimer);
-
-        pGhost.scaredStop(powerUpTimer);
-
-        bGhost.scaredStop(powerUpTimer);
 
         if(rGhost.state != SCARED || oGhost.state != SCARED || pGhost.state != SCARED || bGhost.state != SCARED)
         {
@@ -2667,7 +2478,7 @@ int main()
 
 
         // ghost pacman hittest
-        if(PacDead == false && DEBUG == false){
+        if(!pacman.dead && DEBUG == false){
 
             for(int i = 0; i<4; i++){
 
@@ -2695,7 +2506,7 @@ int main()
                             Dead.play();
                         }
 
-                        PacDead = true;
+                        pacman.dead = true;
                     }
                 }
             }
@@ -2728,10 +2539,9 @@ int main()
         //5 seconds scatter
         //rest of time Chase
 
-        if(GameStateTimer  == 60*5 || GameStateTimer  == 60*30|| GameStateTimer  == 60*55|| GameStateTimer  == 60*80)
-        {
 
-            GameState = "Chase";
+
+        if( gsManager.ghostState  == 60*5 ||  gsManager.ghostState  == 60*30||  gsManager.ghostState  == 60*55||  gsManager.ghostState  == 60*80){
             cout<<"Chase"<<endl;
 
             rGhost.changeState(CHASE);
@@ -2740,10 +2550,7 @@ int main()
             pGhost.changeState(CHASE);
         }
 
-        else if(GameStateTimer == 60*25|| GameStateTimer  == 60*50|| GameStateTimer  == 60*75)
-        {
-
-            GameState = "Scatter";
+        else if( gsManager.ghostState == 60*25||  gsManager.ghostState  == 60*50||  gsManager.ghostState  == 60*75){
             cout<<"Scatter"<<endl;
 
             rGhost.changeState(SCATTER);
@@ -2767,19 +2574,29 @@ int main()
 
 
 
-        if(dotsEaten == 244 && PowerUpEaten==4)
-        {
+        if(dotsEaten == 244 && PowerUpEaten==4){
 
-            cout<<"Next Level"<<endl;
+            //cout<<"Next Level"<<endl;
 
             if(setting.Effect)
             {
                 Mac_start.play();
             }
 
-
-
             Level++;
+
+            dotsEaten = 0;
+            PowerUpEaten = 0;
+
+            gsManager.berryTimer = 0;
+            gsManager.ghostState = -1;
+
+            pacman.reset();
+
+            rGhost.reset();
+            oGhost.reset();
+            pGhost.reset();
+            bGhost.reset();
 
             dotplace = 0;
             PowerUpplace = 0;
@@ -2800,41 +2617,20 @@ int main()
                     }
                 }
             }
-
-            Berrytimer = 0;
-            PowerUpEaten = 0;
-            dotsEaten = 0;
-
-            pacman.reset();
-
-            rGhost.reset();
-            oGhost.reset();
-            pGhost.reset();
-            bGhost.reset();
-
-
-            GameState = "Scatter";
-
-
-            GameStateTimer = -1;
         }
 
 
-        if(PacDeathAni(PacDeath, pacman.sprite, death_ani_Timer)&& DEBUG == false)
-        {
-
-            PacDead = false;
+        if(pacman.killPac() && DEBUG == false){
 
             cout<<"reset"<<endl;
 
-            PacDeath.setPosition(1000,1000);
-
-            death_ani_Timer = 0;
-
+            pacman.dead = false;
 
             PacLives --;
             PacLife[PacLives].setPosition(1000,1000);
 
+            gsManager.reset();
+
             pacman.reset();
 
             rGhost.reset();
@@ -2842,110 +2638,59 @@ int main()
             pGhost.reset();
             bGhost.reset();
 
-
-            GameState = "Scatter";
-
-
-            GameStateTimer = -1;
-
-                if(setting.Music){
-                    switch(setting.Track){
-                        case 1:
-                            BackG_Pizza.play();
-                            break;
-                        case 2:
-                            BackG_Subwooder.play();
-                            break;
-                        case 3:
-                            BackG_Sweden.play();
-                            break;
-                    }
+            if(setting.Music){
+                switch(setting.Track){
+                    case 1:
+                        BackG_Pizza.play();
+                        break;
+                    case 2:
+                        BackG_Subwooder.play();
+                        break;
+                    case 3:
+                        BackG_Sweden.play();
+                        break;
                 }
+            }
         }
 
 
 
-
-
-        if(PacLives == 0 && DEBUG == false && MenuOnce == true)
-        {
+        if(PacLives == 0 && gsManager.gState == GameStates::GAME && DEBUG == false){
             //Game Over
-            MenuOnce = false;
+            PacLives--;
 
-            BackG_Pizza.stop();
-
-            BackG_Subwooder.stop();
-
-            BackG_Sweden.stop();
-
-
-            if(setting.Effect)
-            {
+            if(setting.Effect){
                 XP_End.play();
             }
 
-
             SaveHS(highscore,score,HSString,NewHS);
-
 
             BackG_Pizza.stop();
             BackG_Subwooder.stop();
             BackG_Sweden.stop();
 
-
-            InMenu = true;
-            GameOver = true;
-            InSettings = false;
+            gsManager.changeState(GameStates::GAMEOVER);
         }
 
 
 
         scoreUpdate(HsDis, scoreDis, score, highscore, scoreShow, HSString);
-        PowerPelletAni(PowerUp, Pwr_ani_frame, glowTimer);
+        PowerPelletAni(PowerUp, gsManager.glowTimer);
 
 
-        if(TitlePacTimer == 10)
-        {
-
+        if(gsManager.TitlePacTimer < 10){
             TitlePacMan.setTexture(PacTexture2);
-
-        }
-        else if(TitlePacTimer == 20)
-        {
-
+        }else{
             TitlePacMan.setTexture(PacTexture1);
-            TitlePacTimer = 0;
+            gsManager.TitlePacTimer = 0;
         }
 
 
+        BerryPlace(Berry, gsManager.berryTimer);
 
 
-        pacman.textureSwitcher(PacTexture1,PacTexture2);
-
-        //pacTimer
-
-
-
-
-        BerryPlace(Berry, Berrytimer);
-
-
-        if(GameOver == true)
-        {
-
-            if(gameoverTimer < 80)
-            {
-                gameoverTimer++;
-            }
-            else
-            {
-                GameOver = false;
-
-                if(setting.Music)
-                {
-                    BackG_Wii.play();
-                }
-            }
+        if(gsManager.endGame() && setting.Music){
+            BackG_Wii.play();
         }
 
 
@@ -2956,68 +2701,63 @@ int main()
             feetTimer+=2;
         }
 
-        rGhost.textureSwitcher(redTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
+        pacman.updateAniTimer();
 
-        oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
+        pacman.textureSwitcher(PacTexture1,PacTexture2, deadTextures);
 
-        pGhost.textureSwitcher(pinkTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
+        rGhost.textureSwitcher(redTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
 
-        bGhost.textureSwitcher(blueTextures, scaredTextures, eyeTextures, feetTimer, powerUpTimer);
+        oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
 
+        pGhost.textureSwitcher(pinkTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
 
+        bGhost.textureSwitcher(blueTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
 
-        PauseTimer++;
+        gsManager.increment();
 
-        if(InMenu == true)
-        {
-            TitlePacTimer++;
-        }
+        if(gsManager.gState == GameStates::GAME && !pacman.dead){
 
-        if(GamePaused == false && InMenu  == false)
-        {
-
-            glowTimer++;
-            powerUpTimer++;
-            Berrytimer++;
-
-
-
-            if(PacDead == true)
-            {
-                death_ani_Timer++;
-            }
-
-
-            pacman.updateAniTimer();
-
-
-            if(GhostScared == false)
-            {
-                GameStateTimer++;
-            }
-
-            if(PacDead == false)
-            {
                 pacman.sprite.move(pacman.xSpeed,pacman.ySpeed);
                 rGhost.sprite.move(rGhost.xSpeed, rGhost.ySpeed);
                 oGhost.sprite.move(oGhost.xSpeed, oGhost.ySpeed);
                 bGhost.sprite.move(bGhost.xSpeed, bGhost.ySpeed);
                 pGhost.sprite.move(pGhost.xSpeed, pGhost.ySpeed);
-            }
         }
 
 
         window.clear();
         window.setView(view);
 
+        switch(gsManager.gState){
 
-        if(GameOver == false)
-        {
-            if(InMenu == false)
-            {
+            case GameStates::MENU:
+                window.draw(Menu);
+                window.draw(Setting);
+                window.draw(Help);
+                window.draw(StartImage);
+                window.draw(PreStart);
+                window.draw(TitlePacMan);
+                break;
+
+            case GameStates::SETTINGS:
+                for(int i = 0; i<3; i++){
+                    window.draw(setting.tracks[i]);
+                    window.draw(setting.setYN[i]);
+                }
+                window.draw(Settings_text_sprite);
+                window.draw(Return);
+                break;
+
+            case GameStates::HELP:
+                window.draw(Help_text_sprite);
+                window.draw(Return);
+                break;
+
+            case GameStates::PAUSE:
+                window.draw(Paused);
+            case GameStates::GAME:
 
                 window.draw(Background);
-
 
                 if(DEBUG == true)
                 {
@@ -3044,7 +2784,6 @@ int main()
 
                 for(int i = 0; i<4; i++)
                 {
-
                     window.draw(PowerUp[i]);
                 }
 
@@ -3055,7 +2794,7 @@ int main()
                 window.draw(pGhost.sprite);
 
 
-                if(PacDead == false)
+                //if(PacDead == false)
                     window.draw(pacman.sprite);
 
 
@@ -3063,49 +2802,21 @@ int main()
 
                 window.draw(Berry);
 
-                window.draw(PacDeath);
-
-                window.draw(Paused);
 
                 for(int i = 0; i<PacLife.size(); i++)
                 {
-
                     window.draw(PacLife[i]);
                 }
 
 
-            }
-            else
-            {
+                break;
+            case GameStates::GAMEOVER:
+                window.draw(NewHS);
+                window.draw(GameDone);
+                break;
 
-                window.draw(Menu);
+        };
 
-                for(int i = 0; i<3; i++)
-                {
-                    window.draw(setting.tracks[i]);
-                    window.draw(setting.setYN[i]);
-                }
-
-                window.draw(Setting);
-                window.draw(Return);
-                window.draw(Help);
-                window.draw(Help_text_sprite);
-                window.draw(Settings_text_sprite);
-
-
-
-                window.draw(StartImage);
-                window.draw(PreStart);
-
-                window.draw(TitlePacMan);
-
-            }
-        }
-        else
-        {
-            window.draw(NewHS);
-            window.draw(GameDone);
-        }
 
         // window.draw(TestGhost);
 
