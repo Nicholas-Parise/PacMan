@@ -32,8 +32,6 @@ void Settings::hoverTrack(int index){
 }
 
 
-
-
 void Settings::initSprite(){
 
     for(int i = 0; i<3; i++){

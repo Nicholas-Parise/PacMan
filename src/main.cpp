@@ -28,6 +28,47 @@ const int GhostHomeCol = 11;
 const int DeadSpeed = 4.5;      // Must be less than 18
 const double GhostSpeed = 1.5;  // Must be less than 18
 
+ const vector<vector<int>> GameMatrix = {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+        {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1},
+        {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+        {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 6, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 1, 6, 6, 6, 6, 6, 6, 1, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 6, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+        {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1},
+        {1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1},
+        {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1},
+        {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+        {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+        //GameMatrix[31 Y][28 X];
+
+        // 0 is a dot
+        //1 is a wall
+        //6 is a blank spaces
+        // 8 is a big dot
+    };
+
 //startx,starty,boxsizex,boxsizex
 #define Bry_Cherry 0,0,12,12
 #define Bry_Strawberry 16,0,11,12
@@ -106,9 +147,7 @@ int SmallestDistance(int Start, int Solution)
 
     if(Start>Solution)
     {
-
         Number = Start - Solution;
-
     }
     else
     {
@@ -512,106 +551,69 @@ int solvemaze(int r, int c, int solutionCol, int solutionRow, Directions Current
 
 
 
-int ScaredSolver(int r, int c, Directions CurrentDirection,vector<vector<int>> &solution,vector<int> &PathCol, vector<int> &PathRow,vector<vector<int>> maze)
-{
+void ScaredSolver(int r, int c, Directions CurrentDirection,vector<vector<int>> &solution,vector<int> &PathCol, vector<int> &PathRow,vector<vector<int>> maze){
 
     solution[r][c] = 1;
     PathCol.push_back(c);
     PathRow.push_back(r);
 
+    float prob = 0.50;
 
-    bool CanGoDown = false;
-    bool CanGoUp = false;
-    bool CanGoLeft = false;
-    bool CanGoRight = false;
+    while(true){
 
-    int BoolTrue = 0;
-    int RandNumber = 0;
+        prob -= 0.05;
 
+        if(solution[r-1][c] == 0 && maze[r-1][c] != 1 && CurrentDirection !=DOWN){
+            //up
+            if(rand() >= prob){
+                solution[r-1][c] = 1;
+                PathCol.push_back(c);
+                PathRow.push_back(r-1);
+                return;
+            }
+        }
 
-    if(solution[r-1][c] == 0 && maze[r-1][c] != 1&& CurrentDirection !=DOWN)
-    {
-        CanGoUp = true;
-    }
-
-    if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !=RIGHT)
-    {
-        CanGoLeft = true;
-    }
-
-    if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !=UP)
-    {
-        CanGoDown = true;
-    }
-
-    if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !=LEFT)
-    {
-        CanGoRight = true;
-    }
-
-
-    vector <bool> AllCans = {CanGoUp,CanGoLeft,CanGoDown,CanGoRight};
-    vector <int> AvaliableNum;
-
-
-    for(int i = 0; i<4; i++)
-    {
-        if(AllCans[i]== true)
+        if(solution[r][c-1] == 0 && maze[r][c-1] != 1&& CurrentDirection !=RIGHT)
         {
+            //left
+            if(rand() >= prob){
+                solution[r][c-1] = 1;
+                PathCol.push_back(c-1);
+                PathRow.push_back(r);
+                return;
+            }
+        }
 
-            BoolTrue++;
-            AvaliableNum.push_back(i);
+        if(solution[r+1][c] == 0 && maze[r+1][c] != 1 && CurrentDirection !=UP)
+        {
+            //down
+            if(rand() >= prob){
+                solution[r+1][c] = 1;
+                PathCol.push_back(c);
+                PathRow.push_back(r+1);
+                return;
+            }
+        }
+
+        if(solution[r][c+1] == 0 && maze[r][c+1] != 1 && CurrentDirection !=LEFT)
+        {
+            //right
+            if(rand() >= prob){
+                solution[r][c+1] = 1;
+                PathCol.push_back(c+1);
+                PathRow.push_back(r);
+                return;
+            }
         }
     }
 
-
-    if(BoolTrue>0)
-    {
-        RandNumber = rand()%BoolTrue;
-
-        if(AvaliableNum[RandNumber] == 0)
-        {
-
-            solution[r-1][c] = 1;
-            PathCol.push_back(c);
-            PathRow.push_back(r-1);
-
-        }
-        else if(AvaliableNum[RandNumber] == 1)
-        {
-
-            solution[r][c-1] = 1;
-            PathCol.push_back(c-1);
-            PathRow.push_back(r);
-
-        }
-        else if(AvaliableNum[RandNumber] == 2)
-        {
-
-            solution[r+1][c] = 1;
-            PathCol.push_back(c);
-            PathRow.push_back(r+1);
-
-        }
-        else if(AvaliableNum[RandNumber] == 3)
-        {
-
-            solution[r][c+1] = 1;
-            PathCol.push_back(c+1);
-            PathRow.push_back(r);
-        }
-    }
-
-
-    return 1;
-
+    return;
 }
 
 
 
 
-sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight)
-{
+sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight){
 
     // Compares the aspect ratio of the window to the aspect ratio of the view,
     // and sets the view's viewport accordingly in order to archieve a letterbox effect.
@@ -694,7 +696,6 @@ vector<string> WallTest(vector<vector<int>> GameMatrix, int Row, int Col, Direct
 
     //1 is a wall
 
-    // so it doesn't fuck it'self up
     if(Col >0)
     {
         //Above
@@ -815,58 +816,6 @@ bool CenterOfTile(int Row, int Col, string currentDur, sf::Sprite GameSprite, bo
 
 
     return inCenter;
-}
-
-
-bool isNode(std::vector<string> AvallibleDir)
-{
-
-    bool isANode = false;
-
-    if(AvallibleDir.size() > 2)
-    {
-
-        isANode = true;
-    }
-    else
-    {
-
-
-        if(AvallibleDir[0]== "Up")
-        {
-
-            if(AvallibleDir[1]== "Left")
-            {
-
-                isANode = true;
-
-            }
-            else if(AvallibleDir[1]== "Right")
-            {
-
-                isANode = true;
-            }
-
-        }
-        else if(AvallibleDir[0]== "Down")
-        {
-
-            if(AvallibleDir[1]== "Left")
-            {
-
-                isANode = true;
-
-            }
-            else if(AvallibleDir[1]== "Right")
-            {
-
-                isANode = true;
-            }
-        }
-    }
-
-
-    return isANode;
 }
 
 
@@ -1047,50 +996,32 @@ void BerryPlace(sf::Sprite &Berry, int Berrytimer){
 }
 
 
-
-void PlaceLives(std::vector<sf::Sprite> &PacLife)
-{
-
-    int temp;
-
-    for(int i = 0; i<PacLife.size(); i++)
-    {
-
-        temp = 400 + i*50;
-
+void PlaceLives(std::vector<sf::Sprite> &PacLife){
+    for(int i = 0; i<PacLife.size(); i++){
         PacLife[i].setOrigin(15,15);
-        PacLife[i].setPosition(temp,600);
-
+        PacLife[i].setPosition(400 + i*50,600);
     }
 }
 
-/*
-void floodFillUtil(vector<vector<int>> screen, int x, int y, int prevC, int newC,vector<int> &XBucket, vector<int> &YBucket){
 
-    // Base cases
-    if (x < 0 || x >= M || y < 0 || y >= N)
-        return;
+void resetDots( std::vector<sf::RectangleShape> &Dot, std::vector<sf::CircleShape> &PowerUp){
 
-    if (screen[x][y] != prevC)
-        return;
+    int dotplace = 0;
+    int PowerUpplace = 0;
+    for(int i = 0; i<31; i++){
+        for(int j = 0; j<28; j++){
 
-    if (screen[x][y] == newC)
-        return;
-
-    // Replace the color at (x, y)
-    screen[x][y] = newC;
-
-    XBucket.push_back(x);
-    YBucket.push_back(y);
-
-    // Recur for north, east, south and west
-    floodFillUtil(screen, x+1, y, prevC, newC,XBucket,YBucket);
-    floodFillUtil(screen, x-1, y, prevC, newC,XBucket,YBucket);
-    floodFillUtil(screen, x, y+1, prevC, newC,XBucket,YBucket);
-    floodFillUtil(screen, x, y-1, prevC, newC,XBucket,YBucket);
+            if(GameMatrix[i][j] == 0){
+                Dot[dotplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
+                dotplace++;
+            }
+            if(GameMatrix[i][j] == 8){
+                PowerUp[PowerUpplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
+                PowerUpplace++;
+            }
+        }
+    }
 }
-*/
-
 
 
 int main()
@@ -1121,7 +1052,6 @@ int main()
     Player pacman;
     int PacLives = 3;
     bool stopPacMan;
-    //bool PacDead = false;
 
 
     Ghost rGhost;
@@ -1164,32 +1094,18 @@ int main()
     ghosts[2] = &oGhost;
     ghosts[3] = &pGhost;
 
-
     int solutionRow = 14;
     int solutionCol = 17;
-    int StartRow = 13;
-    int StartCol = 11;
-
 
     int dotsEaten = 0;
     int PowerUpEaten = 0;
     int score = 0;
     int highscore = 0;
 
-
-    bool GameOver = false;
-    bool GhostScared = false;
     int Level = 0;
     bool freeLife = true;
 
-
-
-
-
     int place = 0;
-    int dotplace = 0;
-    int PowerUpplace = 0;
-    bool TileChange = false;
 
     int feetTimer = 0;
 
@@ -1205,47 +1121,7 @@ int main()
     std::vector<string> PacManAvallibleDir = {"Left","Right"};
 
 
-    const vector<vector<int>> GameMatrix =
-    {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
-        {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1},
-        {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1},
-        {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 6, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 1, 6, 6, 6, 6, 6, 6, 1, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 6, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
-        {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1},
-        {1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1},
-        {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1},
-        {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1},
-        {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-        {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 
-        //GameMatrix[31 Y][28 X];
-
-        // 0 is a dot
-        //1 is a wall
-        //6 is a blank spaces
-        // 8 is a big dot
-    };
 
 
     for(int i = 0; i<SIZEX; i++)
@@ -1287,50 +1163,36 @@ int main()
     }
 
 
+    resetDots(Dot, PowerUp);
+
 
     std::vector<sf::RectangleShape> Tiles(868);
 
-    for(int i = 0; i<31; i++)
-    {
-        for(int j = 0; j<28; j++)
-        {
+    for(int i = 0; i<31; i++){
+        for(int j = 0; j<28; j++){
 
             Tiles[place].setOrigin(0,0);
             Tiles[place].setSize(sf::Vector2f(18.78571429, 18.61290323));
             Tiles[place].setPosition(sf::Vector2f(18.78571429*j,18.61290323*i));
 
-            if(GameMatrix[i][j] == 0)
-            {
-                //  Dot[dotplace].setPosition(sf::Vector2f(17.7857142857*j+j+(17.7857142857/2), 17.6129032258*i+i+(17.6129032258/2)));
-                Dot[dotplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                dotplace++;
+            if(GameMatrix[i][j] == 0){
                 Tiles[place].setFillColor(sf::Color(0,255,255,128));
                 Tiles[place].setFillColor(sf::Color(0,255,255,0));
             }
 
-            if(GameMatrix[i][j] == 8)
-            {
-//                PowerUp[PowerUpplace].setPosition(sf::Vector2f(17.7857142857*j+j+(17.7857142857/2), 17.6129032258*i+i+(17.6129032258/2)));
-
-                PowerUp[PowerUpplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                PowerUpplace++;
+            if(GameMatrix[i][j] == 8){
                 Tiles[place].setFillColor(sf::Color(0,255,255,128));
                 Tiles[place].setFillColor(sf::Color(0,255,255,0));
             }
 
-
-            if(GameMatrix[i][j] == 1)
-            {
+            if(GameMatrix[i][j] == 1){
                 Tiles[place].setFillColor(sf::Color(255,0,255,128));
                 Tiles[place].setFillColor(sf::Color(255,0,255,0));
             }
 
-            if(GameMatrix[i][j] == 6)
-            {
-                //  Tiles[place].setFillColor(sf::Color(255,255,0,128));
+            if(GameMatrix[i][j] == 6){
                 Tiles[place].setFillColor(sf::Color(255,255,0,0));
             }
-
             place++;
         }
     }
@@ -1667,7 +1529,7 @@ int main()
     sf::Sprite Return;
     Return.setTexture(texture17);
     Return.setOrigin(136,47);
-    Return.setPosition(sf::Vector2f(1000,1000));
+    Return.setPosition(sf::Vector2f(522/2.f,550.f));
     Return.setScale(.6f,.6f);
 
     sf::Sprite Help;
@@ -1675,7 +1537,6 @@ int main()
     Help.setOrigin(111,47);
     Help.setPosition(sf::Vector2f(522/2.f,488.f));
     Help.setScale(.6f,.6f);
-
 
     std::vector<sf::Sprite> PacLife(3, sf::Sprite(PacTexture1));
     PlaceLives(PacLife);
@@ -1730,15 +1591,14 @@ int main()
     Help_text_sprite.setCharacterSize(20);
     Help_text_sprite.setStyle(sf::Text::Bold);
     Help_text_sprite.setFillColor(sf::Color::White);
-    Help_text_sprite.setPosition(1000, 1000);
+    Help_text_sprite.setPosition(0, 100);
 
 
     sf::Text Settings_text_sprite(Settings_Text, font);
     Settings_text_sprite.setCharacterSize(30);
     Settings_text_sprite.setStyle(sf::Text::Bold);
     Settings_text_sprite.setFillColor(sf::Color::White);
-    Settings_text_sprite.setPosition(1000, 1000);
-
+    Settings_text_sprite.setPosition(100, 10);
 
 
     sf::Vector2i pixelPos;
@@ -1783,7 +1643,7 @@ int main()
             ///////
 
 
-            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true){
+            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
 
                 Setting.setTexture(texture16);
 
@@ -1799,15 +1659,6 @@ int main()
                         Button_click.play();
                     }
 
-                    Help.setPosition(1000, 1000);
-                    Setting.setPosition(1000, 1000);
-                    StartImage.setPosition(1000, 1000);
-                    PreStart.setPosition(1000,1000);
-
-                    Settings_text_sprite.setPosition(100, 10);
-
-                    Return.setPosition(sf::Vector2f(522/2.f,550.f));
-
                     setting.appear();
                 }
             }else{
@@ -1816,8 +1667,7 @@ int main()
             }
 
 
-            if(isSpriteHover(Return.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
+            if(isSpriteHover(Return.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP)){
 
                 Return.setTexture(texture18);
 
@@ -1830,14 +1680,6 @@ int main()
 
                     gsManager.changeState(GameStates::MENU);
 
-                    Return.setPosition(1000, 1000);
-                    Help.setPosition(sf::Vector2f(522/2.f,488.f));
-                    StartImage.setPosition(sf::Vector2f(266, 150));
-                    PreStart.setPosition(522/2, 620/2);
-                    Setting.setPosition(sf::Vector2f(522/2.f,388.f));
-                    Help_text_sprite.setPosition(1000, 1000);
-                    Settings_text_sprite.setPosition(1000, 1000);
-
                     if(setting.Effect){
                         Button_click.play();
                     }
@@ -1846,15 +1688,12 @@ int main()
                     setting.disappear();
                 }
             }
-            else
-            {
-
+            else{
                 Return.setTexture(texture17);
             }
 
 
-            if(isSpriteHover(Help.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) == true)
-            {
+            if(isSpriteHover(Help.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
 
                 Help.setTexture(texture20);
                 if(setting.Effect)
@@ -1871,18 +1710,8 @@ int main()
                     {
                         Button_click.play();
                     }
-
-                    Return.setPosition(sf::Vector2f(522/2.f,550.f));
-                    Help.setPosition(1000, 1000);
-                    Setting.setPosition(1000, 1000);
-                    StartImage.setPosition(1000, 1000);
-                    PreStart.setPosition(1000,1000);
-                    Help_text_sprite.setPosition(0, 100);
-
                 }
-            }
-            else
-            {
+            }else{
                 Help.setTexture(texture19);
             }
 
@@ -1944,9 +1773,7 @@ int main()
                 }
             }
 
-
             setting.textureSwitcher(trackTextures, YNtextures);
-
         }
 
 
@@ -1957,8 +1784,6 @@ int main()
         TempRowCol = ClossestTile(pacman.sprite.getPosition().x,pacman.sprite.getPosition().y, Tiles);
         pacman.row = TempRowCol[0];
         pacman.col = TempRowCol[1];
-
-        //  cout<<PacRow<<" "<<PacCol<<endl;
 
         TempRowCol = ClossestTile(rGhost.sprite.getPosition().x,rGhost.sprite.getPosition().y, Tiles);
         rGhost.row = TempRowCol[0];
@@ -2276,26 +2101,7 @@ int main()
 
             PlaceLives(PacLife);
 
-            dotplace = 0;
-            PowerUpplace = 0;
-            for(int i = 0; i<31; i++)
-            {
-                for(int j = 0; j<28; j++)
-                {
-
-                    if(GameMatrix[i][j] == 0)
-                    {
-                        Dot[dotplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                        dotplace++;
-                    }
-                    if(GameMatrix[i][j] == 8)
-                    {
-                        PowerUp[PowerUpplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                        PowerUpplace++;
-                    }
-                }
-            }
-
+            resetDots(Dot, PowerUp);
 
 
             BackG_Wii.stop();
@@ -2321,7 +2127,7 @@ int main()
         }
 
 
-
+    if(!pacman.dead){
         for(int i = 0; i<PacManAvallibleDir.size(); i++){
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == "Left"){
@@ -2344,7 +2150,7 @@ int main()
                 pacman.goDirection(DOWN);
             }
         }
-
+    }
 
         if(pacman.teleporter() && setting.Effect){
             XP_Tele.play();
@@ -2448,6 +2254,7 @@ int main()
                 }
 
                 gsManager.GhostScared = true;
+                gsManager.powerUpTimer = 0;
 
                 PowerUpEaten ++;
                 score +=25;
@@ -2470,9 +2277,8 @@ int main()
         bGhost.scaredStop(gsManager.powerUpTimer);
 
 
-        if(rGhost.state != SCARED || oGhost.state != SCARED || pGhost.state != SCARED || bGhost.state != SCARED)
-        {
-            GhostScared = false;
+        if(rGhost.state != SCARED || oGhost.state != SCARED || pGhost.state != SCARED || bGhost.state != SCARED){
+             gsManager.GhostScared = false;
         }
 
 
@@ -2527,20 +2333,6 @@ int main()
 
 
 
-
-
-        //GameState Timer
-        //5 seconds Scatter
-        //20 seconds Chase
-        //5 Seconds Scatter
-        //20 Seconds Chase
-        //5 seconds Scatter
-        //20 seconds chase
-        //5 seconds scatter
-        //rest of time Chase
-
-
-
         if( gsManager.ghostState  == 60*5 ||  gsManager.ghostState  == 60*30||  gsManager.ghostState  == 60*55||  gsManager.ghostState  == 60*80){
             cout<<"Chase"<<endl;
 
@@ -2562,21 +2354,13 @@ int main()
 
 
 
-        if(freeLife == true && score>highscore)
-        {
-
+        if(freeLife && score>highscore){
             freeLife = false;
-            cout<<"aaaaaaaaaaaaaaaa"<<endl;
             PacLives++;
-
         }
 
 
-
-
         if(dotsEaten == 244 && PowerUpEaten==4){
-
-            //cout<<"Next Level"<<endl;
 
             if(setting.Effect)
             {
@@ -2598,25 +2382,7 @@ int main()
             pGhost.reset();
             bGhost.reset();
 
-            dotplace = 0;
-            PowerUpplace = 0;
-            for(int i = 0; i<31; i++)
-            {
-                for(int j = 0; j<28; j++)
-                {
-
-                    if(GameMatrix[i][j] == 0)
-                    {
-                        Dot[dotplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                        dotplace++;
-                    }
-                    if(GameMatrix[i][j] == 8)
-                    {
-                        PowerUp[PowerUpplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                        PowerUpplace++;
-                    }
-                }
-            }
+            resetDots(Dot, PowerUp);
         }
 
 
@@ -2775,15 +2541,11 @@ int main()
                     }
                 }
 
-                for(int i = 0; i<Dot.size(); i++)
-                {
-
+                for(int i = 0; i<Dot.size(); i++){
                     window.draw(Dot[i]);
                 }
 
-
-                for(int i = 0; i<4; i++)
-                {
+                for(int i = 0; i<4; i++){
                     window.draw(PowerUp[i]);
                 }
 
@@ -2793,23 +2555,17 @@ int main()
                 window.draw(bGhost.sprite);
                 window.draw(pGhost.sprite);
 
-
-                //if(PacDead == false)
-                    window.draw(pacman.sprite);
-
+                window.draw(pacman.sprite);
 
                 window.draw(scoreDis);
-
                 window.draw(Berry);
 
 
-                for(int i = 0; i<PacLife.size(); i++)
-                {
+                for(int i = 0; i<PacLife.size(); i++){
                     window.draw(PacLife[i]);
                 }
-
-
                 break;
+
             case GameStates::GAMEOVER:
                 window.draw(NewHS);
                 window.draw(GameDone);

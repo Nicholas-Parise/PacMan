@@ -41,8 +41,7 @@ void GameStateManager::toString(GameStates s){
 
 void GameStateManager::changeState(GameStates s){
     gState = s;
-    std::cout<<"changed"<<std::endl;
-    //reset();
+    reset();
 }
 
 bool GameStateManager::endGame(){
@@ -64,7 +63,7 @@ void GameStateManager::increment(){
         case GameStates::GAME:
              berryTimer++;
             glowTimer++;
-            if(!GhostScared){
+            if(!GhostScared && powerUpTimer>600){
                 ghostState++;
             }
             break;
