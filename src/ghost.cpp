@@ -1,4 +1,6 @@
 #include "Ghost.h"
+#include "configuration.h"
+
 
 Ghost::Ghost(){
 
@@ -61,10 +63,9 @@ void Ghost::changeState(States s){
 }
 
 
+void Ghost::followPath(int PathRow, int PathCol){
 
-void Ghost::followPath(int PathRow, int PathCol, float speed, float deadSpeed){
-
-    Directions tempDir = NONE;
+    Directions tempDir = direction;
 
     int rowMulti = PathRow - this->row;
     int colMulti = PathCol - this->col;
@@ -93,11 +94,11 @@ void Ghost::followPath(int PathRow, int PathCol, float speed, float deadSpeed){
 
 
     if(this->state == DEAD){
-        this->xSpeed = deadSpeed * rowMulti;
-        this->ySpeed = deadSpeed * colMulti;
+        this->xSpeed = conf::DeadSpeed * rowMulti;
+        this->ySpeed = conf::DeadSpeed * colMulti;
     }else{
-        this->xSpeed = speed * rowMulti;
-        this->ySpeed = speed * colMulti;
+        this->xSpeed = conf::GhostSpeed * rowMulti;
+        this->ySpeed = conf::GhostSpeed * colMulti;
     }
 
 }
