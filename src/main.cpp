@@ -559,10 +559,6 @@ int main(){
     deadTextures[9].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack10));
     deadTextures[10].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack11));
 
-
-    sf::Texture texture11;
-    texture11.loadFromFile("Assets/Other/Solid_black.png");
-
     sf::Texture texture14;
     texture14.loadFromFile("Assets/Sprite/pause.png");
 
@@ -620,12 +616,6 @@ int main(){
     StartImage.setTexture(texture9);
     StartImage.setPosition(sf::Vector2f(266, 150));
     StartImage.setOrigin(225,51);
-
-    sf::Sprite Menu;
-    Menu.setTexture(texture11);
-    Menu.setPosition(sf::Vector2f(0, 0));
-    Menu.setOrigin(0,0);
-    Menu.setScale(10.f, 10.f);
 
     sf::Sprite Setting;
     Setting.setTexture(texture15);
@@ -1581,7 +1571,6 @@ int main(){
         switch(gsManager.gState){
 
             case GameStates::MENU:
-                window.draw(Menu);
                 window.draw(Setting);
                 window.draw(Help);
                 window.draw(StartImage);
@@ -1641,7 +1630,6 @@ int main(){
 
                 window.draw(scoreDis);
                 window.draw(pellet.Berry);
-
 
                 for(int i = 0; i<PacLife.size(); i++){
                     window.draw(PacLife[i]);

@@ -138,7 +138,6 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
 
     std::vector<Node> Pathing::scaredSolver(Node start){
 
-        start.direction = NONE;
         std::vector<Node> sequence;
         std::vector<Node> temp = avaliableDirections(start);
         int value = (rand()%temp.size());
