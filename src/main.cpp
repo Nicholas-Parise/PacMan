@@ -33,7 +33,8 @@ using namespace std;
 
 
 
-sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight){
+sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight)
+{
 
     // Compares the aspect ratio of the window to the aspect ratio of the view,
     // and sets the view's viewport accordingly in order to archieve a letterbox effect.
@@ -74,7 +75,8 @@ sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight){
 bool isSpriteHover(sf::FloatRect Button, sf::Vector2f mp)
 {
 
-    if (Button.contains(mp)){
+    if (Button.contains(mp))
+    {
         return true;
     }
 
@@ -99,9 +101,10 @@ vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::Recta
             break;
         }
     }
-    if(FinalPlace != -1){
-    col = FinalPlace/28;
-    row = FinalPlace%28;
+    if(FinalPlace != -1)
+    {
+        col = FinalPlace/28;
+        row = FinalPlace%28;
     }
 
     vector<int> RowColArray = {row,col};
@@ -109,7 +112,8 @@ vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::Recta
     return RowColArray;
 }
 
-vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
+vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
+{
 
     std::vector<Directions> AvallibleDir;
 
@@ -118,9 +122,11 @@ vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
     if(Col >0)
     {
         //Above
-        if(conf::GameMatrix[Col-1][Row] == 1){
+        if(conf::GameMatrix[Col-1][Row] == 1)
+        {
 
-            if(currentDur == UP){
+            if(currentDur == UP)
+            {
                 Stop = true;
             }
         }
@@ -131,9 +137,11 @@ vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
     }
 
     //below
-    if(conf::GameMatrix[Col+1][Row] == 1){
+    if(conf::GameMatrix[Col+1][Row] == 1)
+    {
 
-        if(currentDur == DOWN){
+        if(currentDur == DOWN)
+        {
             Stop = true;
         }
     }
@@ -205,7 +213,7 @@ bool CenterOfTile(int Row, int Col, string currentDur, sf::Sprite GameSprite, bo
         // cout<<"a"<<endl;
     }
 
-//Note to self change -10 // +10 to something smaller than 8
+    //Note to self change -10 // +10 to something smaller than 8
 
     if((SpriteY > (TileYCenter-5)) && (SpriteY < (TileYCenter+5)))
     {
@@ -292,14 +300,17 @@ void SaveHS(int &highscore, int &score,string &HSString,sf::Text &NewHS)
 
 
 
-void PlaceLives(std::vector<sf::Sprite> &PacLife){
-    for(int i = 0; i<PacLife.size(); i++){
+void PlaceLives(std::vector<sf::Sprite> &PacLife)
+{
+    for(int i = 0; i<PacLife.size(); i++)
+    {
         PacLife[i].setOrigin(15,15);
         PacLife[i].setPosition(400 + i*50,600);
     }
 }
 
-int main(){
+int main()
+{
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -330,22 +341,16 @@ int main(){
 
     Ghost rGhost;
     rGhost.setScatter(23,1);
-    vector<Node> redNode;
 
     Ghost bGhost;
-    bGhost.setScatter(29,24);
-    vector<Node> blueNode;
-
+    bGhost.setScatter(24,29);
 
     Ghost oGhost;
     oGhost.setScatter(3,29);
     int OrangePacDistance;
-    vector<Node> orangeNode;
-
 
     Ghost pGhost;
     pGhost.setScatter(2,1);
-    vector<Node> pinkNode;
 
 
     Settings setting;
@@ -391,29 +396,35 @@ int main(){
 
     std::vector<sf::RectangleShape> Tiles(868);
 
-    for(int i = 0; i<31; i++){
-        for(int j = 0; j<28; j++){
+    for(int i = 0; i<31; i++)
+    {
+        for(int j = 0; j<28; j++)
+        {
 
             Tiles[place].setOrigin(0,0);
             Tiles[place].setSize(sf::Vector2f(18.78571429, 18.61290323));
             Tiles[place].setPosition(sf::Vector2f(18.78571429*j,18.61290323*i));
 
-            if(conf::GameMatrix[i][j] == 0){
+            if(conf::GameMatrix[i][j] == 0)
+            {
                 Tiles[place].setFillColor(sf::Color(0,255,255,128));
                 Tiles[place].setFillColor(sf::Color(0,255,255,0));
             }
 
-            if(conf::GameMatrix[i][j] == 8){
+            if(conf::GameMatrix[i][j] == 8)
+            {
                 Tiles[place].setFillColor(sf::Color(0,255,255,128));
                 Tiles[place].setFillColor(sf::Color(0,255,255,0));
             }
 
-            if(conf::GameMatrix[i][j] == 1){
+            if(conf::GameMatrix[i][j] == 1)
+            {
                 Tiles[place].setFillColor(sf::Color(255,0,255,100));
-               // Tiles[place].setFillColor(sf::Color(255,0,255,0));
+                // Tiles[place].setFillColor(sf::Color(255,0,255,0));
             }
 
-            if(conf::GameMatrix[i][j] == 6){
+            if(conf::GameMatrix[i][j] == 6)
+            {
                 Tiles[place].setFillColor(sf::Color(255,255,0,0));
             }
             place++;
@@ -702,7 +713,8 @@ int main(){
     sf::Vector2f worldPos;
 
     // done loading, play music
-    if(setting.Music){
+    if(setting.Music)
+    {
         soundManager.BackG_Wii.play();
     }
 
@@ -743,36 +755,44 @@ int main(){
             ///////
 
 
-            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
+            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU)
+            {
 
                 Setting.setTexture(texture16);
 
-                if(setting.Effect){
+                if(setting.Effect)
+                {
                     soundManager.Button_select.play();
                 }
 
 
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
+                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                {
 
                     gsManager.changeState(GameStates::SETTINGS);
 
-                    if(setting.Effect){
+                    if(setting.Effect)
+                    {
                         soundManager.Button_click.play();
                     }
 
                     setting.appear();
                 }
-            }else{
+            }
+            else
+            {
 
                 Setting.setTexture(texture15);
             }
 
 
-            if(isSpriteHover(Return.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP)){
+            if(isSpriteHover(Return.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP))
+            {
 
                 Return.setTexture(texture18);
 
-                if(setting.Effect){
+                if(setting.Effect)
+                {
                     soundManager.Button_select.play();
                 }
 
@@ -781,7 +801,8 @@ int main(){
 
                     gsManager.changeState(GameStates::MENU);
 
-                    if(setting.Effect){
+                    if(setting.Effect)
+                    {
                         soundManager.Button_click.play();
                     }
 
@@ -789,7 +810,8 @@ int main(){
                     setting.disappear();
                 }
             }
-            else{
+            else
+            {
                 Return.setTexture(texture17);
             }
 
@@ -816,37 +838,45 @@ int main(){
                 Help.setTexture(texture19);
             }
 
-
-
             // ---------------
 
             setting.resetHover();
 
-            for(int i = 0; i<3; i++){
+            for(int i = 0; i<3; i++)
+            {
 
-                if(isSpriteHover(setting.setYN[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y))){
+                if(isSpriteHover(setting.setYN[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)))
+                {
 
                     setting.hoverYN(i);
 
-                    if(setting.Effect){
+                    if(setting.Effect)
+                    {
                         soundManager.Button_select.play();
                     }
 
-                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
+                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                    {
 
-                        if(setting.Effect){
+                        if(setting.Effect)
+                        {
                             soundManager.Button_click.play();
                         }
 
-                        if(*setting.aOptions[i]){
+                        if(*setting.aOptions[i])
+                        {
                             *setting.aOptions[i] = false;
-                            if(i == 0){
+                            if(i == 0)
+                            {
                                 *setting.aOptions[1] = false;
                                 *setting.aOptions[2] = false;
                                 soundManager.BackG_Wii.stop();
                             }
-                        }else{
-                            if(i == 0 || i > 0 && *setting.aOptions[0]){
+                        }
+                        else
+                        {
+                            if(i == 0 || i > 0 && *setting.aOptions[0])
+                            {
                                 *setting.aOptions[i] = true;
                             }
                         }
@@ -855,17 +885,21 @@ int main(){
 
                 //
 
-                if(isSpriteHover(setting.tracks[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y))){
+                if(isSpriteHover(setting.tracks[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)))
+                {
 
                     setting.hoverTrack(i);
 
-                    if(setting.Effect){
+                    if(setting.Effect)
+                    {
                         soundManager.Button_select.play();
                     }
 
-                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
+                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                    {
 
-                        if(setting.Effect){
+                        if(setting.Effect)
+                        {
                             soundManager.Button_click.play();
                         }
 
@@ -908,207 +942,114 @@ int main(){
 
 
 
-        //Red
-        if(pacman.changedPosition()|| rGhost.changedPosition()){
-            rGhost.updateOldRC();
+        // update all ghosts pathing
+        for(int i = 0; i<4; i++)
+        {
 
-            Node start(rGhost.col,rGhost.row,rGhost.direction);
-
-            switch(rGhost.state){
-
-            case CHASE:
-            {
-                Node finish(solutionCol,solutionRow);
-                redNode = pathing.shortestPath(start,finish);
-            }
-               break;
-            case SCATTER:
-                {
-                Node finish(rGhost.scatterCol,rGhost.scatterRow);
-                redNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            case SCARED:
-                {
-                redNode = pathing.scaredSolver(start);
-                }
-                break;
-            case DEAD:
-                {
-                Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
-                redNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            }
-        }
-
-
-        //Blue
-         if(pacman.changedPosition() || bGhost.changedPosition()){
-            bGhost.updateOldRC();
-
-            Node start(bGhost.col,bGhost.row,bGhost.direction);
-
-            solutionRow =  pacman.row;
-            solutionCol = pacman.col;
-
-            if(pacman.direction == UP){
-                solutionCol-=2;
-            }
-            if(pacman.direction == DOWN)
-            {
-                solutionCol+=2;
-            }
-            if(pacman.direction == LEFT)
-            {
-                solutionRow-=2;
-            }
-            if(pacman.direction == RIGHT)
-            {
-                solutionRow+=2;
-            }
-
-
-            ///TODO proper destination needed
-
-            int tempSolutionRow = solutionRow - rGhost.row;
-            int tempSolutionCol = solutionCol - rGhost.col;
-
-            solutionRow = solutionRow + (tempSolutionRow*-1);
-            solutionCol = solutionCol + (tempSolutionCol*-1);
-
-//            solutionRow = abs(solutionCol - rGhost.col);
-  //          solutionCol = abs(solutionRow - rGhost.row);
-
-
-            switch(bGhost.state){
-            case CHASE:
-                {
-                    Node finish(solutionCol,solutionRow);
-                    blueNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            case SCATTER:
-                 {
-                    Node finish(bGhost.scatterRow,bGhost.scatterCol);
-                    blueNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            case SCARED:
-                {
-                    blueNode = pathing.scaredSolver(start);
-                }
-                break;
-            case DEAD:
-                 {
-                    Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
-                    blueNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            }
-        }
-
-
-        //Orange
-         if(pacman.changedPosition() || oGhost.changedPosition()){
-            oGhost.updateOldRC();
-
-            Node start(oGhost.col,oGhost.row,oGhost.direction);
-
-            OrangePacDistance = pow(pacman.row-oGhost.row,2) + pow(pacman.col-oGhost.col,2);
-
-            if(OrangePacDistance>80){
-                solutionRow =  pacman.row;
-                solutionCol = pacman.col;
-            }else{
-                solutionRow =  oGhost.scatterRow;
-                solutionCol = oGhost.scatterCol;
-            }
-
-            switch(oGhost.state){
-
-            case CHASE:
-                {
-                    Node finish(solutionCol,solutionRow);
-                    orangeNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            case SCATTER:
-                  {
-                    Node finish(oGhost.scatterCol,oGhost.scatterRow);
-                    orangeNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            case SCARED:
-                {
-                    orangeNode = pathing.scaredSolver(start);
-                }
-                break;
-            case DEAD:
-                 {
-                    Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
-                    orangeNode = pathing.shortestPath(start,finish);
-                }
-                break;
-            }
-        }
-
-
-        //Pink
-         if(pacman.changedPosition() || pGhost.changedPosition()){
-            pGhost.updateOldRC();
-
-            Node start(pGhost.col,pGhost.row,pGhost.direction);
-
+            // red
             solutionRow = pacman.row;
             solutionCol = pacman.col;
 
-            if(pacman.direction == UP){
-                solutionCol-=4;
-            }
-            if(pacman.direction == DOWN)
+            switch(i)
             {
-                solutionCol+=4;
-            }
-            if(pacman.direction == LEFT)
-            {
-                solutionRow-=4;
-            }
-            if(pacman.direction == RIGHT)
-            {
-                solutionRow+=4;
-            }
+                case 1:
+                {
+                    // blue
+                    if(pacman.direction == UP)
+                    {
+                        solutionCol-=2;
+                    }
+                    if(pacman.direction == DOWN)
+                    {
+                        solutionCol+=2;
+                    }
+                    if(pacman.direction == LEFT)
+                    {
+                        solutionRow-=2;
+                    }
+                    if(pacman.direction == RIGHT)
+                    {
+                        solutionRow+=2;
+                    }
 
 
-            switch(pGhost.state){
+                    ///TODO proper destination needed
 
-            case CHASE:
-                  {
+                    int tempSolutionRow = solutionRow - rGhost.row;
+                    int tempSolutionCol = solutionCol - rGhost.col;
+
+                    solutionRow = solutionRow + (tempSolutionRow*-1);
+                    solutionCol = solutionCol + (tempSolutionCol*-1);
+                    break;
+                }
+                case 2:
+                {
+                    //orange
+                    OrangePacDistance = pow(pacman.row-oGhost.row,2) + pow(pacman.col-oGhost.col,2);
+                    if(OrangePacDistance<80)
+                    {
+                        solutionRow =  oGhost.scatterRow;
+                        solutionCol = oGhost.scatterCol;
+                    } // else pacman
+                    break;
+                }
+                case 3:
+                    //pink
+                {
+                    if(pacman.direction == UP)
+                    {
+                        solutionCol-=4;
+                    }
+                    if(pacman.direction == DOWN)
+                    {
+                        solutionCol+=4;
+                    }
+                    if(pacman.direction == LEFT)
+                    {
+                        solutionRow-=4;
+                    }
+                    if(pacman.direction == RIGHT)
+                    {
+                        solutionRow+=4;
+                    }
+                }
+            }
+
+            if(pacman.changedPosition()|| ghosts[i]->changedPosition())
+            {
+                ghosts[i]->updateOldRC();
+
+                Node start(ghosts[i]->col,ghosts[i]->row,ghosts[i]->direction);
+
+                switch(ghosts[i]->state)
+                {
+
+                case CHASE:
+                {
                     Node finish(solutionCol,solutionRow);
-                    pinkNode = pathing.shortestPath(start,finish);
+                    ghosts[i]->path = pathing.shortestPath(start,finish);
                 }
                 break;
-            case SCATTER:
+                case SCATTER:
                 {
-                    Node finish(pGhost.scatterCol,pGhost.scatterRow);
-                    pinkNode = pathing.shortestPath(start,finish);
+                    Node finish(ghosts[i]->scatterCol,ghosts[i]->scatterRow);
+                    ghosts[i]->path = pathing.shortestPath(start,finish);
                 }
                 break;
-            case SCARED:
+                case SCARED:
                 {
-                    pinkNode = pathing.scaredSolver(start);
+                    ghosts[i]->path = pathing.scaredSolver(start);
                 }
                 break;
-            case DEAD:
+                case DEAD:
                 {
                     Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
-                    pinkNode = pathing.shortestPath(start,finish);
+                    ghosts[i]->path = pathing.shortestPath(start,finish);
                 }
                 break;
+                }
             }
-            // printsolution(solutionRow,solutionCol,StartRow,StartCol,Pink_solution,GameMatrix);
         }
-
 
         pacman.updateOldRC();
 
@@ -1134,11 +1075,13 @@ int main(){
                     {
                         Tiles[place].setFillColor(sf::Color(255,255,0,128));
                     }
-                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol){
+                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol)
+                    {
                         Tiles[place].setFillColor(sf::Color(255,0,255,128));
                     }
 
-                     if(j == conf::GhostHomeRow && i == conf::GhostHomeCol+3){
+                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol+3)
+                    {
                         Tiles[place].setFillColor(sf::Color(255,50,255,128));
                     }
 
@@ -1147,22 +1090,26 @@ int main(){
             }
 
 
-             for(int i = 0; i< pinkNode.size(); i++){
-               Tiles[pinkNode[i].row*28+pinkNode[i].col].setFillColor(sf::Color(255,105,180,128));
+            for(int i = 0; i< pGhost.path.size(); i++)
+            {
+                Tiles[pGhost.path[i].row*28+pGhost.path[i].col].setFillColor(sf::Color(255,105,180,128));
             }
 
-            for(int i = 0; i< orangeNode.size(); i++){
-               Tiles[orangeNode[i].row*28+orangeNode[i].col].setFillColor(sf::Color(255,140,0,128));
-            }
-
-
-            for(int i = 0; i< blueNode.size(); i++){
-               Tiles[blueNode[i].row*28+blueNode[i].col].setFillColor(sf::Color(0,0,255,128));
+            for(int i = 0; i< oGhost.path.size(); i++)
+            {
+                Tiles[oGhost.path[i].row*28+oGhost.path[i].col].setFillColor(sf::Color(255,140,0,128));
             }
 
 
-           for(int i = 0; i< redNode.size(); i++){
-               Tiles[redNode[i].row*28+redNode[i].col].setFillColor(sf::Color(255,0,0,128));
+            for(int i = 0; i< bGhost.path.size(); i++)
+            {
+                Tiles[bGhost.path[i].row*28+bGhost.path[i].col].setFillColor(sf::Color(0,0,255,128));
+            }
+
+
+            for(int i = 0; i< rGhost.path.size(); i++)
+            {
+                Tiles[rGhost.path[i].row*28+rGhost.path[i].col].setFillColor(sf::Color(255,0,0,128));
             }
         }
 
@@ -1176,9 +1123,11 @@ int main(){
 
 
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+        {
 
-            if(gsManager.gState != GameStates::PAUSE && gsManager.gState != GameStates::MENU && gsManager.pauseTimer >10){
+            if(gsManager.gState != GameStates::PAUSE && gsManager.gState != GameStates::MENU && gsManager.pauseTimer >10)
+            {
 
                 gsManager.pauseTimer = 10;
                 gsManager.changeState(GameStates::PAUSE);
@@ -1194,23 +1143,26 @@ int main(){
                 gsManager.changeState(GameStates::GAME);
                 gsManager.pauseTimer = 0;
 
-                if(setting.Music){
-                    switch(setting.Track){
-                        case 1:
-                            soundManager.BackG_Pizza.play();
-                            break;
-                        case 2:
-                            soundManager.BackG_Subwooder.play();
-                            break;
-                        case 3:
-                            soundManager.BackG_Sweden.play();
-                            break;
+                if(setting.Music)
+                {
+                    switch(setting.Track)
+                    {
+                    case 1:
+                        soundManager.BackG_Pizza.play();
+                        break;
+                    case 2:
+                        soundManager.BackG_Subwooder.play();
+                        break;
+                    case 3:
+                        soundManager.BackG_Sweden.play();
+                        break;
                     }
                 }
             }
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gsManager.gState == GameStates::MENU){
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gsManager.gState == GameStates::MENU)
+        {
 
             cout<<"play"<<endl;
 
@@ -1241,49 +1193,58 @@ int main(){
                 soundManager.start_Game.play();
             }
 
-                if(setting.Music){
-                    switch(setting.Track){
-                        case 1:
-                            soundManager.BackG_Pizza.play();
-                            break;
-                        case 2:
-                            soundManager.BackG_Subwooder.play();
-                            break;
-                        case 3:
-                            soundManager.BackG_Sweden.play();
-                            break;
-                    }
+            if(setting.Music)
+            {
+                switch(setting.Track)
+                {
+                case 1:
+                    soundManager.BackG_Pizza.play();
+                    break;
+                case 2:
+                    soundManager.BackG_Subwooder.play();
+                    break;
+                case 3:
+                    soundManager.BackG_Sweden.play();
+                    break;
                 }
+            }
+        }
+
+
+        if(!pacman.dead)
+        {
+            for(int i = 0; i<PacManAvallibleDir.size(); i++)
+            {
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == LEFT)
+                {
+
+                    pacman.goDirection(LEFT);
+
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == RIGHT)
+                {
+
+                    pacman.goDirection(RIGHT);
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == UP)
+                {
+
+                    pacman.goDirection(UP);
+
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == DOWN)
+                {
+
+                    pacman.goDirection(DOWN);
+                }
+            }
         }
 
 
-    if(!pacman.dead){
-        for(int i = 0; i<PacManAvallibleDir.size(); i++){
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == LEFT){
-
-                pacman.goDirection(LEFT);
-
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == RIGHT){
-
-                pacman.goDirection(RIGHT);
-            }
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == UP){
-
-                pacman.goDirection(UP);
-
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == DOWN){
-
-                pacman.goDirection(DOWN);
-            }
-        }
-    }
-
-
-        if((pacman.teleporter() | rGhost.teleporter() | oGhost.teleporter() | bGhost.teleporter() | pGhost.teleporter())&& setting.Effect){
+        if((pacman.teleporter() | rGhost.teleporter() | oGhost.teleporter() | bGhost.teleporter() | pGhost.teleporter())&& setting.Effect)
+        {
             soundManager.teleport_Game.play();
         }
 
@@ -1295,49 +1256,33 @@ int main(){
         }
 
 
-
-        rGhost.outOfSpawn();
-
-        bGhost.outOfSpawn();
-
-        oGhost.outOfSpawn();
-
-        pGhost.outOfSpawn();
-
-
-
-
-        //Red
-        if(redNode.size()>1)
-         rGhost.followPath(redNode[1].col,redNode[1].row);
-
-        //blue
-        if(blueNode.size()>1)
-         bGhost.followPath(blueNode[1].col,blueNode[1].row);
-
-        //Orange
-        if(orangeNode.size()>1)
-         oGhost.followPath(orangeNode[1].col,orangeNode[1].row);
-
-        //Pink
-        if(pinkNode.size()>1)
-         pGhost.followPath(pinkNode[1].col,pinkNode[1].row);
+        // update all ghosts
+        for(int i = 0; i<4; i++)
+        {
+            ghosts[i]->outOfSpawn();
+            ghosts[i]->followPath();
+            ghosts[i]->scaredStop(gsManager.powerUpTimer);
+        }
 
 
         // --Dot Hit Test--
-        if(pellet.dotHit(pacman.sprite)){
+        if(pellet.dotHit(pacman.sprite))
+        {
             score +=5;
-            if(setting.Effect){
+            if(setting.Effect)
+            {
                 soundManager.Dot_Chomp.play();
             }
         }
 
         // --Powerup Hit Test--
-        if(pellet.powerHit(pacman.sprite)){
+        if(pellet.powerHit(pacman.sprite))
+        {
 
             pellet.PowerUpEaten ++;
 
-            if(setting.Effect){
+            if(setting.Effect)
+            {
                 soundManager.Power_Chomp.play();
             }
 
@@ -1353,38 +1298,34 @@ int main(){
         }
 
         // -- Berry Hite Test --
-        if(pellet.berryHit(pacman.sprite)){
-
+        if(pellet.berryHit(pacman.sprite))
+        {
             score +=10;
-            if(setting.Effect){
+            if(setting.Effect)
+            {
                 soundManager.Berry_Chomp.play();
             }
         }
 
 
-        rGhost.scaredStop(gsManager.powerUpTimer);
-
-        oGhost.scaredStop(gsManager.powerUpTimer);
-
-        pGhost.scaredStop(gsManager.powerUpTimer);
-
-        bGhost.scaredStop(gsManager.powerUpTimer);
-
-
-        if(rGhost.state != SCARED || oGhost.state != SCARED || pGhost.state != SCARED || bGhost.state != SCARED){
-             gsManager.GhostScared = false;
+        if(rGhost.state != SCARED || oGhost.state != SCARED || pGhost.state != SCARED || bGhost.state != SCARED)
+        {
+            gsManager.GhostScared = false;
         }
 
 
-
         // ghost pacman hittest
-        if(!pacman.dead && conf::DEBUG == false){
+        if(!pacman.dead && conf::DEBUG == false)
+        {
 
-            for(int i = 0; i<4; i++){
+            for(int i = 0; i<4; i++)
+            {
 
-                if(pacman.sprite.getGlobalBounds().intersects((ghosts[i])->sprite.getGlobalBounds())){
+                if(pacman.sprite.getGlobalBounds().intersects((ghosts[i])->sprite.getGlobalBounds()))
+                {
 
-                    if(ghosts[i]->state == SCARED){
+                    if(ghosts[i]->state == SCARED)
+                    {
                         score +=10;
 
                         if(setting.Effect)
@@ -1395,7 +1336,9 @@ int main(){
                         ghosts[i]->changeState(DEAD);
 
 
-                    }else if(ghosts[i]->state != DEAD){
+                    }
+                    else if(ghosts[i]->state != DEAD)
+                    {
 
                         soundManager.BackG_Pizza.pause();
                         soundManager.BackG_Subwooder.pause();
@@ -1413,16 +1356,18 @@ int main(){
         }
 
 
-        if(gsManager.ghostState  == 60*5 ||  gsManager.ghostState  == 60*30||  gsManager.ghostState  == 60*55||  gsManager.ghostState  == 60*80){
+        if(gsManager.ghostState  == 60*5 ||  gsManager.ghostState  == 60*30||  gsManager.ghostState  == 60*55||  gsManager.ghostState  == 60*80)
+        {
             cout<<"Chase"<<endl;
 
             rGhost.changeState(CHASE);
             oGhost.changeState(CHASE);
             bGhost.changeState(CHASE);
             pGhost.changeState(CHASE);
-        }
 
-        else if(gsManager.ghostState == 60*25||  gsManager.ghostState  == 60*50||  gsManager.ghostState  == 60*75){
+        }
+        else if(gsManager.ghostState == 60*25||  gsManager.ghostState  == 60*50||  gsManager.ghostState  == 60*75)
+        {
             cout<<"Scatter"<<endl;
 
             rGhost.changeState(SCATTER);
@@ -1433,13 +1378,15 @@ int main(){
 
 
 
-        if(freeLife && score>highscore){
+        if(freeLife && score>highscore)
+        {
             freeLife = false;
             PacLives++;
         }
 
 
-        if(pellet.dotsEaten >= pellet.DOTS && pellet.PowerUpEaten >= pellet.POWERUPS){
+        if(pellet.dotsEaten >= pellet.DOTS && pellet.PowerUpEaten >= pellet.POWERUPS)
+        {
 
             if(setting.Effect)
             {
@@ -1463,7 +1410,8 @@ int main(){
         }
 
 
-        if(pacman.killPac() && conf::DEBUG == false){
+        if(pacman.killPac() && conf::DEBUG == false)
+        {
 
             cout<<"reset"<<endl;
 
@@ -1481,27 +1429,31 @@ int main(){
             pGhost.reset();
             bGhost.reset();
 
-            if(setting.Music){
-                switch(setting.Track){
-                    case 1:
-                        soundManager.BackG_Pizza.play();
-                        break;
-                    case 2:
-                        soundManager.BackG_Subwooder.play();
-                        break;
-                    case 3:
-                        soundManager.BackG_Sweden.play();
-                        break;
+            if(setting.Music)
+            {
+                switch(setting.Track)
+                {
+                case 1:
+                    soundManager.BackG_Pizza.play();
+                    break;
+                case 2:
+                    soundManager.BackG_Subwooder.play();
+                    break;
+                case 3:
+                    soundManager.BackG_Sweden.play();
+                    break;
                 }
             }
         }
 
 
-        if(PacLives == 0 && gsManager.gState == GameStates::GAME && conf::DEBUG == false){
+        if(PacLives == 0 && gsManager.gState == GameStates::GAME && conf::DEBUG == false)
+        {
             //Game Over
             PacLives--;
 
-            if(setting.Effect){
+            if(setting.Effect)
+            {
                 soundManager.gameOver.play();
             }
 
@@ -1521,23 +1473,30 @@ int main(){
         pellet.spawnBerry(berryTextures,gsManager.berryTimer);
 
 
-        if(gsManager.TitlePacTimer < 10){
+        if(gsManager.TitlePacTimer < 10)
+        {
             TitlePacMan.setTexture(PacTexture2);
-        }else{
+        }
+        else
+        {
             TitlePacMan.setTexture(PacTexture1);
             gsManager.TitlePacTimer = 0;
         }
 
 
-        if(gsManager.endGame() && setting.Music){
+        if(gsManager.endGame() && setting.Music)
+        {
             soundManager.BackG_Wii.play();
         }
 
 
         // set the textures of the ghosts
-        if(feetTimer >= 20){
+        if(feetTimer >= 20)
+        {
             feetTimer = 0;
-        }else{
+        }
+        else
+        {
             feetTimer+=2;
         }
 
@@ -1555,91 +1514,97 @@ int main(){
 
         gsManager.increment();
 
-        if(gsManager.gState == GameStates::GAME && !pacman.dead){
+        if(gsManager.gState == GameStates::GAME && !pacman.dead)
+        {
 
-                pacman.sprite.move(pacman.xSpeed,pacman.ySpeed);
-                rGhost.sprite.move(rGhost.xSpeed, rGhost.ySpeed);
-                oGhost.sprite.move(oGhost.xSpeed, oGhost.ySpeed);
-                bGhost.sprite.move(bGhost.xSpeed, bGhost.ySpeed);
-                pGhost.sprite.move(pGhost.xSpeed, pGhost.ySpeed);
+            pacman.sprite.move(pacman.xSpeed,pacman.ySpeed);
+            rGhost.sprite.move(rGhost.xSpeed, rGhost.ySpeed);
+            oGhost.sprite.move(oGhost.xSpeed, oGhost.ySpeed);
+            bGhost.sprite.move(bGhost.xSpeed, bGhost.ySpeed);
+            pGhost.sprite.move(pGhost.xSpeed, pGhost.ySpeed);
         }
 
 
         window.clear();
         window.setView(view);
 
-        switch(gsManager.gState){
+        switch(gsManager.gState)
+        {
 
-            case GameStates::MENU:
-                window.draw(Setting);
-                window.draw(Help);
-                window.draw(StartImage);
-                window.draw(PreStart);
-                window.draw(TitlePacMan);
-                break;
+        case GameStates::MENU:
+            window.draw(Setting);
+            window.draw(Help);
+            window.draw(StartImage);
+            window.draw(PreStart);
+            window.draw(TitlePacMan);
+            break;
 
-            case GameStates::SETTINGS:
-                for(int i = 0; i<3; i++){
-                    window.draw(setting.tracks[i]);
-                    window.draw(setting.setYN[i]);
-                }
-                window.draw(Settings_text_sprite);
-                window.draw(Return);
-                break;
+        case GameStates::SETTINGS:
+            for(int i = 0; i<3; i++)
+            {
+                window.draw(setting.tracks[i]);
+                window.draw(setting.setYN[i]);
+            }
+            window.draw(Settings_text_sprite);
+            window.draw(Return);
+            break;
 
-            case GameStates::HELP:
-                window.draw(Help_text_sprite);
-                window.draw(Return);
-                break;
+        case GameStates::HELP:
+            window.draw(Help_text_sprite);
+            window.draw(Return);
+            break;
 
-            case GameStates::PAUSE:
-                window.draw(Paused);
-            case GameStates::GAME:
+        case GameStates::PAUSE:
+            window.draw(Paused);
+        case GameStates::GAME:
 
-                window.draw(Background);
+            window.draw(Background);
 
-                if(conf::DEBUG)
+            if(conf::DEBUG)
+            {
+                int temp = 0;
+                for(int i = 0; i<31; i++)
                 {
-                    int temp = 0;
-                    for(int i = 0; i<31; i++)
+                    for(int j = 0; j<28; j++)
                     {
-                        for(int j = 0; j<28; j++)
-                        {
-                            //if(conf::GameMatrix[i][j] != 1){
-                                window.draw(Tiles[temp]);
-                          // }
-                            temp++;
-                        }
+                        //if(conf::GameMatrix[i][j] != 1){
+                        window.draw(Tiles[temp]);
+                        // }
+                        temp++;
                     }
                 }
+            }
 
-                for(int i = 0; i< pellet.DOTS; i++){
-                    window.draw(pellet.Dot[i]);
-                }
+            for(int i = 0; i< pellet.DOTS; i++)
+            {
+                window.draw(pellet.Dot[i]);
+            }
 
-                for(int i = 0; i< pellet.POWERUPS; i++){
-                    window.draw(pellet.PowerUp[i]);
-                }
+            for(int i = 0; i< pellet.POWERUPS; i++)
+            {
+                window.draw(pellet.PowerUp[i]);
+            }
 
-                window.draw(rGhost.sprite);
-                window.draw(oGhost.sprite);
-                window.draw(bGhost.sprite);
-                window.draw(pGhost.sprite);
+            window.draw(rGhost.sprite);
+            window.draw(oGhost.sprite);
+            window.draw(bGhost.sprite);
+            window.draw(pGhost.sprite);
 
-                window.draw(pacman.sprite);
+            window.draw(pacman.sprite);
 
-                window.draw(scoreDis);
-                window.draw(pellet.Berry);
+            window.draw(scoreDis);
+            window.draw(pellet.Berry);
 
-                for(int i = 0; i<PacLife.size(); i++){
-                    window.draw(PacLife[i]);
-                }
-                break;
+            for(int i = 0; i<PacLife.size(); i++)
+            {
+                window.draw(PacLife[i]);
+            }
+            break;
 
-            case GameStates::GAMEOVER:
-                window.draw(NewHS);
-                window.draw(GameDone);
-                break;
+        case GameStates::GAMEOVER:
+            window.draw(NewHS);
+            window.draw(GameDone);
+            break;
 
         };
 

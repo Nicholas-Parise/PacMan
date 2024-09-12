@@ -2,7 +2,8 @@
 #include "configuration.h"
 
 
-Ghost::Ghost(){
+Ghost::Ghost()
+{
 
     sprite.setOrigin(14,14);
 
@@ -11,7 +12,8 @@ Ghost::Ghost(){
 }
 
 
-void Ghost::reset(){
+void Ghost::reset()
+{
 
     xSpeed = 0;
     ySpeed = 0;
@@ -26,33 +28,40 @@ void Ghost::reset(){
     sprite.setPosition(sf::Vector2f(18.78571429*row+(18.78571429/2), 18.61290323*col+(18.61290323/2)));
 }
 
-void Ghost::setScatter(int r, int c){
+void Ghost::setScatter(int r, int c)
+{
     this->scatterRow = r;
     this->scatterCol = c;
 }
 
 
 
-void Ghost::changeState(States s){
+void Ghost::changeState(States s)
+{
 
-    if(state != DEAD){
+    if(state != DEAD)
+    {
         state = s;
         //direction = NONE;
     }
 }
 
 
- bool Ghost::isOppositeDirection(Directions a, Directions b){
+bool Ghost::isOppositeDirection(Directions a, Directions b)
+{
 
-    if(a == b){
+    if(a == b)
+    {
         return false;
     }
 
-    if(a == UP && b == DOWN || a == DOWN && b == UP){
+    if(a == UP && b == DOWN || a == DOWN && b == UP)
+    {
         return true;
     }
 
-    if(a == LEFT && b == RIGHT|| a == RIGHT && b == LEFT){
+    if(a == LEFT && b == RIGHT|| a == RIGHT && b == LEFT)
+    {
         return true;
     }
 
@@ -60,44 +69,63 @@ void Ghost::changeState(States s){
 }
 
 
-void Ghost::followPath(int PathRow, int PathCol){
+void Ghost::followPath()
+{
+
+    if(path.size()<2)
+        return;
 
     Directions tempDir = direction;
 
-    int rowMulti = PathRow - this->row;
-    int colMulti = PathCol - this->col;
+    int rowMulti = path[1].col - this->row;
+    int colMulti = path[1].row - this->col;
 
-    if(rowMulti == 0){
-        if(colMulti>0){
+
+    if(rowMulti == 0)
+    {
+        if(colMulti>0)
+        {
             tempDir = DOWN;
             colMulti = 1;
-        }else{
+        }
+        else
+        {
             tempDir = UP;
             colMulti = -1;
         }
     }
 
-    if(colMulti == 0){
-        if(rowMulti>0){
+    if(colMulti == 0)
+    {
+        if(rowMulti>0)
+        {
             tempDir = RIGHT;
             rowMulti = 1;
-        }else{
+        }
+        else
+        {
             tempDir = LEFT;
             rowMulti = -1;
         }
     }
 
-    if(isOppositeDirection(this->direction,tempDir)){
+    if(isOppositeDirection(this->direction,tempDir))
+    {
         return;
-    }else{
+    }
+    else
+    {
         this->direction = tempDir;
     }
 
 
-    if(this->state == DEAD){
+    if(this->state == DEAD)
+    {
         this->xSpeed = conf::DeadSpeed * rowMulti;
         this->ySpeed = conf::DeadSpeed * colMulti;
-    }else{
+    }
+    else
+    {
         this->xSpeed = conf::GhostSpeed * rowMulti;
         this->ySpeed = conf::GhostSpeed * colMulti;
     }
@@ -105,19 +133,24 @@ void Ghost::followPath(int PathRow, int PathCol){
 }
 
 
-void Ghost::scaredStop(int powerUpTimer) {
+void Ghost::scaredStop(int powerUpTimer)
+{
 
-    if(this->state == SCARED){
-        if(powerUpTimer > 600) {
+    if(this->state == SCARED)
+    {
+        if(powerUpTimer > 600)
+        {
             this->state = CHASE;
         }
     }
 }
 
 
-void Ghost::outOfSpawn(){
+void Ghost::outOfSpawn()
+{
 
-    if(row == conf::GhostHomeRow && col == conf::GhostHomeCol+3 && state == DEAD){
+    if(row == conf::GhostHomeRow && col == conf::GhostHomeCol+3 && state == DEAD)
+    {
         state = SCATTER;
         direction = NONE;
     }
@@ -125,58 +158,68 @@ void Ghost::outOfSpawn(){
 
 
 
-void Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer){
+void Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer)
+{
 
     int offset = 0;
     sf::Texture *textures;
     sf::Texture *tex;
 
-    switch(state){
-        case SCARED:
-            textures = scaredTextures;
-            offset = 1;
-            break;
-        case DEAD:
-            textures = eyeTextures;
-            offset = 0;
-            break;
-        default:
-        case CHASE:
-        case SCATTER:
-            textures = ghostTextures;
-            offset = 4;
-            break;
+    switch(state)
+    {
+    case SCARED:
+        textures = scaredTextures;
+        offset = 1;
+        break;
+    case DEAD:
+        textures = eyeTextures;
+        offset = 0;
+        break;
+    default:
+    case CHASE:
+    case SCATTER:
+        textures = ghostTextures;
+        offset = 4;
+        break;
     };
 
-    if(FeetTimer<10) {
+    if(FeetTimer<10)
+    {
         offset = 0;
     }
 
 
-    if(this->state != SCARED){
-        switch(direction){
+    if(this->state != SCARED)
+    {
+        switch(direction)
+        {
 
-            case NONE:
-            case LEFT:
-                tex = &(textures[0+offset]);
-                break;
-            case UP:
-                tex = &(textures[1+offset]);
-                break;
-            case RIGHT:
-                tex = &(textures[2+offset]);
-                break;
-            case DOWN:
-                tex = &(textures[3+offset]);
-                break;
+        case NONE:
+        case LEFT:
+            tex = &(textures[0+offset]);
+            break;
+        case UP:
+            tex = &(textures[1+offset]);
+            break;
+        case RIGHT:
+            tex = &(textures[2+offset]);
+            break;
+        case DOWN:
+            tex = &(textures[3+offset]);
+            break;
         };
 
-    }else{
-        if(powerUpTimer <480 || (powerUpTimer > 510 && powerUpTimer < 540) || powerUpTimer >570) {
+    }
+    else
+    {
+        if(powerUpTimer <480 || (powerUpTimer > 510 && powerUpTimer < 540) || powerUpTimer >570)
+        {
 
             tex = &textures[0+offset];
 
-        } else if((powerUpTimer > 480 && powerUpTimer < 510) || (powerUpTimer > 540&& powerUpTimer < 570)) {
+        }
+        else if((powerUpTimer > 480 && powerUpTimer < 510) || (powerUpTimer > 540&& powerUpTimer < 570))
+        {
 
             tex = &textures[2+offset];
         }
