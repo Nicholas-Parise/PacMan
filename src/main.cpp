@@ -10,7 +10,7 @@
 #include <sstream>
 #include <queue>
 
-#include <thread>         // std::this_thread::sleep_for
+#include <thread>
 #include <chrono>
 
 #include "ghost.h"
@@ -21,6 +21,7 @@
 #include "configuration.h"
 #include "Pathing.h"
 #include "Pellet.h"
+#include "SoundManager.h"
 
 using namespace std;
 
@@ -286,46 +287,9 @@ void SaveHS(int &highscore, int &score,string &HSString,sf::Text &NewHS)
 
     }
     writeFile.close();
-
 }
 
 
-
-void BerryPlace(sf::Sprite &Berry, int Berrytimer){
-
-    if(Berrytimer == 1200){
-
-        int randtemp = rand()%7;
-
-        if(randtemp == 0)
-            Berry.setTextureRect(sf::IntRect(Bry_Cherry));
-
-        if(randtemp == 1)
-            Berry.setTextureRect(sf::IntRect(Bry_Strawberry));
-
-        if(randtemp == 2)
-            Berry.setTextureRect(sf::IntRect(Bry_Peach));
-
-        if(randtemp == 3)
-            Berry.setTextureRect(sf::IntRect(Bry_Apple));
-
-        if(randtemp == 4)
-            Berry.setTextureRect(sf::IntRect(Bry_Lime));
-
-        if(randtemp == 5)
-            Berry.setTextureRect(sf::IntRect(Bry_Spear));
-
-        if(randtemp == 6)
-            Berry.setTextureRect(sf::IntRect(Bry_Bell));
-
-        if(randtemp == 7)
-            Berry.setTextureRect(sf::IntRect(Bry_Key));
-
-        Berry.setScale(2.f, 2.f);
-        Berry.setPosition(522/2,620/2);
-    }
-
-}
 
 
 void PlaceLives(std::vector<sf::Sprite> &PacLife){
@@ -391,6 +355,8 @@ int main(){
     Pathing pathing;
 
     Pellet pellet;
+
+    SoundManager soundManager;
 
     Ghost *ghosts[4];
     ghosts[0] = &rGhost;
@@ -478,13 +444,22 @@ int main(){
     sf::Texture PauseTexture;
     PauseTexture.loadFromFile("Assets/Sprite/pause.png");
 
-
     sf::Texture texture9;
     texture9.loadFromFile("Assets/Other/PacMan-Start.png");
 
-    sf::Texture texture10;
-    texture10.loadFromFile("Assets/Sprite/Berry_Sprite_Sheet.png");
+    // -----
+    sf::Image BerrySheetimage;
+    BerrySheetimage.loadFromFile("Assets/Sprite/Berry_Sprite_Sheet.png");
 
+    sf::Texture berryTextures[8];
+    berryTextures[0].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Cherry));
+    berryTextures[1].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Strawberry));
+    berryTextures[2].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Peach));
+    berryTextures[3].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Apple));
+    berryTextures[4].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Lime));
+    berryTextures[5].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Spear));
+    berryTextures[6].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Bell));
+    berryTextures[7].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Key));
 
     ////
 
@@ -626,137 +601,12 @@ int main(){
     trackTextures[5].loadFromFile("Assets/Buttons/3_2.png");
 
 
-    cout<<"done1"<<endl;
-
-    sf::SoundBuffer sound3;
-    sound3.loadFromFile("Assets/Audio/Effect/Mac_Startup.wav");
-
-    sf::SoundBuffer sound4;
-    sound4.loadFromFile("Assets/Audio/Effect/XP_Dots.wav");
-
-    sf::SoundBuffer sound5;
-    sound5.loadFromFile("Assets/Audio/Effect/XP_Start.wav");
-
-    sf::SoundBuffer sound6;
-    sound6.loadFromFile("Assets/Audio/Effect/XP_Teleport.wav");
-
-    sf::SoundBuffer sound7;
-    sound7.loadFromFile("Assets/Audio/Effect/XP_End.wav");
-
-    sf::SoundBuffer sound8;
-    sound8.loadFromFile("Assets/Audio/Effect/Click_Button.wav");
-
-    sf::SoundBuffer sound9;
-    sound9.loadFromFile("Assets/Audio/Effect/Select_Button.wav");
-
-    sf::SoundBuffer sound10;
-    sound10.loadFromFile("Assets/Audio/Effect/Death.wav");
-
-    sf::SoundBuffer sound11;
-    sound11.loadFromFile("Assets/Audio/Effect/PowerUp.wav");
-
-    sf::SoundBuffer sound12;
-    sound12.loadFromFile("Assets/Audio/Effect/XP_Yay.wav");
-
-    sf::SoundBuffer sound15;
-    sound15.loadFromFile("Assets/Audio/Effect/Fortnite_Clap.wav");
-
-    cout<<"done2"<<endl;
-/////
-
-    sf::SoundBuffer sound1;
-    sound1.loadFromFile("Assets/Audio/Music/Pizza_Theme.wav");
-
-    sf::SoundBuffer sound2;
-    sound2.loadFromFile("Assets/Audio/Music/Wii_Menu2.wav");
-
-    sf::SoundBuffer sound13;
-    sound13.loadFromFile("Assets/Audio/Music/SubwooferLullaby.ogg");
-
-    sf::SoundBuffer sound14;
-    sound14.loadFromFile("Assets/Audio/Music/Sweden.ogg");
-
-
-
-    cout<<"done3"<<endl;
-//music
-    sf::Sound BackG_Pizza;
-    BackG_Pizza.setBuffer(sound1);
-
-    sf::Sound BackG_Subwooder;
-    BackG_Subwooder.setBuffer(sound13);
-
-    sf::Sound BackG_Sweden;
-    BackG_Sweden.setBuffer(sound14);
-
-//sfx
-    sf::Sound BackG_Wii;
-    BackG_Wii.setBuffer(sound2);
-
-    sf::Sound Mac_start;
-    Mac_start.setBuffer(sound3);
-
-    sf::Sound XP_Tele;
-    XP_Tele.setBuffer(sound4);
-
-    sf::Sound XP_start;
-    XP_start.setBuffer(sound5);
-
-    sf::Sound Dot_Chomp;
-    Dot_Chomp.setBuffer(sound6);
-
-    sf::Sound XP_End;
-    XP_End.setBuffer(sound7);
-
-    sf::Sound Button_click;
-    Button_click.setBuffer(sound8);
-
-    sf::Sound Button_select;
-    Button_select.setBuffer(sound9);
-
-    sf::Sound Dead;
-    Dead.setBuffer(sound10);
-
-    sf::Sound PowerSound;
-    PowerSound.setBuffer(sound11);
-
-    sf::Sound Yay;
-    Yay.setBuffer(sound12);
-
-    sf::Sound Fortnite_Clap;
-    Fortnite_Clap.setBuffer(sound15);
-
-    if(setting.Music)
-    {
-        BackG_Wii.play();
-    }
-
-    BackG_Wii.setLoop(true);
-    BackG_Pizza.setLoop(true);
-    BackG_Subwooder.setLoop(true);
-    BackG_Sweden.setLoop(true);
-
-    BackG_Wii.setVolume(60.f);
-    XP_Tele.setVolume(50.f);
-    Mac_start.setVolume(50.f);
-    BackG_Pizza.setVolume(10.f);
-    PowerSound.setVolume(30.f);
-
-
-    ////
-
-
     sf::Sprite Paused;
     Paused.setTexture(PauseTexture);
     Paused.setPosition(sf::Vector2f(0, 0));
     Paused.setOrigin(25,31);
     Paused.setScale(1.f,1.f);
     Paused.setPosition(261,288);
-
-    sf::IntRect rectSourceSprite(Bry_Apple);
-    sf::Sprite Berry(texture10,rectSourceSprite);
-    Berry.setScale(2.f, 2.f);
-    Berry.setPosition(1000,1000);
 
 
     sf::Sprite TitlePacMan;
@@ -861,7 +711,10 @@ int main(){
     sf::Vector2i pixelPos;
     sf::Vector2f worldPos;
 
-
+    // done loading, play music
+    if(setting.Music){
+        soundManager.BackG_Wii.play();
+    }
 
     while (window.isOpen())
     {
@@ -905,15 +758,16 @@ int main(){
                 Setting.setTexture(texture16);
 
                 if(setting.Effect){
-                    Button_select.play();
+                    soundManager.Button_select.play();
                 }
+
 
                 if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
                     gsManager.changeState(GameStates::SETTINGS);
 
                     if(setting.Effect){
-                        Button_click.play();
+                        soundManager.Button_click.play();
                     }
 
                     setting.appear();
@@ -929,7 +783,7 @@ int main(){
                 Return.setTexture(texture18);
 
                 if(setting.Effect){
-                    Button_select.play();
+                    soundManager.Button_select.play();
                 }
 
                 if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
@@ -938,7 +792,7 @@ int main(){
                     gsManager.changeState(GameStates::MENU);
 
                     if(setting.Effect){
-                        Button_click.play();
+                        soundManager.Button_click.play();
                     }
 
                     setting.saveSettings("Assets/Other/Settings.txt");
@@ -955,7 +809,7 @@ int main(){
                 Help.setTexture(texture20);
                 if(setting.Effect)
                 {
-                    Button_select.play();
+                    soundManager.Button_select.play();
                 }
 
                 if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
@@ -965,7 +819,7 @@ int main(){
 
                     if(setting.Effect)
                     {
-                        Button_click.play();
+                        soundManager.Button_click.play();
                     }
                 }
             }else{
@@ -985,13 +839,13 @@ int main(){
                     setting.hoverYN(i);
 
                     if(setting.Effect){
-                        Button_select.play();
+                        soundManager.Button_select.play();
                     }
 
                     if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
                         if(setting.Effect){
-                            Button_click.play();
+                            soundManager.Button_click.play();
                         }
 
                         if(*setting.aOptions[i]){
@@ -999,7 +853,7 @@ int main(){
                             if(i == 0){
                                 *setting.aOptions[1] = false;
                                 *setting.aOptions[2] = false;
-                                BackG_Wii.stop();
+                                soundManager.BackG_Wii.stop();
                             }
                         }else{
                             if(i == 0 || i > 0 && *setting.aOptions[0]){
@@ -1016,13 +870,13 @@ int main(){
                     setting.hoverTrack(i);
 
                     if(setting.Effect){
-                        Button_select.play();
+                        soundManager.Button_select.play();
                     }
 
                     if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left){
 
                         if(setting.Effect){
-                            Button_click.play();
+                            soundManager.Button_click.play();
                         }
 
                         setting.Track = i+1;
@@ -1057,9 +911,6 @@ int main(){
         TempRowCol = ClossestTile(pGhost.sprite.getPosition().x,pGhost.sprite.getPosition().y, Tiles);
         pGhost.row = TempRowCol[0];
         pGhost.col = TempRowCol[1];
-
-
-
 
 
         solutionRow = pacman.row;
@@ -1342,9 +1193,9 @@ int main(){
                 gsManager.pauseTimer = 10;
                 gsManager.changeState(GameStates::PAUSE);
 
-                BackG_Pizza.pause();
-                BackG_Subwooder.pause();
-                BackG_Sweden.pause();
+                soundManager.BackG_Pizza.pause();
+                soundManager.BackG_Subwooder.pause();
+                soundManager.BackG_Sweden.pause();
             }
 
             else if(gsManager.gState == GameStates::PAUSE && gsManager.pauseTimer > 30)
@@ -1356,13 +1207,13 @@ int main(){
                 if(setting.Music){
                     switch(setting.Track){
                         case 1:
-                            BackG_Pizza.play();
+                            soundManager.BackG_Pizza.play();
                             break;
                         case 2:
-                            BackG_Subwooder.play();
+                            soundManager.BackG_Subwooder.play();
                             break;
                         case 3:
-                            BackG_Sweden.play();
+                            soundManager.BackG_Sweden.play();
                             break;
                     }
                 }
@@ -1393,23 +1244,23 @@ int main(){
 
             pellet.reset();
 
-            BackG_Wii.stop();
+            soundManager.BackG_Wii.stop();
             if(setting.Effect)
             {
-                Button_click.play();
-                Mac_start.play();
+                soundManager.Button_click.play();
+                soundManager.start_Game.play();
             }
 
                 if(setting.Music){
                     switch(setting.Track){
                         case 1:
-                            BackG_Pizza.play();
+                            soundManager.BackG_Pizza.play();
                             break;
                         case 2:
-                            BackG_Subwooder.play();
+                            soundManager.BackG_Subwooder.play();
                             break;
                         case 3:
-                            BackG_Sweden.play();
+                            soundManager.BackG_Sweden.play();
                             break;
                     }
                 }
@@ -1441,28 +1292,9 @@ int main(){
         }
     }
 
-        if(pacman.teleporter() && setting.Effect){
-            XP_Tele.play();
-        }
 
-        // red teleporter
-        if(rGhost.teleporter() && setting.Effect){
-            XP_Tele.play();
-        }
-
-        // orange teleporter
-        if(oGhost.teleporter() && setting.Effect){
-            XP_Tele.play();
-        }
-
-        // blue teleporter
-        if(bGhost.teleporter() && setting.Effect){
-            XP_Tele.play();
-        }
-
-        // pink teleporter
-        if(pGhost.teleporter() && setting.Effect){
-            XP_Tele.play();
+        if((pacman.teleporter() | rGhost.teleporter() | oGhost.teleporter() | bGhost.teleporter() | pGhost.teleporter())&& setting.Effect){
+            soundManager.teleport_Game.play();
         }
 
 
@@ -1486,7 +1318,6 @@ int main(){
 
 
         //Red
-        //rGhost.followPath(Red_PathCol[1],Red_PathRow[1]);
         if(redNode.size()>1)
          rGhost.followPath(redNode[1].col,redNode[1].row);
 
@@ -1503,45 +1334,42 @@ int main(){
          pGhost.followPath(pinkNode[1].col,pinkNode[1].row);
 
 
-        // --Dot Hittest--
-
-        for (int i = 0; i < pellet.Dot.size(); i++){
-            if(pacman.sprite.getGlobalBounds().intersects(pellet.Dot[i].getGlobalBounds())){
-
-                pellet.Dot[i].setPosition(pellet.Dot[i].getPosition().x+1000,pellet.Dot[i].getPosition().y);
-
-                pellet.dotsEaten ++;
-                score +=5;
-
-                if(setting.Effect){
-                    Dot_Chomp.play();
-                }
+        // --Dot Hit Test--
+        if(pellet.dotHit(pacman.sprite)){
+            score +=5;
+            if(setting.Effect){
+                soundManager.Dot_Chomp.play();
             }
         }
 
+        // --Powerup Hit Test--
+        if(pellet.powerHit(pacman.sprite)){
 
-        for (int i = 0; i < pellet.PowerUp.size(); i++){
-            if(pacman.sprite.getGlobalBounds().intersects(pellet.PowerUp[i].getGlobalBounds())){
+            pellet.PowerUpEaten ++;
 
-                pellet.PowerUp[i].setPosition(-100,-100);
-                pellet.PowerUpEaten ++;
-
-                if(setting.Effect){
-                    PowerSound.play();
-                }
-
-                gsManager.GhostScared = true;
-                gsManager.powerUpTimer = 0;
-
-                score +=25;
-
-                rGhost.changeState(SCARED);
-                oGhost.changeState(SCARED);
-                bGhost.changeState(SCARED);
-                pGhost.changeState(SCARED);
+            if(setting.Effect){
+                soundManager.Power_Chomp.play();
             }
+
+            gsManager.GhostScared = true;
+            gsManager.powerUpTimer = 0;
+
+            score +=25;
+
+            rGhost.changeState(SCARED);
+            oGhost.changeState(SCARED);
+            bGhost.changeState(SCARED);
+            pGhost.changeState(SCARED);
         }
 
+        // -- Berry Hite Test --
+        if(pellet.berryHit(pacman.sprite)){
+
+            score +=10;
+            if(setting.Effect){
+                soundManager.Berry_Chomp.play();
+            }
+        }
 
 
         rGhost.scaredStop(gsManager.powerUpTimer);
@@ -1571,7 +1399,7 @@ int main(){
 
                         if(setting.Effect)
                         {
-                            Yay.play();
+                            soundManager.Eat_Ghost.play();
                         }
 
                         ghosts[i]->changeState(DEAD);
@@ -1579,13 +1407,13 @@ int main(){
 
                     }else if(ghosts[i]->state != DEAD){
 
-                        BackG_Pizza.pause();
-                        BackG_Subwooder.pause();
-                        BackG_Sweden.pause();
+                        soundManager.BackG_Pizza.pause();
+                        soundManager.BackG_Subwooder.pause();
+                        soundManager.BackG_Sweden.pause();
 
                         if(setting.Effect)
                         {
-                            Dead.play();
+                            soundManager.Dead.play();
                         }
 
                         pacman.dead = true;
@@ -1593,20 +1421,6 @@ int main(){
                 }
             }
         }
-
-
-        if(pacman.sprite.getGlobalBounds().intersects(Berry.getGlobalBounds()))
-        {
-
-            Berry.setPosition(1000,1000);
-            score +=10;
-
-            if(setting.Effect)
-            {
-                Fortnite_Clap.play();
-            }
-        }
-
 
 
         if(gsManager.ghostState  == 60*5 ||  gsManager.ghostState  == 60*30||  gsManager.ghostState  == 60*55||  gsManager.ghostState  == 60*80){
@@ -1639,7 +1453,7 @@ int main(){
 
             if(setting.Effect)
             {
-                Mac_start.play();
+                soundManager.start_Game.play();
             }
 
             Level++;
@@ -1680,13 +1494,13 @@ int main(){
             if(setting.Music){
                 switch(setting.Track){
                     case 1:
-                        BackG_Pizza.play();
+                        soundManager.BackG_Pizza.play();
                         break;
                     case 2:
-                        BackG_Subwooder.play();
+                        soundManager.BackG_Subwooder.play();
                         break;
                     case 3:
-                        BackG_Sweden.play();
+                        soundManager.BackG_Sweden.play();
                         break;
                 }
             }
@@ -1698,14 +1512,14 @@ int main(){
             PacLives--;
 
             if(setting.Effect){
-                XP_End.play();
+                soundManager.gameOver.play();
             }
 
             SaveHS(highscore,score,HSString,NewHS);
 
-            BackG_Pizza.stop();
-            BackG_Subwooder.stop();
-            BackG_Sweden.stop();
+            soundManager.BackG_Pizza.stop();
+            soundManager.BackG_Subwooder.stop();
+            soundManager.BackG_Sweden.stop();
 
             gsManager.changeState(GameStates::GAMEOVER);
         }
@@ -1713,6 +1527,9 @@ int main(){
         scoreUpdate(HsDis, scoreDis, score, highscore, scoreShow, HSString);
 
         pellet.animate(gsManager.glowTimer);
+
+        pellet.spawnBerry(berryTextures,gsManager.berryTimer);
+
 
         if(gsManager.TitlePacTimer < 10){
             TitlePacMan.setTexture(PacTexture2);
@@ -1722,11 +1539,8 @@ int main(){
         }
 
 
-        BerryPlace(Berry, gsManager.berryTimer);
-
-
         if(gsManager.endGame() && setting.Music){
-            BackG_Wii.play();
+            soundManager.BackG_Wii.play();
         }
 
 
@@ -1810,11 +1624,11 @@ int main(){
                     }
                 }
 
-                for(int i = 0; i<pellet.Dot.size(); i++){
+                for(int i = 0; i< pellet.DOTS; i++){
                     window.draw(pellet.Dot[i]);
                 }
 
-                for(int i = 0; i<4; i++){
+                for(int i = 0; i< pellet.POWERUPS; i++){
                     window.draw(pellet.PowerUp[i]);
                 }
 
@@ -1826,7 +1640,7 @@ int main(){
                 window.draw(pacman.sprite);
 
                 window.draw(scoreDis);
-                window.draw(Berry);
+                window.draw(pellet.Berry);
 
 
                 for(int i = 0; i<PacLife.size(); i++){

@@ -33,7 +33,11 @@ return false;
 }
 
 
-
+/**
+* determines the avaliable directions that do not contain a wall
+* @n current node, this contains row,col, and direction
+* @return vector of Node directions
+*/
 std::vector<Node> Pathing::avaliableDirections(Node n){
 
         int r = n.row;
@@ -45,28 +49,28 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
 
         if(conf::GameMatrix[r-1][c] != 1&& n.direction != DOWN){
             if(isValid(r-1,c)){
-                current = Node(r-1,c);
+                current = Node(r-1,c,UP);
                 dirs.push_back(current);// up
             }
         }
 
         if(conf::GameMatrix[r][c-1] != 1&& n.direction != RIGHT){
             if(isValid(r,c-1)){
-                current = Node(r,c-1);
+                current = Node(r,c-1,LEFT);
                 dirs.push_back(current);//cout<<"Left ";
             }
         }
 
         if(conf::GameMatrix[r+1][c] != 1 && n.direction != UP){
             if(isValid(r+1,c)){
-                current = Node(r+1,c);
+                current = Node(r+1,c,DOWN);
                 dirs.push_back(current);//cout<<"Down ";
             }
         }
 
         if(conf::GameMatrix[r][c+1] != 1 && n.direction != LEFT){
             if(isValid(r,c+1)){
-                current = Node(r,c+1);
+                current = Node(r,c+1,RIGHT);
                 dirs.push_back(current);//cout<<"Right ";
             }
         }

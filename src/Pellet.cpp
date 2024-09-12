@@ -23,6 +23,9 @@ Pellet::Pellet()
         PowerUp.push_back(tempPowerUp);
     }
 
+    Berry.setScale(2.f, 2.f);
+    Berry.setPosition(1000,1000);
+
     reset();
 }
 
@@ -72,4 +75,63 @@ void Pellet::animate(int &glowTimer){
         glowTimer = 0;
     }
 }
+
+
+bool Pellet::dotHit(sf::Sprite pac){
+
+    for (int i = 0; i < DOTS; i++){
+        if(pac.getGlobalBounds().intersects(Dot[i].getGlobalBounds())){
+
+            Dot[i].setPosition(Dot[i].getPosition().x+1000,0);
+
+            dotsEaten ++;
+            //score +=5;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool Pellet::powerHit(sf::Sprite pac){
+
+    for (int i = 0; i < POWERUPS; i++){
+        if(pac.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds())){
+
+            PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,0);
+
+            PowerUpEaten ++;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool Pellet::berryHit(sf::Sprite pac){
+
+    if(pac.getGlobalBounds().intersects(Berry.getGlobalBounds())){
+
+            Berry.setPosition(1000,1000);
+            return true;
+    }
+    return false;
+}
+
+
+
+void Pellet::spawnBerry(sf::Texture *berryTextures, int Berrytimer){
+
+    if(Berrytimer == 120){
+
+        int randtemp = rand()%7;
+
+        Berry.setTexture(berryTextures[randtemp]);
+
+        Berry.setPosition(522/2,620/2);
+    }
+
+}
+
+
 

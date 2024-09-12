@@ -4,13 +4,10 @@
 
 Ghost::Ghost(){
 
-    sprite.setOrigin(15,15);
+    sprite.setOrigin(14,14);
 
     reset();
 
-    // vector<vector<int>> solution(870);
-    // vector<int> PathCol;
-    // vector<int> PathRow;
 }
 
 
@@ -73,16 +70,20 @@ void Ghost::followPath(int PathRow, int PathCol){
     if(rowMulti == 0){
         if(colMulti>0){
             tempDir = DOWN;
+            colMulti = 1;
         }else{
             tempDir = UP;
+            colMulti = -1;
         }
     }
 
     if(colMulti == 0){
         if(rowMulti>0){
             tempDir = RIGHT;
+            rowMulti = 1;
         }else{
             tempDir = LEFT;
+            rowMulti = -1;
         }
     }
 
