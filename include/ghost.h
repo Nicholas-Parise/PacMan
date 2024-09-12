@@ -21,6 +21,7 @@ class Ghost: public Entity{
         void changeState(States s);
         void followPath(int PathRow, int PathCol);
         void scaredStop(int powerUpTimer);
+        void outOfSpawn();
         bool isOppositeDirection(Directions a, Directions b);
         //sf::Texture &textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);
         void textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);

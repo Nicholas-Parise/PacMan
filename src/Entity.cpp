@@ -36,12 +36,12 @@ void Entity::updateOldRC(){
 bool Entity::teleporter(){
 
     if(sprite.getPosition().x<20 && direction == LEFT){
-        sprite.setPosition(522,269.887096835);
+        sprite.setPosition(510,269);
         return true;
     }
 
-    if(sprite.getPosition().x>512 && direction == RIGHT){
-        sprite.setPosition(10,269.887096835);
+    if(sprite.getPosition().x>500 && direction == RIGHT){
+        sprite.setPosition(10,269);
         return true;
     }
 

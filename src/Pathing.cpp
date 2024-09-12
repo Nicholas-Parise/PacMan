@@ -1,4 +1,3 @@
-
 #include "Pathing.h"
 
 class Compare{
@@ -44,28 +43,28 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
 
         // is not in range
 
-        if(conf::GameMatrix[r-1][c] != 1){//&& CurrentDirection != DOWN){
+        if(conf::GameMatrix[r-1][c] != 1&& n.direction != DOWN){
             if(isValid(r-1,c)){
                 current = Node(r-1,c);
                 dirs.push_back(current);// up
             }
         }
 
-        if(conf::GameMatrix[r][c-1] != 1){//&& CurrentDirection != RIGHT){
+        if(conf::GameMatrix[r][c-1] != 1&& n.direction != RIGHT){
             if(isValid(r,c-1)){
                 current = Node(r,c-1);
                 dirs.push_back(current);//cout<<"Left ";
             }
         }
 
-        if(conf::GameMatrix[r+1][c] != 1){// && CurrentDirection != UP){
+        if(conf::GameMatrix[r+1][c] != 1 && n.direction != UP){
             if(isValid(r+1,c)){
                 current = Node(r+1,c);
                 dirs.push_back(current);//cout<<"Down ";
             }
         }
 
-        if(conf::GameMatrix[r][c+1] != 1){// && CurrentDirection != LEFT){
+        if(conf::GameMatrix[r][c+1] != 1 && n.direction != LEFT){
             if(isValid(r,c+1)){
                 current = Node(r,c+1);
                 dirs.push_back(current);//cout<<"Right ";
@@ -79,13 +78,15 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
     /**
      * uses dijkstra algorithm to find the shortest path between two nodes
      * @param start starting node
-     * @param finsh ending node
+     * @param finish ending node
      * @return list of steps to get from start to finish
      * distance is always 1 beucase it's a grid
      */
-    std::vector<Node> Pathing::shortestPath(Node start, Node finsh){
+    std::vector<Node> Pathing::shortestPath(Node start, Node finish){
 
         Node current;
+        std::vector<Node> sequence;
+        std::priority_queue<Node, std::vector<Node>, Compare> pqueue;
 
         // reset arrays
         for (int i = 0; i < conf::VERTEX; i++) {
@@ -93,9 +94,6 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
             prev[i] = nullNode;
         }
 
-        std::priority_queue<Node, std::vector<Node>, Compare> pqueue;
-
-        std::vector<Node> sequence;
         dist[start.getId()] = 0;
         start.priority = 0;  // we set the priority to 0
         pqueue.push(start);   // and we add the start node to the queue
@@ -106,8 +104,7 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
             current = pqueue.top(); // get top node
             pqueue.pop();   // and remove it
 
-
-            if(current.equals(finsh)){ // if it found the end
+            if(current.equals(finish)){ // if it found the end
 
                 while(!current.equals(nullNode)){
                     sequence.insert(sequence.begin(),current); // go through all the previous nodes and find the path
@@ -117,7 +114,6 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
             }
 
             for (Node v : avaliableDirections(current)) { // Go through all v neighbors of "current"
-            //    cout<<"neighbours: "<<v.print()<<endl;
 
                 int altDist = dist[current.getId()] + 1;
 
@@ -131,5 +127,25 @@ std::vector<Node> Pathing::avaliableDirections(Node n){
             }
         }
 
-        return sequence; // failed
+        start.direction = NONE;
+        return scaredSolver(start); // failed but prevents going through walls
     }
+
+
+    std::vector<Node> Pathing::scaredSolver(Node start){
+
+        start.direction = NONE;
+        std::vector<Node> sequence;
+        std::vector<Node> temp = avaliableDirections(start);
+        int value = (rand()%temp.size());
+
+        sequence.push_back(start);
+
+        //std::cout<<temp.size()<<" "<<value<<std::endl;
+        sequence.push_back(temp[value]);
+        return sequence;
+    }
+
+
+
+

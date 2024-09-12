@@ -2,14 +2,8 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Directions.h"
 
-   enum Directions{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    NONE
-    };
 
 class Entity
 {

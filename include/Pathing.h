@@ -2,10 +2,12 @@
 #define PATHING_H
 
 #pragma once
-#include "Node.h"
-#include "configuration.h"
 #include <vector>
 #include <queue>
+#include "Node.h"
+#include "configuration.h"
+#include "Directions.h"
+#include <iostream>
 
 class Pathing
 {
@@ -13,6 +15,7 @@ class Pathing
         Pathing();
         virtual ~Pathing();
         std::vector<Node> shortestPath(Node start, Node finsh);
+        std::vector<Node> scaredSolver(Node start);
 
     protected:
 

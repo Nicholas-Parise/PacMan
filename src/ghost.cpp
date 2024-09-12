@@ -40,7 +40,7 @@ void Ghost::changeState(States s){
 
     if(state != DEAD){
         state = s;
-        direction = NONE;
+        //direction = NONE;
     }
 }
 
@@ -114,6 +114,16 @@ void Ghost::scaredStop(int powerUpTimer) {
 }
 
 
+void Ghost::outOfSpawn(){
+
+    if(row == conf::GhostHomeRow && col == conf::GhostHomeCol+3 && state == DEAD){
+        state = SCATTER;
+        direction = NONE;
+    }
+}
+
+
+
 void Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer){
 
     int offset = 0;
@@ -145,6 +155,7 @@ void Ghost::textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextu
     if(this->state != SCARED){
         switch(direction){
 
+            case NONE:
             case LEFT:
                 tex = &(textures[0+offset]);
                 break;

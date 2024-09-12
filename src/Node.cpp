@@ -1,9 +1,18 @@
 #include "Node.h"
 
+
+Node::Node(int r, int c, Directions d)
+{
+    row = r;
+    col = c;
+    direction = d;
+}
+
 Node::Node(int r, int c)
 {
     row = r;
     col = c;
+    direction = NONE;
 }
 
 
@@ -11,6 +20,7 @@ Node::Node()
 {
     row = 0;
     col = 0;
+    direction = NONE;
 }
 
 bool Node::equals(Node a){

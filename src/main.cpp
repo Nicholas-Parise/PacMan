@@ -20,6 +20,7 @@
 #include "Node.h"
 #include "configuration.h"
 #include "Pathing.h"
+#include "Pellet.h"
 
 using namespace std;
 
@@ -28,652 +29,6 @@ using namespace std;
 
 //https://www.codesdope.com/blog/article/backtracking-to-solve-a-rat-in-a-maze-c-java-pytho/
 //https://www.youtube.com/watch?v=ataGotQ7ir8
-
-
-
-void printsolution(int solutionRow,int solutionCol,int StartRow,int StartCol,vector<vector<int>> &solution,vector<vector<int>> maze)
-{
-//function to print the solution matrix
-    cout<<endl;
-    int i,j;
-    for(i=0; i<conf::SIZEY; i++)
-    {
-        for(j=0; j<conf::SIZEX; j++)
-        {
-
-            if(solutionCol == i && solutionRow == j)
-            {
-                cout<<"@ ";
-            }
-            else if(StartCol == i && StartRow == j)
-            {
-                cout<<"$ ";
-            }
-            else if(maze[i][j]== 1)
-            {
-                cout<<"||";
-            }
-            else
-            {
-                cout<<" "<<solution[i][j];
-            }
-
-        }
-        cout<<endl;
-    }
-}
-
-
-int SmallestDistance(int Start, int Solution)
-{
-
-    int Number;
-
-    if(Start>Solution)
-    {
-        Number = Start - Solution;
-    }
-    else
-    {
-
-        Number = Solution - Start;
-    }
-
-    return Number;
-}
-
-
-
-
-
-class Compare{
-    public:
-        bool operator() (Node a, Node b){
-            return (a.priority > b.priority);
-        }
-};
-
-
-
-
-
-bool isValid(int r, int c){
- if(r<conf::SIZEY && r>=0 && c<conf::SIZEX && c>=0){
-        return true;
- }
-
-return false;
-}
-
-
-
-vector<Node> avaliableDirections(Node n, Directions CurrentDirection){
-
-        int r = n.row;
-        int c = n.col;
-        Node current;
-        vector<Node> sequence;
-
-        // is not in range
-
-        if(conf::GameMatrix[r-1][c] != 1&& CurrentDirection != DOWN){
-            if(isValid(r-1,c)){
-                current = Node(r-1,c);
-                sequence.push_back(current);
-                // up
-            }
-        }
-
-        if(conf::GameMatrix[r][c-1] != 1&& CurrentDirection != RIGHT){
-            if(isValid(r,c-1)){
-                current = Node(r,c-1);
-                sequence.push_back(current);
-                //cout<<"Left ";
-            }
-        }
-
-        if(conf::GameMatrix[r+1][c] != 1 && CurrentDirection != UP){
-            if(isValid(r+1,c)){
-                current = Node(r+1,c);
-                sequence.push_back(current);
-                //cout<<"Down ";
-            }
-        }
-
-        if(conf::GameMatrix[r][c+1] != 1 && CurrentDirection != LEFT){
-            if(isValid(r,c+1)){
-                current = Node(r,c+1);
-                sequence.push_back(current);
-                //cout<<"Right ";
-            }
-        }
-
-        return sequence;
-    }
-
-
-/**
-     * uses dijkstra algorithm to find the shortest path between two nodes
-     * @param start starting node
-     * @param endN ending node
-     * @return list of steps to get from start to finish
-*/
-     // distance is always 1 beucase it's a grid
-    vector<Node> shortestPath(Node start, Node endN){
-
-        int V = conf::SIZEY*conf::SIZEX;
-        Node nullNode(-1,-1);
-        Node current;
-
-        int dist[V]; //= {INT_MAX};
-        Node prev[V]; //= {nullNode};
-
-      //  cout<<"test"<<endl;
-
-        priority_queue<Node, vector<Node>, Compare> pqueue;
-
-        vector<Node> sequence;
-        dist[start.getId()] = 0;
-        start.priority = 0;  // we set the priority to 0
-        pqueue.push(start);   // and we add the start node to the queue
-
-        // populate arrays
-        for (int i = 0; i < V; i++) {
-            if(i!=start.getId()) {
-                dist[i] = INT_MAX;
-                prev[i] = nullNode;
-            }
-        }
-
-
-        while (!pqueue.empty()){
-
-            current = pqueue.top(); // get top node
-            pqueue.pop();   // and remove it
-
-          //  cout<<"current: "<<current.print()<<endl;
-
-            if(current.equals(endN)){
-                    // found the end
-                while(!current.equals(nullNode)){
-                    sequence.insert(sequence.begin(),current);
-                    current = prev[current.getId()];
-                }
-                return sequence;
-            }
-
-            for (Node v : avaliableDirections(current,NONE)) { // Go through all v neighbors of "current"
-            //    cout<<"neighbours: "<<v.print()<<endl;
-
-                int altDist = dist[current.getId()] + 1;
-
-                if(altDist < dist[v.getId()]){ // if the new distance is better than the previous
-
-                    dist[v.getId()] = altDist; // change distance
-                    prev[v.getId()] = current; // add to the previous array (for path finding)
-                    v.priority = altDist;
-                    pqueue.push(v); // add node to the queue and set the priority to the distance
-                }
-            }
-        }
-
-
-        return sequence; // failed
-    }
-
-
-
-
-int solvemaze(int r, int c, int solutionCol, int solutionRow, Directions CurrentDirection, vector<vector<int>> &solution, vector<int> &PathCol, vector<int> &PathRow)
-{
-
-    //if destination is reached, maze is solved
-    //destination is the last cell(maze[SIZE-1][SIZE-1])
-    if((r==solutionRow) && (c==solutionCol))
-    {
-        solution[r][c] = 1;
-        PathCol.push_back(c);
-        PathRow.push_back(r);
-        return 1;
-    }
-    //checking if we can visit in this cell or not
-    //the indices of the cell must be in (0,SIZE-1)
-    //and solution[r][c] == 0 is making sure that the cell is not already visited
-    //maze[r][c] == 0 is making sure that the cell is not blocked
-    if(r>=0 && c>=0 && r<conf::SIZEY && c<conf::SIZEX && solution[r][c] == 0 && conf::GameMatrix[r][c] != 1)
-    {
-        //  if(r>=0 && c>=0 && r<SIZEY && c<SIZEX) {
-
-        //if safe to visit then visit the cell
-        solution[r][c] = 1;
-
-        PathCol.push_back(c);
-        PathRow.push_back(r);
-
-        //cout<<endl;
-        // cout<<"---------------"<<endl;
-
-        int BaseRow = SmallestDistance(r, solutionRow);
-        int BaseCol = SmallestDistance(c, solutionCol);
-        int BaseScore = (BaseRow*BaseRow)+(BaseCol*BaseCol);
-
-
-        int RigthCol = SmallestDistance(c+1, solutionCol);
-        int RigthScore = (BaseRow*BaseRow)+(RigthCol*RigthCol);
-
-        int LeftCol = SmallestDistance(c-1, solutionCol);
-        int LeftScore = (BaseRow*BaseRow)+(LeftCol*LeftCol);
-
-        int UpRow = SmallestDistance(r-1, solutionRow);
-        int UpScore = (UpRow*UpRow)+(BaseCol*BaseCol);
-
-        int DownRow = SmallestDistance(r+1, solutionRow);
-        int DownScore = (DownRow*DownRow)+(BaseCol*BaseCol);
-
-
-        vector<int> AllScores = {UpScore,LeftScore,DownScore,RigthScore};
-
-        vector<int> AllScoresTemp = AllScores;
-
-        std::sort(AllScoresTemp.begin(), AllScoresTemp.end());
-
-        int lowest = AllScoresTemp[0];
-        int SecondLowest = AllScoresTemp[1];
-        int ThridLowest = AllScoresTemp[2];
-        int Highest = AllScoresTemp[3];
-
-        bool CanGoDown = false;
-        bool CanGoUp = false;
-        bool CanGoLeft = false;
-        bool CanGoRight = false;
-
-        for(int i = 0; i<4; i++)
-        {
-
-            if(AllScores[i] == lowest)
-            {
-                lowest = i;
-                break;
-            }
-        }
-
-        for(int i = 0; i<4; i++)
-        {
-
-            if(AllScores[i] == SecondLowest )
-            {
-
-                if(i!= lowest)
-                {
-                    SecondLowest = i;
-                    break;
-                }
-            }
-        }
-
-        for(int i = 0; i<4; i++)
-        {
-
-            if(AllScores[i] == ThridLowest)
-            {
-                if(i !=SecondLowest)
-                {
-                    ThridLowest = i;
-                    break;
-                }
-            }
-        }
-
-        for(int i = 0; i<4; i++)
-        {
-
-            if(AllScores[i] == Highest)
-            {
-                if( i !=ThridLowest)
-                {
-                    Highest = i;
-                    break;
-                }
-            }
-        }
-
-
-
-//cout<<"Can Go: ";
-        if(solution[r-1][c] == 0 && conf::GameMatrix[r-1][c] != 1&& CurrentDirection != DOWN)
-        {
-            CanGoUp = true;
-//cout<<"Up ";
-        }
-
-        if(solution[r][c-1] == 0 && conf::GameMatrix[r][c-1] != 1&& CurrentDirection != RIGHT)
-        {
-            CanGoLeft = true;
-//cout<<"Left ";
-        }
-
-        if(solution[r+1][c] == 0 && conf::GameMatrix[r+1][c] != 1 && CurrentDirection != UP)
-        {
-            CanGoDown = true;
-//cout<<"Down ";
-        }
-
-        if(solution[r][c+1] == 0 && conf::GameMatrix[r][c+1] != 1 && CurrentDirection != LEFT)
-        {
-            CanGoRight = true;
-//cout<<"Right ";
-        }
-
-//cout<<endl;
-
-
-
-
-//cout<<"Did Go: ";
-//        if(CanGoUp == true && lowest == 2) {
-
-        if(CanGoUp == true && lowest == 0)
-        {
-//cout<<"Up ";
-            if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow))
-                return 1;
-
-        }
-        else if(CanGoLeft == true && lowest == 1)
-        {
-//cout<<"Left ";
-            if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow))
-                return 1;
-
-//        } else if(CanGoDown == true && lowest == 3) {
-        }
-        else if(CanGoDown == true && lowest == 2)
-        {
-
-//cout<<"Down ";
-            if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow))
-                return 1;
-
-            //  } else if(CanGoRight == true && lowest == 0) {
-        }
-        else if(CanGoRight == true && lowest == 3)
-        {
-//cout<<"Right ";
-            if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow))
-                return 1;
-
-        }
-        else
-        {
-
-
-
-            //  if(CanGoUp == true && SecondLowest == 2) {
-            if(CanGoUp == true && SecondLowest == 0)
-            {
-//cout<<"Up ";
-                if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow))
-                    return 1;
-
-            }
-            else if(CanGoLeft == true && SecondLowest == 1)
-            {
-
-//cout<<"Left "<<c-1;
-                if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow))
-                    return 1;
-
-                //} else if(CanGoDown == true && SecondLowest == 3) {
-
-            }
-            else if(CanGoDown == true && SecondLowest == 2)
-            {
-//cout<<"Down ";
-                if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow))
-                    return 1;
-
-                // } else if(CanGoRight == true && SecondLowest == 0) {
-
-            }
-            else if(CanGoRight == true && SecondLowest == 3)
-            {
-
-//cout<<"Right "<<c+1;
-                if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow))
-                    return 1;
-
-            }
-            else
-            {
-
-
-
-//                if(CanGoUp == true && ThridLowest == 2) {
-
-                if(CanGoUp == true && ThridLowest == 0)
-                {
-
-//cout<<"Up ";
-                    if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow))
-                        return 1;
-
-                }
-                else if(CanGoLeft == true && ThridLowest == 1)
-                {
-//cout<<"Left "<<c-1;
-                    if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow))
-                        return 1;
-
-                    //  } else if(CanGoDown == true && ThridLowest == 3) {
-
-                }
-                else if(CanGoDown == true && ThridLowest == 2)
-                {
-
-//cout<<"Down ";
-                    if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow))
-                        return 1;
-
-//               } else if(CanGoRight == true && ThridLowest == 0) {
-
-                }
-                else if(CanGoRight == true && ThridLowest == 3)
-                {
-//cout<<"Right "<<c+1;
-                    if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow))
-                        return 1;
-                }
-                else
-                {
-
-
-
-                    //if(CanGoUp == true && Highest == 2) {
-                    if(CanGoUp == true && Highest == 0)
-                    {
-//cout<<"Up ";
-                        if(solvemaze((r-1), c, solutionCol, solutionRow,UP,solution,PathCol,PathRow))
-                            return 1;
-
-                    }
-                    else if(CanGoLeft == true && Highest == 1)
-                    {
-//cout<<"Left ";
-                        if(solvemaze(r, (c-1), solutionCol, solutionRow,LEFT,solution,PathCol,PathRow))
-                            return 1;
-
-                        // } else if(CanGoDown == true && Highest == 3) {
-                    }
-                    else if(CanGoDown == true && Highest == 2)
-                    {
-
-//cout<<"Down ";
-                        if(solvemaze((r+1), c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow))
-                            return 1;
-
-                        //  } else if(CanGoRight == true && Highest == 0) {
-
-                    }
-                    else if(CanGoRight == true && Highest == 3)
-                    {
-//cout<<"Right ";
-                        if(solvemaze(r, (c+1), solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow))
-                            return 1;
-
-                    }
-                    else
-                    {
-
-
-
-                        if(CanGoDown == false && CanGoUp == false && CanGoLeft == false && CanGoRight == true)
-                        {
-
-                            //cout<<"Right ";
-                            if(solvemaze(r, c+1, solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow))
-                                return 1;
-                        }
-
-                        if(CanGoDown == false && CanGoUp == false && CanGoLeft == true && CanGoRight == false)
-                        {
-
-                            //cout<<"Left ";
-                            if(solvemaze(r, c-1, solutionCol, solutionRow,LEFT,solution,PathCol,PathRow))
-                                return 1;
-                        }
-
-                        if(CanGoDown == false && CanGoUp == true && CanGoLeft == false && CanGoRight == false)
-                        {
-
-                            //cout<<"Up ";
-                            if(solvemaze(r-1, c, solutionCol, solutionRow,UP,solution,PathCol,PathRow))
-                                return 1;
-                        }
-
-                        if(CanGoDown == true && CanGoUp == false && CanGoLeft == false && CanGoRight == false)
-                        {
-
-                            //cout<<"Down ";
-                            if(solvemaze(r+1, c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow))
-                                return 1;
-                        }
-                    }
-                }
-            }
-        }
-
-        //cout<<"It fucked up!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-
-
-        return 1;
-
-        // This is a last resort if the algorithm seriously messes up this may help to solve the maze
-
-
-        //going up
-        if(solution[r-1][c] == 0 && conf::GameMatrix[r-1][c] != 1&& CurrentDirection !=DOWN)
-        {
-            //cout<<"Up ";
-            if(solvemaze(r-1, c, solutionCol, solutionRow,UP,solution,PathCol,PathRow))
-                return 1;
-        }
-        //going left
-        if(solution[r][c-1] == 0 && conf::GameMatrix[r][c-1] != 1&& CurrentDirection !=RIGHT)
-        {
-            //cout<<"Left ";
-            if(solvemaze(r, c-1, solutionCol, solutionRow,LEFT,solution,PathCol,PathRow))
-                return 1;
-        }
-
-        //going down
-        if(solution[r+1][c] == 0 && conf::GameMatrix[r+1][c] != 1 && CurrentDirection !=UP)
-        {
-            //cout<<"Down ";
-            if(solvemaze(r+1, c, solutionCol, solutionRow,DOWN,solution,PathCol,PathRow))
-                return 1;
-        }
-
-        //going right
-        if(solution[r][c+1] == 0 && conf::GameMatrix[r][c+1] != 1 && CurrentDirection !=LEFT)
-        {
-            //cout<<"Right ";
-            if(solvemaze(r, c+1, solutionCol, solutionRow,RIGHT,solution,PathCol,PathRow))
-                return 1;
-        }
-
-
-
-
-        //backtracking
-        //  solution[r][c] = 0;
-        return 0;
-    }
-    return 0;
-
-}
-
-
-
-
-void ScaredSolver(int r, int c, Directions CurrentDirection,vector<vector<int>> &solution,vector<int> &PathCol, vector<int> &PathRow){
-
-    solution[r][c] = 1;
-    PathCol.push_back(c);
-    PathRow.push_back(r);
-
-    float prob = 0.50;
-
-    while(true){
-
-        prob -= 0.05;
-
-        if(solution[r-1][c] == 0 && conf::GameMatrix[r-1][c] != 1 && CurrentDirection !=DOWN){
-            //up
-            if(rand() >= prob){
-                solution[r-1][c] = 1;
-                PathCol.push_back(c);
-                PathRow.push_back(r-1);
-                return;
-            }
-        }
-
-        if(solution[r][c-1] == 0 && conf::GameMatrix[r][c-1] != 1&& CurrentDirection !=RIGHT)
-        {
-            //left
-            if(rand() >= prob){
-                solution[r][c-1] = 1;
-                PathCol.push_back(c-1);
-                PathRow.push_back(r);
-                return;
-            }
-        }
-
-        if(solution[r+1][c] == 0 && conf::GameMatrix[r+1][c] != 1 && CurrentDirection !=UP)
-        {
-            //down
-            if(rand() >= prob){
-                solution[r+1][c] = 1;
-                PathCol.push_back(c);
-                PathRow.push_back(r+1);
-                return;
-            }
-        }
-
-        if(solution[r][c+1] == 0 && conf::GameMatrix[r][c+1] != 1 && CurrentDirection !=LEFT)
-        {
-            //right
-            if(rand() >= prob){
-                solution[r][c+1] = 1;
-                PathCol.push_back(c+1);
-                PathRow.push_back(r);
-                return;
-            }
-        }
-    }
-
-    return;
-}
-
 
 
 
@@ -718,8 +73,7 @@ sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight){
 bool isSpriteHover(sf::FloatRect Button, sf::Vector2f mp)
 {
 
-    if (Button.contains(mp))
-    {
+    if (Button.contains(mp)){
         return true;
     }
 
@@ -754,9 +108,9 @@ vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::Recta
     return RowColArray;
 }
 
-vector<string> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
+vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
 
-    std::vector<string> AvallibleDir;
+    std::vector<Directions> AvallibleDir;
 
     //1 is a wall
 
@@ -771,7 +125,7 @@ vector<string> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
         }
         else
         {
-            AvallibleDir.push_back("Up");
+            AvallibleDir.push_back(UP);
         }
     }
 
@@ -784,7 +138,7 @@ vector<string> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
     }
     else
     {
-        AvallibleDir.push_back("Down");
+        AvallibleDir.push_back(DOWN);
     }
 
 
@@ -799,7 +153,7 @@ vector<string> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
     }
     else
     {
-        AvallibleDir.push_back("Left");
+        AvallibleDir.push_back(LEFT);
     }
 
 
@@ -814,7 +168,7 @@ vector<string> WallTest(int Row, int Col, Directions currentDur, bool &Stop){
     }
     else
     {
-        AvallibleDir.push_back("Right");
+        AvallibleDir.push_back(RIGHT);
     }
 
 
@@ -884,74 +238,6 @@ bool CenterOfTile(int Row, int Col, string currentDur, sf::Sprite GameSprite, bo
 
 
 
-bool OutOfTheCloset(int GhostRow, int GhostCol, vector<int> &PathCol, vector<int> &PathRow, int HouseRow, int HouseCol, bool GhostDead){
-
-    //Makes it go down
-    if(GhostCol == HouseCol && GhostRow == HouseRow && GhostDead == true)
-    {
-
-        PathCol[1] = HouseRow;
-        PathRow[1] = HouseCol+1;
-
-
-    }
-
-
-    if(GhostCol == HouseCol+1 && GhostRow == HouseRow && GhostDead == true)
-    {
-
-        PathCol[1] = HouseRow;
-        PathRow[1] = HouseCol+2;
-
-
-    }
-
-
-    if(GhostCol == HouseCol+2 && GhostRow == HouseRow && GhostDead == true)
-    {
-
-        PathCol[1] = HouseRow;
-        PathRow[1] = HouseCol+3;
-
-
-    }
-
-
-    //Makes it go Up
-    if(GhostCol == HouseCol+3 && GhostRow == HouseRow)
-    {
-
-        PathCol[1] = HouseRow;
-        PathRow[1] = HouseCol+2;
-
-
-
-        return true;
-    }
-
-
-    if(GhostCol == HouseCol+2 && GhostRow == HouseRow && GhostDead == false)
-    {
-
-        PathCol[1] = HouseRow;
-        PathRow[1] = HouseCol+1;
-
-
-    }
-
-    if(GhostCol == HouseCol+1 && GhostRow == HouseRow && GhostDead == false)
-    {
-
-        PathCol[1] = HouseRow;
-        PathRow[1] = HouseCol;
-
-
-    }
-
-    return false;
-}
-
-
 void scoreUpdate(sf::Text &HsDis, sf::Text &scoreDis, int score, int highscore, string &scoreShow, string &HSString)
 {
     stringstream ss;
@@ -1004,28 +290,10 @@ void SaveHS(int &highscore, int &score,string &HSString,sf::Text &NewHS)
 }
 
 
-void PowerPelletAni(std::vector<sf::CircleShape> &PowerUp, int &glowTimer)
-{
-
-    if(glowTimer%2 == 0)
-    {
-        for(int i = 0; i<PowerUp.size(); i++){
-            PowerUp[i].setOutlineThickness(-11+(glowTimer/2));
-        }
-    }
-
-    if (glowTimer > 24)
-    {
-        glowTimer = 0;
-    }
-}
-
-
 
 void BerryPlace(sf::Sprite &Berry, int Berrytimer){
 
-    if(Berrytimer == 1200)
-    {
+    if(Berrytimer == 1200){
 
         int randtemp = rand()%7;
 
@@ -1067,27 +335,6 @@ void PlaceLives(std::vector<sf::Sprite> &PacLife){
     }
 }
 
-
-void resetDots( std::vector<sf::RectangleShape> &Dot, std::vector<sf::CircleShape> &PowerUp){
-
-    int dotplace = 0;
-    int PowerUpplace = 0;
-    for(int i = 0; i<31; i++){
-        for(int j = 0; j<28; j++){
-
-            if(conf::GameMatrix[i][j] == 0){
-                Dot[dotplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                dotplace++;
-            }
-            if(conf::GameMatrix[i][j] == 8){
-                PowerUp[PowerUpplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
-                PowerUpplace++;
-            }
-        }
-    }
-}
-
-
 int main(){
 
     sf::ContextSettings settings;
@@ -1119,31 +366,22 @@ int main(){
 
     Ghost rGhost;
     rGhost.setScatter(23,1);
-    vector<vector<int>> Red_solution(870);
-    vector<int> Red_PathCol;
-    vector<int> Red_PathRow;
     vector<Node> redNode;
 
     Ghost bGhost;
     bGhost.setScatter(29,24);
-    vector<vector<int>> Blue_solution(870);
-    vector<int> Blue_PathCol;
-    vector<int> Blue_PathRow;
+    vector<Node> blueNode;
 
 
     Ghost oGhost;
     oGhost.setScatter(3,29);
     int OrangePacDistance;
-    vector<vector<int>> Orange_solution(870);
-    vector<int> Orange_PathCol;
-    vector<int> Orange_PathRow;
+    vector<Node> orangeNode;
 
 
     Ghost pGhost;
     pGhost.setScatter(2,1);
-    vector<vector<int>> Pink_solution(870);
-    vector<int> Pink_PathCol;
-    vector<int> Pink_PathRow;
+    vector<Node> pinkNode;
 
 
     Settings setting;
@@ -1151,6 +389,8 @@ int main(){
     GameStateManager gsManager;
 
     Pathing pathing;
+
+    Pellet pellet;
 
     Ghost *ghosts[4];
     ghosts[0] = &rGhost;
@@ -1161,8 +401,6 @@ int main(){
     int solutionRow = 14;
     int solutionCol = 17;
 
-    int dotsEaten = 0;
-    int PowerUpEaten = 0;
     int score = 0;
     int highscore = 0;
 
@@ -1182,52 +420,7 @@ int main(){
     vector <int> TempRowCol;
 
 
-    std::vector<string> PacManAvallibleDir = {"Left","Right"};
-
-
-
-
-
-    for(int i = 0; i<conf::SIZEX; i++)
-    {
-        for(int j = 0; j<conf::SIZEY; j++)
-        {
-
-            Red_solution[i,j].push_back(0);
-
-            Orange_solution[i,j].push_back(0);
-
-            Blue_solution[i,j].push_back(0);
-
-            Pink_solution[i,j].push_back(0);
-        }
-    }
-
-
-    std::vector<sf::RectangleShape> Dot(245);
-
-    for (int i = 0; i < Dot.size(); i++)
-    {
-
-        Dot[i].setFillColor(sf::Color::White);
-        Dot[i].setSize(sf::Vector2f(5, 5));
-        Dot[i].setOrigin(2.5,2.5);
-    }
-
-
-    std::vector<sf::CircleShape> PowerUp(4);
-
-    for (int i = 0; i < PowerUp.size(); i++)
-    {
-
-        PowerUp[i].setFillColor(sf::Color::White);
-        PowerUp[i].setRadius(10);
-        PowerUp[i].setOrigin(10,10);
-        PowerUp[i].setOutlineColor(sf::Color(250, 150, 100));
-    }
-
-
-    resetDots(Dot, PowerUp);
+    std::vector<Directions> PacManAvallibleDir = {LEFT,RIGHT};
 
 
     std::vector<sf::RectangleShape> Tiles(868);
@@ -1250,8 +443,8 @@ int main(){
             }
 
             if(conf::GameMatrix[i][j] == 1){
-                Tiles[place].setFillColor(sf::Color(255,0,255,128));
-                Tiles[place].setFillColor(sf::Color(255,0,255,0));
+                Tiles[place].setFillColor(sf::Color(255,0,255,100));
+               // Tiles[place].setFillColor(sf::Color(255,0,255,0));
             }
 
             if(conf::GameMatrix[i][j] == 6){
@@ -1873,85 +1066,39 @@ int main(){
         solutionCol = pacman.col;
 
 
-         for(int x = 0; x<conf::SIZEX; x++)
-            {
-                for(int y = 0; y<conf::SIZEY; y++)
-                {
-                    Red_solution[y][x] = 0;
-                    Blue_solution[y][x] = 0;
-                    Pink_solution[y][x] = 0;
-                    Orange_solution[y][x] = 0;
-                }
-            }
-
 
         //Red
         if(pacman.changedPosition()|| rGhost.changedPosition()){
             rGhost.updateOldRC();
 
-            Red_PathCol.clear();
-            Red_PathRow.clear();
-
-
-           // redNode.clear();
-/*
-           using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::milliseconds;
-*/
-
+            Node start(rGhost.col,rGhost.row,rGhost.direction);
 
             switch(rGhost.state){
 
             case CHASE:
-{
-          //  auto t1 = high_resolution_clock::now();
-                solvemaze(rGhost.col,rGhost.row,solutionRow,solutionCol, rGhost.direction, Red_solution,Red_PathCol,Red_PathRow);
-          //  auto t2 = high_resolution_clock::now();
-
-           // auto ms_int = duration_cast<milliseconds>(t2 - t1);
-
-            /* Getting number of milliseconds as a double. */
-            //duration<double, std::milli> ms_double = t2 - t1;
-
-//            std::cout << ms_double.count() << "ms old\n";
-
-
-  //          t1 = high_resolution_clock::now();
-
-                Node start(rGhost.col,rGhost.row);
+            {
                 Node finish(solutionCol,solutionRow);
-               redNode = pathing.shortestPath(start,finish);
-
-
-        //        t2 = high_resolution_clock::now();
-
-     //       ms_int = duration_cast<milliseconds>(t2 - t1);
-
-            /* Getting number of milliseconds as a double. */
-   //          ms_double = t2 - t1;
-
- //           std::cout << ms_double.count() << "ms new\n";
-
-          //   cout<<endl;
-}
-
-
-
-
-                break;
+                redNode = pathing.shortestPath(start,finish);
+            }
+               break;
             case SCATTER:
-                solvemaze(rGhost.col,rGhost.row,rGhost.scatterRow,rGhost.scatterCol, rGhost.direction, Red_solution,Red_PathCol,Red_PathRow);
+                {
+                Node finish(rGhost.scatterCol,rGhost.scatterRow);
+                redNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCARED:
-                ScaredSolver(rGhost.col,rGhost.row, rGhost.direction, Red_solution, Red_PathCol, Red_PathRow);
+                {
+                redNode = pathing.scaredSolver(start);
+                }
                 break;
             case DEAD:
-                solvemaze(rGhost.col,rGhost.row,conf::GhostHomeRow,conf::GhostHomeCol, rGhost.direction, Red_solution,Red_PathCol,Red_PathRow);
+                {
+                Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
+                redNode = pathing.shortestPath(start,finish);
+                }
                 break;
             }
-            // printsolution(solutionRow,solutionCol,StartRow,StartCol,Red_solution,GameMatrix);
         }
 
 
@@ -1959,8 +1106,7 @@ int main(){
          if(pacman.changedPosition() || bGhost.changedPosition()){
             bGhost.updateOldRC();
 
-            Blue_PathCol.clear();
-            Blue_PathRow.clear();
+            Node start(bGhost.col,bGhost.row,bGhost.direction);
 
             solutionRow =  pacman.row;
             solutionCol = pacman.col;
@@ -1981,31 +1127,44 @@ int main(){
                 solutionRow+=2;
             }
 
+
+            ///TODO proper destination needed
+
             int tempSolutionRow = solutionRow - rGhost.row;
             int tempSolutionCol = solutionCol - rGhost.col;
 
             solutionRow = solutionRow + (tempSolutionRow*-1);
             solutionCol = solutionCol + (tempSolutionCol*-1);
 
+//            solutionRow = abs(solutionCol - rGhost.col);
+  //          solutionCol = abs(solutionRow - rGhost.row);
 
-            //rGhost.col
-            //rGhost.row
 
             switch(bGhost.state){
             case CHASE:
-                solvemaze(bGhost.col,bGhost.row,solutionRow,solutionCol, bGhost.direction, Blue_solution,Blue_PathCol,Blue_PathRow);
+                {
+                    Node finish(solutionCol,solutionRow);
+                    blueNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCATTER:
-                solvemaze(bGhost.col,bGhost.row,bGhost.scatterRow,bGhost.scatterCol, bGhost.direction, Blue_solution,Blue_PathCol,Blue_PathRow);
+                 {
+                    Node finish(bGhost.scatterRow,bGhost.scatterCol);
+                    blueNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCARED:
-                ScaredSolver(bGhost.col,bGhost.row, bGhost.direction, Blue_solution, Blue_PathCol, Blue_PathRow);
+                {
+                    blueNode = pathing.scaredSolver(start);
+                }
                 break;
             case DEAD:
-                solvemaze(bGhost.col,bGhost.row,conf::GhostHomeRow,conf::GhostHomeCol, bGhost.direction, Blue_solution,Blue_PathCol,Blue_PathRow);
+                 {
+                    Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
+                    blueNode = pathing.shortestPath(start,finish);
+                }
                 break;
             }
-            // printsolution(solutionRow,solutionCol,StartRow,StartCol,Blue_solution,GameMatrix);
         }
 
 
@@ -2013,12 +1172,11 @@ int main(){
          if(pacman.changedPosition() || oGhost.changedPosition()){
             oGhost.updateOldRC();
 
-            Orange_PathCol.clear();
-            Orange_PathRow.clear();
+            Node start(oGhost.col,oGhost.row,oGhost.direction);
 
             OrangePacDistance = pow(pacman.row-oGhost.row,2) + pow(pacman.col-oGhost.col,2);
 
-            if(OrangePacDistance<80){
+            if(OrangePacDistance>80){
                 solutionRow =  pacman.row;
                 solutionCol = pacman.col;
             }else{
@@ -2029,28 +1187,37 @@ int main(){
             switch(oGhost.state){
 
             case CHASE:
-                solvemaze(oGhost.col,oGhost.row,solutionRow,solutionCol, oGhost.direction, Orange_solution,Orange_PathCol,Orange_PathRow);
+                {
+                    Node finish(solutionCol,solutionRow);
+                    orangeNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCATTER:
-                solvemaze(oGhost.col,oGhost.row,oGhost.scatterRow,oGhost.scatterCol, oGhost.direction, Orange_solution,Orange_PathCol,Orange_PathRow);
+                  {
+                    Node finish(oGhost.scatterCol,oGhost.scatterRow);
+                    orangeNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCARED:
-                ScaredSolver(oGhost.col,oGhost.row, oGhost.direction, Orange_solution, Orange_PathCol, Orange_PathRow);
+                {
+                    orangeNode = pathing.scaredSolver(start);
+                }
                 break;
             case DEAD:
-                solvemaze(oGhost.col,oGhost.row,conf::GhostHomeRow,conf::GhostHomeCol, oGhost.direction, Orange_solution,Orange_PathCol,Orange_PathRow);
+                 {
+                    Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
+                    orangeNode = pathing.shortestPath(start,finish);
+                }
                 break;
             }
-            // printsolution(solutionRow,solutionCol,StartRow,StartCol,Orange_solution,GameMatrix);
         }
 
 
         //Pink
          if(pacman.changedPosition() || pGhost.changedPosition()){
-            oGhost.updateOldRC();
+            pGhost.updateOldRC();
 
-            Pink_PathCol.clear();
-            Pink_PathRow.clear();
+            Node start(pGhost.col,pGhost.row,pGhost.direction);
 
             solutionRow = pacman.row;
             solutionCol = pacman.col;
@@ -2075,16 +1242,27 @@ int main(){
             switch(pGhost.state){
 
             case CHASE:
-                solvemaze(pGhost.col,pGhost.row,solutionRow,solutionCol, pGhost.direction, Pink_solution,Pink_PathCol,Pink_PathRow);
+                  {
+                    Node finish(solutionCol,solutionRow);
+                    pinkNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCATTER:
-                solvemaze(pGhost.col,pGhost.row,pGhost.scatterRow,pGhost.scatterCol, pGhost.direction, Pink_solution,Pink_PathCol,Pink_PathRow);
+                {
+                    Node finish(pGhost.scatterCol,pGhost.scatterRow);
+                    pinkNode = pathing.shortestPath(start,finish);
+                }
                 break;
             case SCARED:
-                ScaredSolver(pGhost.col,pGhost.row, pGhost.direction, Pink_solution, Pink_PathCol, Pink_PathRow);
+                {
+                    pinkNode = pathing.scaredSolver(start);
+                }
                 break;
             case DEAD:
-                solvemaze(pGhost.col,pGhost.row,conf::GhostHomeRow,conf::GhostHomeCol, pGhost.direction, Pink_solution,Pink_PathCol,Pink_PathRow);
+                {
+                    Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
+                    pinkNode = pathing.shortestPath(start,finish);
+                }
                 break;
             }
             // printsolution(solutionRow,solutionCol,StartRow,StartCol,Pink_solution,GameMatrix);
@@ -2115,35 +1293,36 @@ int main(){
                     {
                         Tiles[place].setFillColor(sf::Color(255,255,0,128));
                     }
+                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol){
+                        Tiles[place].setFillColor(sf::Color(255,0,255,128));
+                    }
+
+                     if(j == conf::GhostHomeRow && i == conf::GhostHomeCol+3){
+                        Tiles[place].setFillColor(sf::Color(255,50,255,128));
+                    }
+
                     place++;
                 }
             }
 
-/*
-            for(int i = 0; i<Pink_PathCol.size(); i++)
-            {
-                Tiles[Pink_PathRow[i]*28 + Pink_PathCol[i]].setFillColor(sf::Color(255,105,180,128));
+
+             for(int i = 0; i< pinkNode.size(); i++){
+               Tiles[pinkNode[i].row*28+pinkNode[i].col].setFillColor(sf::Color(255,105,180,128));
             }
 
-            for(int i = 0; i<Orange_PathCol.size(); i++)
-            {
-                Tiles[Orange_PathRow[i]*28 + Orange_PathCol[i]].setFillColor(sf::Color(255,140,0,128));
+            for(int i = 0; i< orangeNode.size(); i++){
+               Tiles[orangeNode[i].row*28+orangeNode[i].col].setFillColor(sf::Color(255,140,0,128));
             }
 
-            for(int i = 0; i<Blue_PathCol.size(); i++)
-            {
-                Tiles[Blue_PathRow[i]*28+Blue_PathCol[i]].setFillColor(sf::Color(0,0,255,128));
+
+            for(int i = 0; i< blueNode.size(); i++){
+               Tiles[blueNode[i].row*28+blueNode[i].col].setFillColor(sf::Color(0,0,255,128));
             }
-            */
+
 
            for(int i = 0; i< redNode.size(); i++){
                Tiles[redNode[i].row*28+redNode[i].col].setFillColor(sf::Color(255,0,0,128));
             }
-
-             for(int i = 0; i< Red_PathRow.size(); i++){
-                Tiles[Red_PathRow[i]*28+Red_PathCol[i]].setFillColor(sf::Color(0,0,255,128));
-            }
-
         }
 
 
@@ -2202,20 +1381,17 @@ int main(){
             Level = 0;
 
             score = 0;
-            PowerUpEaten = 0;
-            dotsEaten = 0;
 
             pacman.reset();
 
             rGhost.reset();
             oGhost.reset();
             pGhost.reset();
-            rGhost.reset();
+            bGhost.reset();
 
             PlaceLives(PacLife);
 
-            resetDots(Dot, PowerUp);
-
+            pellet.reset();
 
             BackG_Wii.stop();
             if(setting.Effect)
@@ -2243,22 +1419,22 @@ int main(){
     if(!pacman.dead){
         for(int i = 0; i<PacManAvallibleDir.size(); i++){
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == "Left"){
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == LEFT){
 
                 pacman.goDirection(LEFT);
 
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == "Right"){
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == RIGHT){
 
                 pacman.goDirection(RIGHT);
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == "Up"){
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == UP){
 
                 pacman.goDirection(UP);
 
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == "Down"){
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == DOWN){
 
                 pacman.goDirection(DOWN);
             }
@@ -2290,7 +1466,7 @@ int main(){
         }
 
 
-        if(stopPacMan == true )
+        if(stopPacMan)
         {
             stopPacMan = false;
             pacman.setSpeed(0,0);
@@ -2298,60 +1474,43 @@ int main(){
 
 
 
-        if(OutOfTheCloset(rGhost.row, rGhost.col, Red_PathCol, Red_PathRow, conf::GhostHomeRow, conf::GhostHomeCol, rGhost.state == DEAD)){
+        rGhost.outOfSpawn();
 
-            rGhost.state = SCATTER;
-            rGhost.direction = NONE;
-       }
+        bGhost.outOfSpawn();
 
+        oGhost.outOfSpawn();
 
-        if(OutOfTheCloset(oGhost.row, oGhost.col, Orange_PathCol, Orange_PathRow, conf::GhostHomeRow, conf::GhostHomeCol, oGhost.state == DEAD)){
-
-            oGhost.state = SCATTER;
-            oGhost.direction = NONE;
-        }
-
-        if(OutOfTheCloset(bGhost.row, bGhost.col, Blue_PathCol, Blue_PathRow, conf::GhostHomeRow, conf::GhostHomeCol, bGhost.state == DEAD))
-        {
-
-            bGhost.state = SCATTER;
-            bGhost.direction = NONE;
-        }
-
-        if(OutOfTheCloset(pGhost.row, pGhost.col, Pink_PathCol, Pink_PathRow, conf::GhostHomeRow, conf::GhostHomeCol, pGhost.state == DEAD))
-        {
-            pGhost.state = SCATTER;
-            pGhost.direction = NONE;
-        }
+        pGhost.outOfSpawn();
 
 
 
 
         //Red
-        rGhost.followPath(Red_PathCol[1],Red_PathRow[1]);
-        // cout<<"power"<<endl;
-        // rGhost.followPath(redNode[1].col,redNode[1].row,GhostSpeed,DeadSpeed);
-        // cout<<"shit"<<endl;
+        //rGhost.followPath(Red_PathCol[1],Red_PathRow[1]);
+        if(redNode.size()>1)
+         rGhost.followPath(redNode[1].col,redNode[1].row);
 
+        //blue
+        if(blueNode.size()>1)
+         bGhost.followPath(blueNode[1].col,blueNode[1].row);
 
         //Orange
-        oGhost.followPath(Orange_PathCol[1],Orange_PathRow[1]);
-
-        //Blue
-        bGhost.followPath(Blue_PathCol[1],Blue_PathRow[1]);
+        if(orangeNode.size()>1)
+         oGhost.followPath(orangeNode[1].col,orangeNode[1].row);
 
         //Pink
-        pGhost.followPath(Pink_PathCol[1],Pink_PathRow[1]);
+        if(pinkNode.size()>1)
+         pGhost.followPath(pinkNode[1].col,pinkNode[1].row);
 
 
         // --Dot Hittest--
 
-        for (int i = 0; i < Dot.size(); i++){
-            if(pacman.sprite.getGlobalBounds().intersects(Dot[i].getGlobalBounds())){
+        for (int i = 0; i < pellet.Dot.size(); i++){
+            if(pacman.sprite.getGlobalBounds().intersects(pellet.Dot[i].getGlobalBounds())){
 
-                Dot[i].setPosition(Dot[i].getPosition().x+1000,Dot[i].getPosition().y);
+                pellet.Dot[i].setPosition(pellet.Dot[i].getPosition().x+1000,pellet.Dot[i].getPosition().y);
 
-                dotsEaten ++;
+                pellet.dotsEaten ++;
                 score +=5;
 
                 if(setting.Effect){
@@ -2361,20 +1520,19 @@ int main(){
         }
 
 
-        for (int i = 0; i < PowerUp.size(); i++){
-            if(pacman.sprite.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds())){
+        for (int i = 0; i < pellet.PowerUp.size(); i++){
+            if(pacman.sprite.getGlobalBounds().intersects(pellet.PowerUp[i].getGlobalBounds())){
 
-                PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,PowerUp[i].getPosition().y);
+                pellet.PowerUp[i].setPosition(-100,-100);
+                pellet.PowerUpEaten ++;
 
-                if(setting.Effect)
-                {
+                if(setting.Effect){
                     PowerSound.play();
                 }
 
                 gsManager.GhostScared = true;
                 gsManager.powerUpTimer = 0;
 
-                PowerUpEaten ++;
                 score +=25;
 
                 rGhost.changeState(SCARED);
@@ -2477,7 +1635,7 @@ int main(){
         }
 
 
-        if(dotsEaten == 244 && PowerUpEaten==4){
+        if(pellet.dotsEaten >= pellet.DOTS && pellet.PowerUpEaten >= pellet.POWERUPS){
 
             if(setting.Effect)
             {
@@ -2485,9 +1643,6 @@ int main(){
             }
 
             Level++;
-
-            dotsEaten = 0;
-            PowerUpEaten = 0;
 
             gsManager.berryTimer = 0;
             gsManager.ghostState = -1;
@@ -2499,7 +1654,8 @@ int main(){
             pGhost.reset();
             bGhost.reset();
 
-            resetDots(Dot, PowerUp);
+            pellet.reset();
+
         }
 
 
@@ -2554,10 +1710,9 @@ int main(){
             gsManager.changeState(GameStates::GAMEOVER);
         }
 
-
         scoreUpdate(HsDis, scoreDis, score, highscore, scoreShow, HSString);
-        PowerPelletAni(PowerUp, gsManager.glowTimer);
 
+        pellet.animate(gsManager.glowTimer);
 
         if(gsManager.TitlePacTimer < 10){
             TitlePacMan.setTexture(PacTexture2);
@@ -2647,21 +1802,20 @@ int main(){
                     {
                         for(int j = 0; j<28; j++)
                         {
-                            if(conf::GameMatrix[i][j] != 1)
-                            {
+                            //if(conf::GameMatrix[i][j] != 1){
                                 window.draw(Tiles[temp]);
-                            }
+                          // }
                             temp++;
                         }
                     }
                 }
 
-                for(int i = 0; i<Dot.size(); i++){
-                    window.draw(Dot[i]);
+                for(int i = 0; i<pellet.Dot.size(); i++){
+                    window.draw(pellet.Dot[i]);
                 }
 
                 for(int i = 0; i<4; i++){
-                    window.draw(PowerUp[i]);
+                    window.draw(pellet.PowerUp[i]);
                 }
 
                 window.draw(rGhost.sprite);
