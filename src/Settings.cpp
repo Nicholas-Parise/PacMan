@@ -20,6 +20,9 @@ void Settings::resetHover(){
     for(int i = 0; i<6; i++){
         hoverOffsets[i] = 0;
     }
+    settingOffset = 0;
+    returnOffset = 0;
+    helpOffset = 0;
 }
 
 
@@ -32,40 +35,45 @@ void Settings::hoverTrack(int index){
 }
 
 
+void Settings::hoverReturn(){
+    returnOffset = 1;
+}
+
+void Settings::hoverSettings(){
+    settingOffset = 1;
+}
+
+void Settings::hoverHelp(){
+    helpOffset = 1;
+}
+
+
 void Settings::initSprite(){
 
     for(int i = 0; i<3; i++){
         tracks[i].setOrigin(65,47);
-        tracks[i].setPosition(sf::Vector2f(1000,1000));
+        tracks[i].setPosition(sf::Vector2f(150 + 100*i,450.f));
         tracks[i].setScale(.6f,.6f);
 
         setYN[i].setScale(.7f,.7f);
-        setYN[i].setPosition(1000,1000);
-    }
-
-}
-
-void Settings::appear(){
-
-    for(int i = 0; i<3; i++){
-        tracks[i].setPosition(sf::Vector2f(150 + 100*i,450.f));
         setYN[i].setPosition(400,i*90+10);
     }
+
+    settingBTN.setOrigin(312,47);
+    settingBTN.setPosition(sf::Vector2f(522/2.f,388.f));
+    settingBTN.setScale(.7f,.7f);
+
+    returnBTN.setOrigin(136,47);
+    returnBTN.setPosition(sf::Vector2f(522/2.f,550.f));
+    returnBTN.setScale(.6f,.6f);
+
+    helpBTN.setOrigin(111,47);
+    helpBTN.setPosition(sf::Vector2f(522/2.f,488.f));
+    helpBTN.setScale(.6f,.6f);
 }
 
 
-void Settings::disappear(){
-
-    for(int i = 0; i<3; i++){
-        tracks[i].setPosition(1000,1000);
-        setYN[i].setPosition(1000,1000);
-    }
-
-}
-
-
-
-void Settings::textureSwitcher(sf::Texture *trackTextures, sf::Texture *YNtextures){
+void Settings::textureSwitcher(sf::Texture *trackTextures, sf::Texture *YNtextures, sf::Texture *settingsTextures, sf::Texture *returnTextures, sf::Texture *helpTextures){
 
     for(int i = 0; i<3; i++){
         if(Track == i+1){
@@ -79,8 +87,11 @@ void Settings::textureSwitcher(sf::Texture *trackTextures, sf::Texture *YNtextur
         }else{
             setYN[i].setTexture(YNtextures[2+hoverOffsets[i]]);
         }
-
     }
+
+    settingBTN.setTexture(settingsTextures[settingOffset]);
+    returnBTN.setTexture(returnTextures[returnOffset]);
+    helpBTN.setTexture(helpTextures[helpOffset]);
 }
 
 

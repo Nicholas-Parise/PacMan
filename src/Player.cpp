@@ -37,7 +37,7 @@ bool Player::killPac(){
 
 
 
-void Player::textureSwitcher(sf::Texture &pacTextures,sf::Texture &pacTextures2, sf::Texture *deadTextures){
+void Player::textureSwitcher(sf::Texture *pacTextures, sf::Texture *deadTextures){
 
     sf::Texture *tex;
 
@@ -49,10 +49,10 @@ void Player::textureSwitcher(sf::Texture &pacTextures,sf::Texture &pacTextures2,
 
     }else{
         //int offset = 1;
-        sprite.setTexture(pacTextures2);
+        sprite.setTexture(pacTextures[1]);
         if(aniTimer<10) {
             //offset = 0;
-            sprite.setTexture(pacTextures);
+            sprite.setTexture(pacTextures[0]);
         }
     }
 }

@@ -22,6 +22,7 @@
 #include "Pathing.h"
 #include "Pellet.h"
 #include "SoundManager.h"
+#include "TextureManager.h"
 
 using namespace std;
 
@@ -263,9 +264,8 @@ void scoreUpdate(sf::Text &HsDis, sf::Text &scoreDis, int score, int highscore, 
 }
 
 
-void SaveHS(int &highscore, int &score,string &HSString,sf::Text &NewHS)
+void SaveHS(int &highscore, int score, sf::Text &NewHS)
 {
-
     ifstream readFile;
     readFile.open("Assets/Other/High_Score.txt");
 
@@ -279,15 +279,9 @@ void SaveHS(int &highscore, int &score,string &HSString,sf::Text &NewHS)
     if(writeFile.is_open())
     {
 
-        stringstream ss3;
-        ss3<<highscore;
-        ss3>>HSString;
-
         if(score>highscore)
         {
-
             highscore = score;
-
             NewHS.setPosition(522/2, 400);
         }
 
@@ -363,6 +357,8 @@ int main()
 
     SoundManager soundManager;
 
+    TextureManager textureManager;
+
     Ghost *ghosts[4];
     ghosts[0] = &rGhost;
     ghosts[1] = &bGhost;
@@ -383,8 +379,8 @@ int main()
     int feetTimer = 0;
 
 
-    string Help_Text = "\t\t\t\t\t\t\t\t HELP \n \n \nMove is Arrow keys \nIf you eat all the dots on the board more will spawn. \nIf a ghost hits you and is not Blue, YOU. WILL. DIE! \nTo make a ghost blue you must eat a power pellet,\nthere are 4 accros the map.\nYou Have 3 lives,\nif you beat the High score You get a free life.\n\n\t\tBy. Nicholas Parise";
-    string Settings_Text = "Master Audio: \n\n\n Music: \n\n\n Sound Effects: \n\n\n\n Music Track:";
+    const string Help_Text = "\t\t\t\t\t\t\t\t HELP \n \n \nMove is Arrow keys \nIf you eat all the dots on the board more will spawn. \nIf a ghost hits you and is not Blue, YOU. WILL. DIE! \nTo make a ghost blue you must eat a power pellet,\nthere are 4 accros the map.\nYou Have 3 lives,\nif you beat the High score You get a free life.\n\n\t\tBy. Nicholas Parise";
+    const string Settings_Text = "Master Audio: \n\n\n Music: \n\n\n Sound Effects: \n\n\n\n Music Track:";
     string scoreShow;
     string HSString;
 
@@ -431,9 +427,6 @@ int main()
         }
     }
 
-
-    cout<<"done"<<endl;
-
     sf::Image image;
     image.loadFromFile("Assets/Sprite/PacMan_background.png");
 
@@ -444,14 +437,6 @@ int main()
     Background.setTexture(MapTexture);
     Background.setPosition(sf::Vector2f(0, 0));
 
-
-    sf::Texture PacTexture1;
-    PacTexture1.loadFromFile("Assets/Sprite/PacMan_open.png");
-
-    sf::Texture PacTexture2;
-    PacTexture2.loadFromFile("Assets/Sprite/PacMan_closed.png");
-
-
     sf::Texture PauseTexture;
     PauseTexture.loadFromFile("Assets/Sprite/pause.png");
 
@@ -459,154 +444,6 @@ int main()
     texture9.loadFromFile("Assets/Other/PacMan-Start.png");
 
     // -----
-    sf::Image BerrySheetimage;
-    BerrySheetimage.loadFromFile("Assets/Sprite/Berry_Sprite_Sheet.png");
-
-    sf::Texture berryTextures[8];
-    berryTextures[0].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Cherry));
-    berryTextures[1].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Strawberry));
-    berryTextures[2].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Peach));
-    berryTextures[3].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Apple));
-    berryTextures[4].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Lime));
-    berryTextures[5].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Spear));
-    berryTextures[6].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Bell));
-    berryTextures[7].loadFromImage(BerrySheetimage, sf::IntRect(Bry_Key));
-
-    ////
-
-    sf::Texture scaredTextures[4];
-    scaredTextures[0].loadFromFile("Assets/Sprite/ScaredGhost1.png");
-    scaredTextures[1].loadFromFile("Assets/Sprite/ScaredGhost2.png");
-    scaredTextures[2].loadFromFile("Assets/Sprite/ScaredGhostWhite1.png");
-    scaredTextures[3].loadFromFile("Assets/Sprite/ScaredGhostWhite2.png");
-
-    ////
-
-    sf::Image RedSheetimage;
-    RedSheetimage.loadFromFile("Assets/Sprite/RedGhostSpriteSheet.png");
-
-    sf::Texture redTextures[8];
-    redTextures[0].loadFromImage(RedSheetimage, sf::IntRect(GhostLeft1));
-    redTextures[1].loadFromImage(RedSheetimage, sf::IntRect(GhostUp1));
-    redTextures[2].loadFromImage(RedSheetimage, sf::IntRect(GhostRight1));
-    redTextures[3].loadFromImage(RedSheetimage, sf::IntRect(GhostDown1));
-    redTextures[4].loadFromImage(RedSheetimage, sf::IntRect(GhostLeft2));
-    redTextures[5].loadFromImage(RedSheetimage, sf::IntRect(GhostUp2));
-    redTextures[6].loadFromImage(RedSheetimage, sf::IntRect(GhostRight2));
-    redTextures[7].loadFromImage(RedSheetimage, sf::IntRect(GhostDown2));
-
-    ///////
-
-    sf::Image OrangeSheetimage;
-    OrangeSheetimage.loadFromFile("Assets/Sprite/OrangeGhostSpriteSheet.png");
-
-    sf::Texture orangeTextures[8];
-    orangeTextures[0].loadFromImage(OrangeSheetimage, sf::IntRect(GhostLeft1));
-    orangeTextures[1].loadFromImage(OrangeSheetimage, sf::IntRect(GhostUp1));
-    orangeTextures[2].loadFromImage(OrangeSheetimage, sf::IntRect(GhostRight1));
-    orangeTextures[3].loadFromImage(OrangeSheetimage, sf::IntRect(GhostDown1));
-    orangeTextures[4].loadFromImage(OrangeSheetimage, sf::IntRect(GhostLeft2));
-    orangeTextures[5].loadFromImage(OrangeSheetimage, sf::IntRect(GhostUp2));
-    orangeTextures[6].loadFromImage(OrangeSheetimage, sf::IntRect(GhostRight2));
-    orangeTextures[7].loadFromImage(OrangeSheetimage, sf::IntRect(GhostDown2));
-
-
-    ////////
-
-    sf::Image BlueSheetimage;
-    BlueSheetimage.loadFromFile("Assets/Sprite/BlueGhostSpriteSheet.png");
-
-    sf::Texture blueTextures[8];
-    blueTextures[0].loadFromImage(BlueSheetimage, sf::IntRect(GhostLeft1));
-    blueTextures[1].loadFromImage(BlueSheetimage, sf::IntRect(GhostUp1));
-    blueTextures[2].loadFromImage(BlueSheetimage, sf::IntRect(GhostRight1));
-    blueTextures[3].loadFromImage(BlueSheetimage, sf::IntRect(GhostDown1));
-    blueTextures[4].loadFromImage(BlueSheetimage, sf::IntRect(GhostLeft2));
-    blueTextures[5].loadFromImage(BlueSheetimage, sf::IntRect(GhostUp2));
-    blueTextures[6].loadFromImage(BlueSheetimage, sf::IntRect(GhostRight2));
-    blueTextures[7].loadFromImage(BlueSheetimage, sf::IntRect(GhostDown2));
-
-
-    /////
-    sf::Image PinkSheetimage;
-    PinkSheetimage.loadFromFile("Assets/Sprite/PinkGhostSpriteSheet.png");
-
-    sf::Texture pinkTextures[8];
-    pinkTextures[0].loadFromImage(PinkSheetimage, sf::IntRect(GhostLeft1));
-    pinkTextures[1].loadFromImage(PinkSheetimage, sf::IntRect(GhostUp1));
-    pinkTextures[2].loadFromImage(PinkSheetimage, sf::IntRect(GhostRight1));
-    pinkTextures[3].loadFromImage(PinkSheetimage, sf::IntRect(GhostDown1));
-    pinkTextures[4].loadFromImage(PinkSheetimage, sf::IntRect(GhostLeft2));
-    pinkTextures[5].loadFromImage(PinkSheetimage, sf::IntRect(GhostUp2));
-    pinkTextures[6].loadFromImage(PinkSheetimage, sf::IntRect(GhostRight2));
-    pinkTextures[7].loadFromImage(PinkSheetimage, sf::IntRect(GhostDown2));
-
-    //////
-
-    sf::Image EyeSheetimage;
-    EyeSheetimage.loadFromFile("Assets/Sprite/EyeSpriteSheet.png");
-
-    sf::Texture eyeTextures[4];
-    eyeTextures[0].loadFromImage(EyeSheetimage, sf::IntRect(GhostLeft1));
-    eyeTextures[1].loadFromImage(EyeSheetimage, sf::IntRect(GhostUp1));
-    eyeTextures[2].loadFromImage(EyeSheetimage, sf::IntRect(GhostRight1));
-    eyeTextures[3].loadFromImage(EyeSheetimage, sf::IntRect(GhostDown1));
-
-    //////////
-
-    sf::Image DeadSheetimage;
-    DeadSheetimage.loadFromFile("Assets/Sprite/Pac-Death-SpriteSheet.png");
-
-    sf::Texture deadTextures[11];
-    deadTextures[0].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack1));
-    deadTextures[1].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack2));
-    deadTextures[2].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack3));
-    deadTextures[3].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack4));
-    deadTextures[4].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack5));
-    deadTextures[5].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack6));
-    deadTextures[6].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack7));
-    deadTextures[7].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack8));
-    deadTextures[8].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack9));
-    deadTextures[9].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack10));
-    deadTextures[10].loadFromImage(DeadSheetimage, sf::IntRect(Pac_wack11));
-
-    sf::Texture texture14;
-    texture14.loadFromFile("Assets/Sprite/pause.png");
-
-    sf::Texture texture15;
-    texture15.loadFromFile("Assets/Buttons/Settings_1.png");
-
-    sf::Texture texture16;
-    texture16.loadFromFile("Assets/Buttons/Settings_2.png");
-
-    sf::Texture texture17;
-    texture17.loadFromFile("Assets/Buttons/Return_1.png");
-
-    sf::Texture texture18;
-    texture18.loadFromFile("Assets/Buttons/Return_2.png");
-
-    sf::Texture texture19;
-    texture19.loadFromFile("Assets/Buttons/Help_1.png");
-
-    sf::Texture texture20;
-    texture20.loadFromFile("Assets/Buttons/Help_2.png");
-
-
-    sf::Texture YNtextures[4];
-    YNtextures[0].loadFromFile("Assets/Buttons/Yes_1.png");
-    YNtextures[1].loadFromFile("Assets/Buttons/Yes_2.png");
-    YNtextures[2].loadFromFile("Assets/Buttons/No_1.png");
-    YNtextures[3].loadFromFile("Assets/Buttons/No_2.png");
-
-
-    sf::Texture trackTextures[6];
-    trackTextures[0].loadFromFile("Assets/Buttons/1_1.png");
-    trackTextures[1].loadFromFile("Assets/Buttons/1_2.png");
-    trackTextures[2].loadFromFile("Assets/Buttons/2_1.png");
-    trackTextures[3].loadFromFile("Assets/Buttons/2_2.png");
-    trackTextures[4].loadFromFile("Assets/Buttons/3_1.png");
-    trackTextures[5].loadFromFile("Assets/Buttons/3_2.png");
-
 
     sf::Sprite Paused;
     Paused.setTexture(PauseTexture);
@@ -617,10 +454,9 @@ int main()
 
 
     sf::Sprite TitlePacMan;
-    TitlePacMan.setTexture(PacTexture1);
+    TitlePacMan.setTexture(textureManager.PacTexture[0]);
     TitlePacMan.setOrigin(15,15);
     TitlePacMan.setRotation(-90);
-
 
 
     sf::Sprite StartImage;
@@ -628,25 +464,8 @@ int main()
     StartImage.setPosition(sf::Vector2f(266, 150));
     StartImage.setOrigin(225,51);
 
-    sf::Sprite Setting;
-    Setting.setTexture(texture15);
-    Setting.setOrigin(312,47);
-    Setting.setPosition(sf::Vector2f(522/2.f,388.f));
-    Setting.setScale(.7f,.7f);
 
-    sf::Sprite Return;
-    Return.setTexture(texture17);
-    Return.setOrigin(136,47);
-    Return.setPosition(sf::Vector2f(522/2.f,550.f));
-    Return.setScale(.6f,.6f);
-
-    sf::Sprite Help;
-    Help.setTexture(texture19);
-    Help.setOrigin(111,47);
-    Help.setPosition(sf::Vector2f(522/2.f,488.f));
-    Help.setScale(.6f,.6f);
-
-    std::vector<sf::Sprite> PacLife(3, sf::Sprite(PacTexture1));
+    std::vector<sf::Sprite> PacLife(3, sf::Sprite(textureManager.PacTexture[0]));
     PlaceLives(PacLife);
 
 
@@ -667,19 +486,12 @@ int main()
     scoreDis.setOrigin(15,15);
     scoreDis.setPosition(30,590);
 
-
-
-    SaveHS(highscore,score,HSString,NewHS);
-
-
-    sf::Text HsDis(HSString, font);
+    sf::Text HsDis("0", font);
     HsDis.setCharacterSize(30);
     HsDis.setStyle(sf::Text::Bold);
     HsDis.setFillColor(sf::Color::White);
     HsDis.setOrigin(15,15);
     HsDis.setPosition(250, 590);
-
-
 
     sf::Text PreStart("Push Space To Start", font);
     PreStart.setCharacterSize(30);
@@ -726,7 +538,7 @@ int main()
             if (event.type == sf::Event::Closed)
             {
 
-                SaveHS(highscore,score,HSString,NewHS);
+                SaveHS(highscore,score,NewHS);
                 window.close();
 
                 return 0;
@@ -754,11 +566,13 @@ int main()
 
             ///////
 
+            setting.resetHover();
 
-            if(isSpriteHover(Setting.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU)
+
+            if(isSpriteHover(setting.settingBTN.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU)
             {
 
-                Setting.setTexture(texture16);
+                setting.hoverSettings();
 
                 if(setting.Effect)
                 {
@@ -775,21 +589,14 @@ int main()
                     {
                         soundManager.Button_click.play();
                     }
-
-                    setting.appear();
                 }
             }
-            else
+
+
+            if(isSpriteHover(setting.returnBTN.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP))
             {
 
-                Setting.setTexture(texture15);
-            }
-
-
-            if(isSpriteHover(Return.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP))
-            {
-
-                Return.setTexture(texture18);
+                setting.hoverReturn();
 
                 if(setting.Effect)
                 {
@@ -807,18 +614,14 @@ int main()
                     }
 
                     setting.saveSettings("Assets/Other/Settings.txt");
-                    setting.disappear();
                 }
             }
-            else
-            {
-                Return.setTexture(texture17);
-            }
 
 
-            if(isSpriteHover(Help.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
+            if(isSpriteHover(setting.helpBTN.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
 
-                Help.setTexture(texture20);
+                 setting.hoverHelp();
+
                 if(setting.Effect)
                 {
                     soundManager.Button_select.play();
@@ -834,13 +637,11 @@ int main()
                         soundManager.Button_click.play();
                     }
                 }
-            }else{
-                Help.setTexture(texture19);
             }
 
             // ---------------
 
-            setting.resetHover();
+
 
             for(int i = 0; i<3; i++)
             {
@@ -908,7 +709,7 @@ int main()
                 }
             }
 
-            setting.textureSwitcher(trackTextures, YNtextures);
+            setting.textureSwitcher(textureManager.trackTextures, textureManager.YNtextures,textureManager.settingsTextures, textureManager.returnTextures, textureManager.helpTextures);
         }
 
 
@@ -935,11 +736,6 @@ int main()
         TempRowCol = ClossestTile(pGhost.sprite.getPosition().x,pGhost.sprite.getPosition().y, Tiles);
         pGhost.row = TempRowCol[0];
         pGhost.col = TempRowCol[1];
-
-
-        solutionRow = pacman.row;
-        solutionCol = pacman.col;
-
 
 
         // update all ghosts pathing
@@ -1054,65 +850,6 @@ int main()
         pacman.updateOldRC();
 
 
-        if(conf::DEBUG == true)
-        {
-
-            place = 0;
-            for(int i = 0; i<31; i++)
-            {
-                for(int j = 0; j<28; j++)
-                {
-
-                    if(conf::GameMatrix[i][j] == 0)
-                    {
-                        Tiles[place].setFillColor(sf::Color(0,255,255,128));
-                    }
-                    if(conf::GameMatrix[i][j] == 8)
-                    {
-                        Tiles[place].setFillColor(sf::Color(0,255,255,128));
-                    }
-                    if(conf::GameMatrix[i][j] == 6)
-                    {
-                        Tiles[place].setFillColor(sf::Color(255,255,0,128));
-                    }
-                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol)
-                    {
-                        Tiles[place].setFillColor(sf::Color(255,0,255,128));
-                    }
-
-                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol+3)
-                    {
-                        Tiles[place].setFillColor(sf::Color(255,50,255,128));
-                    }
-
-                    place++;
-                }
-            }
-
-
-            for(int i = 0; i< pGhost.path.size(); i++)
-            {
-                Tiles[pGhost.path[i].row*28+pGhost.path[i].col].setFillColor(sf::Color(255,105,180,128));
-            }
-
-            for(int i = 0; i< oGhost.path.size(); i++)
-            {
-                Tiles[oGhost.path[i].row*28+oGhost.path[i].col].setFillColor(sf::Color(255,140,0,128));
-            }
-
-
-            for(int i = 0; i< bGhost.path.size(); i++)
-            {
-                Tiles[bGhost.path[i].row*28+bGhost.path[i].col].setFillColor(sf::Color(0,0,255,128));
-            }
-
-
-            for(int i = 0; i< rGhost.path.size(); i++)
-            {
-                Tiles[rGhost.path[i].row*28+rGhost.path[i].col].setFillColor(sf::Color(255,0,0,128));
-            }
-        }
-
 
 
         //////////////
@@ -1157,55 +894,6 @@ int main()
                         soundManager.BackG_Sweden.play();
                         break;
                     }
-                }
-            }
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gsManager.gState == GameStates::MENU)
-        {
-
-            cout<<"play"<<endl;
-
-            gsManager.changeState(GameStates::GAME);
-            gsManager.reset();
-
-            freeLife = true;
-            PacLives = 3;
-            Level = 0;
-
-            score = 0;
-
-            pacman.reset();
-
-            rGhost.reset();
-            oGhost.reset();
-            pGhost.reset();
-            bGhost.reset();
-
-            PlaceLives(PacLife);
-
-            pellet.reset();
-
-            soundManager.BackG_Wii.stop();
-            if(setting.Effect)
-            {
-                soundManager.Button_click.play();
-                soundManager.start_Game.play();
-            }
-
-            if(setting.Music)
-            {
-                switch(setting.Track)
-                {
-                case 1:
-                    soundManager.BackG_Pizza.play();
-                    break;
-                case 2:
-                    soundManager.BackG_Subwooder.play();
-                    break;
-                case 3:
-                    soundManager.BackG_Sweden.play();
-                    break;
                 }
             }
         }
@@ -1385,6 +1073,58 @@ int main()
         }
 
 
+
+        /// ------ start game -------
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gsManager.gState == GameStates::MENU)
+        {
+
+            cout<<"play"<<endl;
+
+            gsManager.changeState(GameStates::GAME);
+            gsManager.reset();
+
+            freeLife = true;
+            PacLives = 3;
+            Level = 0;
+
+            score = 0;
+
+            pacman.reset();
+
+            rGhost.reset();
+            oGhost.reset();
+            pGhost.reset();
+            bGhost.reset();
+
+            PlaceLives(PacLife);
+
+            pellet.reset();
+
+            soundManager.BackG_Wii.stop();
+            if(setting.Effect)
+            {
+                soundManager.Button_click.play();
+                soundManager.start_Game.play();
+            }
+
+            if(setting.Music)
+            {
+                switch(setting.Track)
+                {
+                case 1:
+                    soundManager.BackG_Pizza.play();
+                    break;
+                case 2:
+                    soundManager.BackG_Subwooder.play();
+                    break;
+                case 3:
+                    soundManager.BackG_Sweden.play();
+                    break;
+                }
+            }
+        }
+
+        /// ------ go to next level -------
         if(pellet.dotsEaten >= pellet.DOTS && pellet.PowerUpEaten >= pellet.POWERUPS)
         {
 
@@ -1406,10 +1146,9 @@ int main()
             bGhost.reset();
 
             pellet.reset();
-
         }
 
-
+        /// ------ pac man dead ------
         if(pacman.killPac() && conf::DEBUG == false)
         {
 
@@ -1446,10 +1185,10 @@ int main()
             }
         }
 
-
+        /// ------ Game Over ------
         if(PacLives == 0 && gsManager.gState == GameStates::GAME && conf::DEBUG == false)
         {
-            //Game Over
+
             PacLives--;
 
             if(setting.Effect)
@@ -1457,7 +1196,7 @@ int main()
                 soundManager.gameOver.play();
             }
 
-            SaveHS(highscore,score,HSString,NewHS);
+            SaveHS(highscore,score,NewHS);
 
             soundManager.BackG_Pizza.stop();
             soundManager.BackG_Subwooder.stop();
@@ -1465,21 +1204,22 @@ int main()
 
             gsManager.changeState(GameStates::GAMEOVER);
         }
+        /// ------
 
         scoreUpdate(HsDis, scoreDis, score, highscore, scoreShow, HSString);
 
         pellet.animate(gsManager.glowTimer);
 
-        pellet.spawnBerry(berryTextures,gsManager.berryTimer);
+        pellet.spawnBerry(textureManager.berryTextures,gsManager.berryTimer);
 
 
         if(gsManager.TitlePacTimer < 10)
         {
-            TitlePacMan.setTexture(PacTexture2);
+            TitlePacMan.setTexture(textureManager.PacTexture[1]);
         }
         else
         {
-            TitlePacMan.setTexture(PacTexture1);
+            TitlePacMan.setTexture(textureManager.PacTexture[0]);
             gsManager.TitlePacTimer = 0;
         }
 
@@ -1502,15 +1242,15 @@ int main()
 
         pacman.updateAniTimer();
 
-        pacman.textureSwitcher(PacTexture1,PacTexture2, deadTextures);
+        pacman.textureSwitcher(textureManager.PacTexture, textureManager.deadTextures);
 
-        rGhost.textureSwitcher(redTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
+        rGhost.textureSwitcher(textureManager.redTextures, textureManager.scaredTextures, textureManager.eyeTextures, feetTimer, gsManager.powerUpTimer);
 
-        oGhost.textureSwitcher(orangeTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
+        oGhost.textureSwitcher(textureManager.orangeTextures, textureManager.scaredTextures, textureManager.eyeTextures, feetTimer, gsManager.powerUpTimer);
 
-        pGhost.textureSwitcher(pinkTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
+        pGhost.textureSwitcher(textureManager.pinkTextures, textureManager.scaredTextures, textureManager.eyeTextures, feetTimer, gsManager.powerUpTimer);
 
-        bGhost.textureSwitcher(blueTextures, scaredTextures, eyeTextures, feetTimer, gsManager.powerUpTimer);
+        bGhost.textureSwitcher(textureManager.blueTextures, textureManager.scaredTextures, textureManager.eyeTextures, feetTimer, gsManager.powerUpTimer);
 
         gsManager.increment();
 
@@ -1524,6 +1264,69 @@ int main()
             pGhost.sprite.move(pGhost.xSpeed, pGhost.ySpeed);
         }
 
+        /// ---- debug graphics ----
+
+
+         if(conf::DEBUG == true){
+
+            place = 0;
+            for(int i = 0; i<31; i++)
+            {
+                for(int j = 0; j<28; j++)
+                {
+
+                    if(conf::GameMatrix[i][j] == 0)
+                    {
+                        Tiles[place].setFillColor(sf::Color(0,255,255,128));
+                    }
+                    if(conf::GameMatrix[i][j] == 8)
+                    {
+                        Tiles[place].setFillColor(sf::Color(0,255,255,128));
+                    }
+                    if(conf::GameMatrix[i][j] == 6)
+                    {
+                        Tiles[place].setFillColor(sf::Color(255,255,0,128));
+                    }
+                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol)
+                    {
+                        Tiles[place].setFillColor(sf::Color(255,0,255,128));
+                    }
+
+                    if(j == conf::GhostHomeRow && i == conf::GhostHomeCol+3)
+                    {
+                        Tiles[place].setFillColor(sf::Color(255,50,255,128));
+                    }
+
+                    place++;
+                }
+            }
+
+
+            for(int i = 0; i< pGhost.path.size(); i++)
+            {
+                Tiles[pGhost.path[i].row*28+pGhost.path[i].col].setFillColor(sf::Color(255,105,180,128));
+            }
+
+            for(int i = 0; i< oGhost.path.size(); i++)
+            {
+                Tiles[oGhost.path[i].row*28+oGhost.path[i].col].setFillColor(sf::Color(255,140,0,128));
+            }
+
+
+            for(int i = 0; i< bGhost.path.size(); i++)
+            {
+                Tiles[bGhost.path[i].row*28+bGhost.path[i].col].setFillColor(sf::Color(0,0,255,128));
+            }
+
+
+            for(int i = 0; i< rGhost.path.size(); i++)
+            {
+                Tiles[rGhost.path[i].row*28+rGhost.path[i].col].setFillColor(sf::Color(255,0,0,128));
+            }
+        }
+
+        /// -------------------------------------------
+
 
         window.clear();
         window.setView(view);
@@ -1532,8 +1335,8 @@ int main()
         {
 
         case GameStates::MENU:
-            window.draw(Setting);
-            window.draw(Help);
+            window.draw(setting.settingBTN);
+            window.draw(setting.helpBTN);
             window.draw(StartImage);
             window.draw(PreStart);
             window.draw(TitlePacMan);
@@ -1546,12 +1349,12 @@ int main()
                 window.draw(setting.setYN[i]);
             }
             window.draw(Settings_text_sprite);
-            window.draw(Return);
+            window.draw(setting.returnBTN);
             break;
 
         case GameStates::HELP:
             window.draw(Help_text_sprite);
-            window.draw(Return);
+            window.draw(setting.returnBTN);
             break;
 
         case GameStates::PAUSE:
