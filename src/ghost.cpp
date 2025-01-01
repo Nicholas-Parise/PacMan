@@ -2,10 +2,10 @@
 #include "configuration.h"
 
 
-Ghost::Ghost()
+Ghost::Ghost(sf::Texture &texture) : Entity(texture)
 {
 
-    sprite.setOrigin(14,14);
+    sprite.setOrigin(sf::Vector2f(14.0f,14.0f));
 
     reset();
 
@@ -21,11 +21,11 @@ void Ghost::reset()
     oldCol = -1;
     direction = NONE;
 
-    row = 13;
-    col = 15;
+    row = conf::GhostHomeRow+3;
+    col = conf::GhostHomeCol;
     state = SCATTER;
 
-    sprite.setPosition(sf::Vector2f(18.78571429*row+(18.78571429/2), 18.61290323*col+(18.61290323/2)));
+    sprite.setPosition(sf::Vector2f(conf::TILESIZE*col+(conf::TILESIZE/2),conf::TILESIZE*row+(conf::TILESIZE/2)));
 }
 
 void Ghost::setScatter(int r, int c)
@@ -69,45 +69,118 @@ bool Ghost::isOppositeDirection(Directions a, Directions b)
 }
 
 
+sf::Vector2f matrixToScreen(int row, int col)
+{
+    // Add half the tile size to both coordinates for centering
+    return sf::Vector2f(col * conf::TILESIZE + conf::TILESIZE / 2.0f, row * conf::TILESIZE + conf::TILESIZE / 2.0f);
+}
+
+void Ghost::moveSprite(float deltaTime)
+{
+    // if there are no nodes
+    if(path.size()<2) return;
+
+
+    if(path[1].row == this->row)
+    {
+
+        if(path[1].col > this->col)
+        {
+            this->direction = RIGHT;
+        }
+        else
+        {
+            this->direction = LEFT;
+        }
+    }
+
+    if(path[1].col == this->col)
+    {
+
+        if(path[1].row > this->row)
+        {
+            this->direction = DOWN;
+        }
+        else
+        {
+            this->direction = UP;
+        }
+
+    }
+
+
+    // Get current and target positions in screen coordinates (centered)
+    sf::Vector2f currentPos = sprite.getPosition();
+    sf::Vector2f targetPos = matrixToScreen(path[1].row, path[1].col);
+
+    // Compute direction and distance
+    sf::Vector2f direction = targetPos - currentPos;
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+    // Check if we're close enough to the target node
+    if (distance > 1.0f)
+    {
+        // Move toward the target node
+        sf::Vector2f normalizedDir = (direction* 1.5f / distance) ; //* deltaTime
+        sprite.move(normalizedDir);
+
+    }
+    else
+    {
+        // Snap to target node and move to the next one
+        sprite.setPosition(targetPos);
+    }
+}
+
+
 void Ghost::followPath()
 {
+    moveSprite(1.0);
+
+    if(true)
+    {
+        return;
+    }
 
     if(path.size()<2)
         return;
 
     Directions tempDir = direction;
 
-    int rowMulti = path[1].col - this->row;
-    int colMulti = path[1].row - this->col;
+    int rowMulti = 1;
+    int colMulti = 1;
 
-
-    if(rowMulti == 0)
+    if(path[1].row == this->row)
     {
-        if(colMulti>0)
+
+        if(path[1].col > this->col)
         {
-            tempDir = DOWN;
+            tempDir = RIGHT;
             colMulti = 1;
         }
         else
         {
-            tempDir = UP;
+            tempDir = LEFT;
             colMulti = -1;
         }
     }
 
-    if(colMulti == 0)
+    if(path[1].col == this->col)
     {
-        if(rowMulti>0)
+
+        if(path[1].row > this->row)
         {
-            tempDir = RIGHT;
+            tempDir = DOWN;
             rowMulti = 1;
         }
         else
         {
-            tempDir = LEFT;
+            tempDir = UP;
             rowMulti = -1;
         }
+
     }
+
 
     if(isOppositeDirection(this->direction,tempDir))
     {
@@ -121,13 +194,13 @@ void Ghost::followPath()
 
     if(this->state == DEAD)
     {
-        this->xSpeed = conf::DeadSpeed * rowMulti;
-        this->ySpeed = conf::DeadSpeed * colMulti;
+        this->xSpeed = conf::DeadSpeed * colMulti;
+        this->ySpeed = conf::DeadSpeed * rowMulti;
     }
     else
     {
-        this->xSpeed = conf::GhostSpeed * rowMulti;
-        this->ySpeed = conf::GhostSpeed * colMulti;
+        this->xSpeed = conf::GhostSpeed * colMulti;
+        this->ySpeed = conf::GhostSpeed * rowMulti;
     }
 
 }
@@ -153,6 +226,7 @@ void Ghost::outOfSpawn()
     {
         state = SCATTER;
         direction = NONE;
+        std::cout<<"fella";
     }
 }
 

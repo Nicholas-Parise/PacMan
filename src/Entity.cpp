@@ -1,8 +1,10 @@
 #include "Entity.h"
 
-Entity::Entity()
+Entity::Entity(sf::Texture &texture) : sprite(texture)
 {
-    //ctor
+   //sprite.setTexture(texture);
+ //   sf::Sprite sprite(texture);
+
 }
 
 Entity::~Entity()
@@ -35,13 +37,13 @@ void Entity::updateOldRC(){
 
 bool Entity::teleporter(){
 
-    if(sprite.getPosition().x<20 && direction == LEFT){
-        sprite.setPosition(510,269);
+    if(sprite.getPosition().x<conf::TILESIZE && direction == LEFT){ // less than one tile away from left side
+        sprite.setPosition(sf::Vector2f((float)(26*conf::TILESIZE+conf::TILESIZE/2),(float)(14*conf::TILESIZE+conf::TILESIZE/2)));
         return true;
     }
 
-    if(sprite.getPosition().x>500 && direction == RIGHT){
-        sprite.setPosition(10,269);
+    if(sprite.getPosition().x>26*conf::TILESIZE+conf::TILESIZE/2 && direction == RIGHT){ // less than one tile away from right side
+        sprite.setPosition(sf::Vector2f(conf::TILESIZE+conf::TILESIZE/2,14*conf::TILESIZE+conf::TILESIZE/2));
         return true;
     }
 

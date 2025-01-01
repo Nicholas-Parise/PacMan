@@ -3,7 +3,7 @@
 class Player: public Entity{
 
     public:
-        Player();
+        Player(sf::Texture &texture);
         virtual ~Player();
         void reset();
         void textureSwitcher(sf::Texture *pacTextures, sf::Texture *deadTextures);

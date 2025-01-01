@@ -1,8 +1,8 @@
 #include "Player.h"
 
-Player::Player()
+Player::Player(sf::Texture &texture) : Entity(texture)
 {
-    sprite.setOrigin(15,15);
+    sprite.setOrigin(sf::Vector2f(15,15));
     reset();
 }
 
@@ -21,10 +21,10 @@ void Player::reset(){
 
     dead = false;
 
-    row = 14;
-    col = 17;
+    row = 17;
+    col = 14;
 
-    sprite.setPosition(sf::Vector2f(18.78571429*row+(18.78571429/2), 18.61290323*col+(18.61290323/2)));
+    sprite.setPosition(sf::Vector2f(conf::TILESIZE*col+(conf::TILESIZE/2),conf::TILESIZE*row+(conf::TILESIZE/2)));
 }
 
 
@@ -65,22 +65,22 @@ void Player::goDirection(Directions d){
     switch(direction){
 
         case LEFT:
-            sprite.setRotation(-180);
+            sprite.setRotation(sf::degrees(-180.0f));
             xSpeed = -2;
             ySpeed = 0;
             break;
         case UP:
-            sprite.setRotation(-90);
+            sprite.setRotation(sf::degrees(-90.0f));
             xSpeed = 0;
             ySpeed = -2;
             break;
         case RIGHT:
-            sprite.setRotation(0);
+            sprite.setRotation(sf::degrees(0.0f));
             xSpeed = 2;
             ySpeed = 0;
             break;
         case DOWN:
-            sprite.setRotation(90);
+            sprite.setRotation(sf::degrees(90.0f));
             xSpeed = 0;
             ySpeed = 2;
             break;

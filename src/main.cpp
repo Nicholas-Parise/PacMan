@@ -67,7 +67,7 @@ sf::View getLetterboxView(sf::View view, int windowWidth, int windowHeight)
         posY = (1 - sizeY) / 2.f;
     }
 
-    view.setViewport( sf::FloatRect(posX, posY, sizeX, sizeY) );
+    view.setViewport( sf::FloatRect({posX, posY}, {sizeX, sizeY}) );
 
     return view;
 }
@@ -85,28 +85,10 @@ bool isSpriteHover(sf::FloatRect Button, sf::Vector2f mp)
 }
 
 
-vector<int> ClossestTile(float PositionX, float PositionY, std::vector<sf::RectangleShape> Tiles)
+vector<int> ClossestTile(float PositionX, float PositionY)
 {
-
-    int FinalPlace = -1;
-    int row = 1;
-    int col = 1;
-
-    for(int i = 0; i<28*31; i++)
-    {
-
-        if ((Tiles[i].getGlobalBounds()).contains(sf::Vector2f(PositionX, PositionY)))
-        {
-
-            FinalPlace = i;
-            break;
-        }
-    }
-    if(FinalPlace != -1)
-    {
-        col = FinalPlace/28;
-        row = FinalPlace%28;
-    }
+    int row = PositionY/conf::TILESIZE;
+    int col = PositionX/conf::TILESIZE;
 
     vector<int> RowColArray = {row,col};
 
@@ -123,7 +105,7 @@ vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
     if(Col >0)
     {
         //Above
-        if(conf::GameMatrix[Col-1][Row] == 1)
+        if(conf::GameMatrix[Row-1][Col] == 1)
         {
 
             if(currentDur == UP)
@@ -138,7 +120,7 @@ vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
     }
 
     //below
-    if(conf::GameMatrix[Col+1][Row] == 1)
+    if(conf::GameMatrix[Row+1][Col] == 1)
     {
 
         if(currentDur == DOWN)
@@ -153,7 +135,7 @@ vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
 
 
     //Left
-    if(conf::GameMatrix[Col][Row-1] == 1)
+    if(conf::GameMatrix[Row][Col-1] == 1)
     {
 
         if(currentDur == LEFT)
@@ -168,7 +150,7 @@ vector<Directions> WallTest(int Row, int Col, Directions currentDur, bool &Stop)
 
 
     //Right
-    if(conf::GameMatrix[Col][Row+1] == 1)
+    if(conf::GameMatrix[Row][Col+1] == 1)
     {
 
         if(currentDur == RIGHT)
@@ -282,7 +264,7 @@ void SaveHS(int &highscore, int score, sf::Text &NewHS)
         if(score>highscore)
         {
             highscore = score;
-            NewHS.setPosition(522/2, 400);
+            NewHS.setPosition(sf::Vector2f(522/2, 400));
         }
 
         writeFile<< highscore;
@@ -298,8 +280,8 @@ void PlaceLives(std::vector<sf::Sprite> &PacLife)
 {
     for(int i = 0; i<PacLife.size(); i++)
     {
-        PacLife[i].setOrigin(15,15);
-        PacLife[i].setPosition(400 + i*50,600);
+        PacLife[i].setOrigin(sf::Vector2f(15,15));
+        PacLife[i].setPosition(sf::Vector2f(400 + i*50,600));
     }
 }
 
@@ -307,57 +289,52 @@ int main()
 {
 
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-    sf::RenderWindow window(sf::VideoMode(522, 620), "PacMan", sf::Style::Default,settings);
+    settings.antiAliasingLevel = 8;
+    sf::RenderWindow window(sf::VideoMode({522, 620}), "PacMan", sf::Style::Default,sf::State::Windowed ,settings);
     window.setFramerateLimit(60);
-    sf::View view(sf::FloatRect(0.f, 0.f, window.getSize().x, window.getSize().y));
+    sf::View view(sf::FloatRect({0.f, 0.f}, {window.getSize().x, window.getSize().y}));
 
-    sf::Font font;
-    font.loadFromFile("Assets/Other/Arial.ttf");
+    const sf::Font font("Assets/Other/Arial.ttf");
 
-
-    sf::Text GameDone("Loading...", font);
-    GameDone.setCharacterSize(30);
+    sf::Text GameDone(font, "Loading...", 30);
     GameDone.setStyle(sf::Text::Bold);
     GameDone.setFillColor(sf::Color::Red);
-    GameDone.setPosition(182, 387);
+    GameDone.setPosition(sf::Vector2f(182, 387));
 
     window.draw(GameDone);
     window.display();
 
     srand (time(NULL));
 
+    TextureManager textureManager;
 
-    Player pacman;
+    Player pacman(textureManager.PacTexture[0]);
     int PacLives = 3;
     bool stopPacMan;
 
+    Ghost rGhost(textureManager.redTextures[0]);
+    rGhost.setScatter(1,23);
 
-    Ghost rGhost;
-    rGhost.setScatter(23,1);
+    Ghost bGhost(textureManager.blueTextures[0]);
+    bGhost.setScatter(29,24);
 
-    Ghost bGhost;
-    bGhost.setScatter(24,29);
-
-    Ghost oGhost;
-    oGhost.setScatter(3,29);
+    Ghost oGhost(textureManager.orangeTextures[0]);
+    oGhost.setScatter(29,3);
     int OrangePacDistance;
 
-    Ghost pGhost;
-    pGhost.setScatter(2,1);
+    Ghost pGhost(textureManager.pinkTextures[0]);
+    pGhost.setScatter(1,2);
 
-
-    Settings setting;
+    Settings setting(textureManager.trackTextures[0], textureManager.YNtextures[0],textureManager.settingsTextures[0], textureManager.returnTextures[0], textureManager.helpTextures[0]);
 
     GameStateManager gsManager;
 
     Pathing pathing;
 
-    Pellet pellet;
+    Pellet pellet(textureManager.berryTextures[0]);
 
     SoundManager soundManager;
 
-    TextureManager textureManager;
 
     Ghost *ghosts[4];
     ghosts[0] = &rGhost;
@@ -392,14 +369,14 @@ int main()
 
     std::vector<sf::RectangleShape> Tiles(868);
 
-    for(int i = 0; i<31; i++)
+    for(int i = 0; i<conf::SIZEY; i++)
     {
-        for(int j = 0; j<28; j++)
+        for(int j = 0; j<conf::SIZEX; j++)
         {
 
-            Tiles[place].setOrigin(0,0);
-            Tiles[place].setSize(sf::Vector2f(18.78571429, 18.61290323));
-            Tiles[place].setPosition(sf::Vector2f(18.78571429*j,18.61290323*i));
+            Tiles[place].setOrigin(sf::Vector2f(0,0));
+            Tiles[place].setSize(sf::Vector2f(conf::TILESIZE, conf::TILESIZE));
+            Tiles[place].setPosition(sf::Vector2f(conf::TILESIZE*j,conf::TILESIZE*i));
 
             if(conf::GameMatrix[i][j] == 0)
             {
@@ -433,8 +410,7 @@ int main()
     sf::Texture MapTexture;
     MapTexture.loadFromImage(image);
 
-    sf::Sprite Background;
-    Background.setTexture(MapTexture);
+    sf::Sprite Background(MapTexture);
     Background.setPosition(sf::Vector2f(0, 0));
 
     sf::Texture PauseTexture;
@@ -445,24 +421,21 @@ int main()
 
     // -----
 
-    sf::Sprite Paused;
-    Paused.setTexture(PauseTexture);
+    sf::Sprite Paused(PauseTexture);
     Paused.setPosition(sf::Vector2f(0, 0));
-    Paused.setOrigin(25,31);
-    Paused.setScale(1.f,1.f);
-    Paused.setPosition(261,288);
+    Paused.setOrigin(sf::Vector2f(25,31));
+    Paused.setScale(sf::Vector2f(1.f,1.f));
+    Paused.setPosition(sf::Vector2f(261,288));
 
 
-    sf::Sprite TitlePacMan;
-    TitlePacMan.setTexture(textureManager.PacTexture[0]);
-    TitlePacMan.setOrigin(15,15);
-    TitlePacMan.setRotation(-90);
+    sf::Sprite TitlePacMan(textureManager.PacTexture[0]);
+    TitlePacMan.setOrigin(sf::Vector2f(15,15));
+    TitlePacMan.setRotation(sf::degrees(-90.0f));
 
 
-    sf::Sprite StartImage;
-    StartImage.setTexture(texture9);
+    sf::Sprite StartImage(texture9);
     StartImage.setPosition(sf::Vector2f(266, 150));
-    StartImage.setOrigin(225,51);
+    StartImage.setOrigin(sf::Vector2f(225,51));
 
 
     std::vector<sf::Sprite> PacLife(3, sf::Sprite(textureManager.PacTexture[0]));
@@ -471,54 +444,48 @@ int main()
 
     //----------------Text----------------
 
-    sf::Text NewHS("NEW HIGHSCORE!!", font);
-    NewHS.setCharacterSize(30);
+    sf::Text NewHS(font,"NEW HIGHSCORE!!", 30);
     NewHS.setStyle(sf::Text::Bold);
     NewHS.setFillColor(sf::Color::Red);
-    NewHS.setOrigin(150,15);
-    NewHS.setPosition(1000, 1000);
+    NewHS.setOrigin(sf::Vector2f(150,15));
+    NewHS.setPosition(sf::Vector2f(1000, 1000));
 
 
-    sf::Text scoreDis("0", font);
-    scoreDis.setCharacterSize(30);
+    sf::Text scoreDis(font,"0", 30);
     scoreDis.setStyle(sf::Text::Bold);
     scoreDis.setFillColor(sf::Color::White);
-    scoreDis.setOrigin(15,15);
-    scoreDis.setPosition(30,590);
+    scoreDis.setOrigin(sf::Vector2f(15,15));
+    scoreDis.setPosition(sf::Vector2f(30,590));
 
-    sf::Text HsDis("0", font);
-    HsDis.setCharacterSize(30);
+    sf::Text HsDis(font, "0", 30);
     HsDis.setStyle(sf::Text::Bold);
     HsDis.setFillColor(sf::Color::White);
-    HsDis.setOrigin(15,15);
-    HsDis.setPosition(250, 590);
+    HsDis.setOrigin(sf::Vector2f(15, 15));
+    HsDis.setPosition(sf::Vector2f(250, 590));
 
-    sf::Text PreStart("Push Space To Start", font);
-    PreStart.setCharacterSize(30);
+    sf::Text PreStart(font,"Push Space To Start",30);
     PreStart.setStyle(sf::Text::Bold);
     PreStart.setFillColor(sf::Color::White);
-    PreStart.setOrigin(142,15);
-    PreStart.setPosition(522/2, 620/2);
+    PreStart.setOrigin(sf::Vector2f(142,15));
+    PreStart.setPosition(sf::Vector2f(522/2, 620/2));
 
 
-    GameDone.setOrigin(95,15);
-    GameDone.setPosition(522/2, 322);
+    GameDone.setOrigin(sf::Vector2f(95,15));
+    GameDone.setPosition(sf::Vector2f(522/2, 322));
     GameDone.setString("GAME OVER");
 
 
 
-    sf::Text Help_text_sprite(Help_Text, font);
-    Help_text_sprite.setCharacterSize(20);
+    sf::Text Help_text_sprite(font, Help_Text, 20);
     Help_text_sprite.setStyle(sf::Text::Bold);
     Help_text_sprite.setFillColor(sf::Color::White);
-    Help_text_sprite.setPosition(0, 100);
+    Help_text_sprite.setPosition(sf::Vector2f(0,100));
 
 
-    sf::Text Settings_text_sprite(Settings_Text, font);
-    Settings_text_sprite.setCharacterSize(30);
+    sf::Text Settings_text_sprite(font, Settings_Text, 30);
     Settings_text_sprite.setStyle(sf::Text::Bold);
     Settings_text_sprite.setFillColor(sf::Color::White);
-    Settings_text_sprite.setPosition(100, 10);
+    Settings_text_sprite.setPosition(sf::Vector2f(100,10));
 
 
     sf::Vector2i pixelPos;
@@ -532,10 +499,10 @@ int main()
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
+
+        while (const std::optional event = window.pollEvent()){
+
+            if (event->is<sf::Event::Closed>())
             {
 
                 SaveHS(highscore,score,NewHS);
@@ -544,73 +511,73 @@ int main()
                 return 0;
             }
 
-            if (event.type == sf::Event::Resized)
+            if (const auto* resized = event->getIf<sf::Event::Resized>())
             {
-                view = getLetterboxView( view, event.size.width, event.size.height );
+                view = getLetterboxView( view, resized->size.x, resized->size.y );
             }
 
             pixelPos = sf::Mouse::getPosition(window);
             worldPos = window.mapPixelToCoords(pixelPos);
 
-            if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+            if(event->is<sf::Event::MouseButtonReleased>() )
             {
                 //  cout<<worldPos.x<<" "<<worldPos.y<<endl;
-                TempRowCol = ClossestTile(worldPos.x,worldPos.y, Tiles);
-                //  cout<<endl;
-                //  cout<<TempRowCol[0]<<" "<<TempRowCol[1]<<endl;
+                TempRowCol = ClossestTile(worldPos.x,worldPos.y);
+                  //cout<<endl;
+                  cout<<TempRowCol[0]<<" "<<TempRowCol[1]<<endl;
                 //  return 0;
             }
 
 
-            TitlePacMan.setPosition(worldPos.x,worldPos.y);
+            TitlePacMan.setPosition(sf::Vector2f(worldPos.x,worldPos.y));
 
             ///////
 
             setting.resetHover();
 
 
-            if(isSpriteHover(setting.settingBTN.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU)
+            if(isSpriteHover(setting.settingBTN->getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU)
             {
 
                 setting.hoverSettings();
 
                 if(setting.Effect)
                 {
-                    soundManager.Button_select.play();
+                    soundManager.Button_select->play();
                 }
 
 
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                if(event->is<sf::Event::MouseButtonReleased>())
                 {
 
                     gsManager.changeState(GameStates::SETTINGS);
 
                     if(setting.Effect)
                     {
-                        soundManager.Button_click.play();
+                        soundManager.Button_click->play();
                     }
                 }
             }
 
 
-            if(isSpriteHover(setting.returnBTN.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP))
+            if(isSpriteHover(setting.returnBTN->getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && (gsManager.gState == GameStates::SETTINGS || gsManager.gState == GameStates::HELP))
             {
 
                 setting.hoverReturn();
 
                 if(setting.Effect)
                 {
-                    soundManager.Button_select.play();
+                    soundManager.Button_select->play();
                 }
 
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                if(event->is<sf::Event::MouseButtonReleased>())
                 {
 
                     gsManager.changeState(GameStates::MENU);
 
                     if(setting.Effect)
                     {
-                        soundManager.Button_click.play();
+                        soundManager.Button_click->play();
                     }
 
                     setting.saveSettings("Assets/Other/Settings.txt");
@@ -618,23 +585,23 @@ int main()
             }
 
 
-            if(isSpriteHover(setting.helpBTN.getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
+            if(isSpriteHover(setting.helpBTN->getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)) && gsManager.gState == GameStates::MENU){
 
                  setting.hoverHelp();
 
                 if(setting.Effect)
                 {
-                    soundManager.Button_select.play();
+                    soundManager.Button_select->play();
                 }
 
-                if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                if(event->is<sf::Event::MouseButtonReleased>())
                 {
 
                     gsManager.changeState(GameStates::HELP);
 
                     if(setting.Effect)
                     {
-                        soundManager.Button_click.play();
+                        soundManager.Button_click->play();
                     }
                 }
             }
@@ -646,22 +613,22 @@ int main()
             for(int i = 0; i<3; i++)
             {
 
-                if(isSpriteHover(setting.setYN[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)))
+                if(isSpriteHover(setting.setYN[i]->getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)))
                 {
 
                     setting.hoverYN(i);
 
                     if(setting.Effect)
                     {
-                        soundManager.Button_select.play();
+                        soundManager.Button_select->play();
                     }
 
-                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                    if(event->is<sf::Event::MouseButtonReleased>())
                     {
 
                         if(setting.Effect)
                         {
-                            soundManager.Button_click.play();
+                            soundManager.Button_click->play();
                         }
 
                         if(*setting.aOptions[i])
@@ -686,22 +653,22 @@ int main()
 
                 //
 
-                if(isSpriteHover(setting.tracks[i].getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)))
+                if(isSpriteHover(setting.tracks[i]->getGlobalBounds(), sf::Vector2f(worldPos.x, worldPos.y)))
                 {
 
                     setting.hoverTrack(i);
 
                     if(setting.Effect)
                     {
-                        soundManager.Button_select.play();
+                        soundManager.Button_select->play();
                     }
 
-                    if(event.type == sf::Event::MouseButtonReleased &&  event.mouseButton.button == sf::Mouse::Left)
+                    if(event->is<sf::Event::MouseButtonReleased>())
                     {
 
                         if(setting.Effect)
                         {
-                            soundManager.Button_click.play();
+                            soundManager.Button_click->play();
                         }
 
                         setting.Track = i+1;
@@ -717,23 +684,23 @@ int main()
         //////Path Finding
 
 
-        TempRowCol = ClossestTile(pacman.sprite.getPosition().x,pacman.sprite.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(pacman.sprite.getPosition().x,pacman.sprite.getPosition().y);
         pacman.row = TempRowCol[0];
         pacman.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(rGhost.sprite.getPosition().x,rGhost.sprite.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(rGhost.sprite.getPosition().x,rGhost.sprite.getPosition().y);
         rGhost.row = TempRowCol[0];
         rGhost.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(oGhost.sprite.getPosition().x,oGhost.sprite.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(oGhost.sprite.getPosition().x,oGhost.sprite.getPosition().y);
         oGhost.row = TempRowCol[0];
         oGhost.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(bGhost.sprite.getPosition().x,bGhost.sprite.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(bGhost.sprite.getPosition().x,bGhost.sprite.getPosition().y);
         bGhost.row = TempRowCol[0];
         bGhost.col = TempRowCol[1];
 
-        TempRowCol = ClossestTile(pGhost.sprite.getPosition().x,pGhost.sprite.getPosition().y, Tiles);
+        TempRowCol = ClossestTile(pGhost.sprite.getPosition().x,pGhost.sprite.getPosition().y);
         pGhost.row = TempRowCol[0];
         pGhost.col = TempRowCol[1];
 
@@ -753,19 +720,19 @@ int main()
                     // blue
                     if(pacman.direction == UP)
                     {
-                        solutionCol-=2;
+                        solutionRow-=2;
                     }
                     if(pacman.direction == DOWN)
                     {
-                        solutionCol+=2;
+                        solutionRow+=2;
                     }
                     if(pacman.direction == LEFT)
                     {
-                        solutionRow-=2;
+                        solutionCol-=2;
                     }
                     if(pacman.direction == RIGHT)
                     {
-                        solutionRow+=2;
+                        solutionCol+=2;
                     }
 
 
@@ -784,7 +751,7 @@ int main()
                     OrangePacDistance = pow(pacman.row-oGhost.row,2) + pow(pacman.col-oGhost.col,2);
                     if(OrangePacDistance<80)
                     {
-                        solutionRow =  oGhost.scatterRow;
+                        solutionRow = oGhost.scatterRow;
                         solutionCol = oGhost.scatterCol;
                     } // else pacman
                     break;
@@ -794,41 +761,40 @@ int main()
                 {
                     if(pacman.direction == UP)
                     {
-                        solutionCol-=4;
+                        solutionRow-=4;
                     }
                     if(pacman.direction == DOWN)
                     {
-                        solutionCol+=4;
+                        solutionRow+=4;
                     }
                     if(pacman.direction == LEFT)
                     {
-                        solutionRow-=4;
+                        solutionCol-=4;
                     }
                     if(pacman.direction == RIGHT)
                     {
-                        solutionRow+=4;
+                        solutionCol+=4;
                     }
                 }
             }
 
-            if(pacman.changedPosition()|| ghosts[i]->changedPosition())
-            {
+            if(pacman.changedPosition()|| ghosts[i]->changedPosition()){
                 ghosts[i]->updateOldRC();
 
-                Node start(ghosts[i]->col,ghosts[i]->row,ghosts[i]->direction);
+                Node start(ghosts[i]->row,ghosts[i]->col,ghosts[i]->direction);
 
                 switch(ghosts[i]->state)
                 {
 
                 case CHASE:
                 {
-                    Node finish(solutionCol,solutionRow);
+                    Node finish(solutionRow, solutionCol);
                     ghosts[i]->path = pathing.shortestPath(start,finish);
                 }
                 break;
                 case SCATTER:
                 {
-                    Node finish(ghosts[i]->scatterCol,ghosts[i]->scatterRow);
+                    Node finish(ghosts[i]->scatterRow, ghosts[i]->scatterCol);
                     ghosts[i]->path = pathing.shortestPath(start,finish);
                 }
                 break;
@@ -839,7 +805,7 @@ int main()
                 break;
                 case DEAD:
                 {
-                    Node finish(conf::GhostHomeCol+3,conf::GhostHomeRow);
+                    Node finish(conf::GhostHomeRow,conf::GhostHomeCol+3);
                     ghosts[i]->path = pathing.shortestPath(start,finish);
                 }
                 break;
@@ -860,7 +826,7 @@ int main()
 
 
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
         {
 
             if(gsManager.gState != GameStates::PAUSE && gsManager.gState != GameStates::MENU && gsManager.pauseTimer >10)
@@ -904,25 +870,25 @@ int main()
             for(int i = 0; i<PacManAvallibleDir.size(); i++)
             {
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && PacManAvallibleDir[i] == LEFT)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) && PacManAvallibleDir[i] == LEFT)
                 {
 
                     pacman.goDirection(LEFT);
 
                 }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)&& PacManAvallibleDir[i] == RIGHT)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) && PacManAvallibleDir[i] == RIGHT)
                 {
 
                     pacman.goDirection(RIGHT);
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)&& PacManAvallibleDir[i] == UP)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) && PacManAvallibleDir[i] == UP)
                 {
 
                     pacman.goDirection(UP);
 
                 }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)&& PacManAvallibleDir[i] == DOWN)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) && PacManAvallibleDir[i] == DOWN)
                 {
 
                     pacman.goDirection(DOWN);
@@ -933,7 +899,7 @@ int main()
 
         if((pacman.teleporter() | rGhost.teleporter() | oGhost.teleporter() | bGhost.teleporter() | pGhost.teleporter())&& setting.Effect)
         {
-            soundManager.teleport_Game.play();
+            soundManager.teleport_Game->play();
         }
 
 
@@ -959,7 +925,7 @@ int main()
             score +=5;
             if(setting.Effect)
             {
-                soundManager.Dot_Chomp.play();
+                soundManager.Dot_Chomp->play();
             }
         }
 
@@ -971,7 +937,7 @@ int main()
 
             if(setting.Effect)
             {
-                soundManager.Power_Chomp.play();
+                soundManager.Power_Chomp->play();
             }
 
             gsManager.GhostScared = true;
@@ -991,7 +957,7 @@ int main()
             score +=10;
             if(setting.Effect)
             {
-                soundManager.Berry_Chomp.play();
+                soundManager.Berry_Chomp->play();
             }
         }
 
@@ -1009,7 +975,7 @@ int main()
             for(int i = 0; i<4; i++)
             {
 
-                if(pacman.sprite.getGlobalBounds().intersects((ghosts[i])->sprite.getGlobalBounds()))
+                if(pacman.sprite.getGlobalBounds().findIntersection((ghosts[i])->sprite.getGlobalBounds()))
                 {
 
                     if(ghosts[i]->state == SCARED)
@@ -1018,7 +984,7 @@ int main()
 
                         if(setting.Effect)
                         {
-                            soundManager.Eat_Ghost.play();
+                            soundManager.Eat_Ghost->play();
                         }
 
                         ghosts[i]->changeState(DEAD);
@@ -1034,7 +1000,7 @@ int main()
 
                         if(setting.Effect)
                         {
-                            soundManager.Dead.play();
+                            soundManager.Dead->play();
                         }
 
                         pacman.dead = true;
@@ -1075,7 +1041,7 @@ int main()
 
 
         /// ------ start game -------
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gsManager.gState == GameStates::MENU)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && gsManager.gState == GameStates::MENU)
         {
 
             cout<<"play"<<endl;
@@ -1103,8 +1069,8 @@ int main()
             soundManager.BackG_Wii.stop();
             if(setting.Effect)
             {
-                soundManager.Button_click.play();
-                soundManager.start_Game.play();
+                soundManager.Button_click->play();
+                soundManager.start_Game->play();
             }
 
             if(setting.Music)
@@ -1130,7 +1096,7 @@ int main()
 
             if(setting.Effect)
             {
-                soundManager.start_Game.play();
+                soundManager.start_Game->play();
             }
 
             Level++;
@@ -1157,7 +1123,7 @@ int main()
             pacman.dead = false;
 
             PacLives --;
-            PacLife[PacLives].setPosition(1000,1000);
+            PacLife[PacLives].setPosition({1000,1000});
 
             gsManager.reset();
 
@@ -1193,7 +1159,7 @@ int main()
 
             if(setting.Effect)
             {
-                soundManager.gameOver.play();
+                soundManager.gameOver->play();
             }
 
             SaveHS(highscore,score,NewHS);
@@ -1257,11 +1223,11 @@ int main()
         if(gsManager.gState == GameStates::GAME && !pacman.dead)
         {
 
-            pacman.sprite.move(pacman.xSpeed,pacman.ySpeed);
-            rGhost.sprite.move(rGhost.xSpeed, rGhost.ySpeed);
-            oGhost.sprite.move(oGhost.xSpeed, oGhost.ySpeed);
-            bGhost.sprite.move(bGhost.xSpeed, bGhost.ySpeed);
-            pGhost.sprite.move(pGhost.xSpeed, pGhost.ySpeed);
+            pacman.sprite.move(sf::Vector2f(pacman.xSpeed, pacman.ySpeed));
+            rGhost.sprite.move(sf::Vector2f(rGhost.xSpeed, rGhost.ySpeed));
+            oGhost.sprite.move(sf::Vector2f(oGhost.xSpeed, oGhost.ySpeed));
+            bGhost.sprite.move(sf::Vector2f(bGhost.xSpeed, bGhost.ySpeed));
+            pGhost.sprite.move(sf::Vector2f(pGhost.xSpeed, pGhost.ySpeed));
         }
 
         /// ---- debug graphics ----
@@ -1335,8 +1301,8 @@ int main()
         {
 
         case GameStates::MENU:
-            window.draw(setting.settingBTN);
-            window.draw(setting.helpBTN);
+            window.draw(*setting.settingBTN);
+            window.draw(*setting.helpBTN);
             window.draw(StartImage);
             window.draw(PreStart);
             window.draw(TitlePacMan);
@@ -1345,16 +1311,16 @@ int main()
         case GameStates::SETTINGS:
             for(int i = 0; i<3; i++)
             {
-                window.draw(setting.tracks[i]);
-                window.draw(setting.setYN[i]);
+                window.draw(*setting.tracks[i]);
+                window.draw(*setting.setYN[i]);
             }
             window.draw(Settings_text_sprite);
-            window.draw(setting.returnBTN);
+            window.draw(*setting.returnBTN);
             break;
 
         case GameStates::HELP:
             window.draw(Help_text_sprite);
-            window.draw(setting.returnBTN);
+            window.draw(*setting.returnBTN);
             break;
 
         case GameStates::PAUSE:

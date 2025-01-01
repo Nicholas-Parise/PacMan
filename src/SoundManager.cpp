@@ -1,23 +1,44 @@
 #include "SoundManager.h"
 
-SoundManager::SoundManager()
+SoundManager::SoundManager(){
+
+    loadMusic();
+
+    loadEffects();
+
+    BackG_Wii.setLooping(true);
+    BackG_Pizza.setLooping(true);
+    BackG_Subwooder.setLooping(true);
+    BackG_Sweden.setLooping(true);
+
+    BackG_Wii.setVolume(60.0f);
+    teleport_Game->setVolume(50.0f);
+    start_Game->setVolume(50.0f);
+    BackG_Pizza.setVolume(10.0f);
+    Power_Chomp->setVolume(30.0f);
+}
+
+SoundManager::~SoundManager()
 {
-    // music
+    //dtor
+}
+
+void SoundManager::loadMusic(){
     BackG_Pizza.openFromFile("Assets/Audio/Music/Pizza_Theme.wav");
-
     BackG_Wii.openFromFile("Assets/Audio/Music/Wii_Menu2.wav");
-
     BackG_Subwooder.openFromFile("Assets/Audio/Music/SubwooferLullaby.ogg");
-
     BackG_Sweden.openFromFile("Assets/Audio/Music/Sweden.ogg");
+}
 
-    // effects
-    // load
+
+void SoundManager::loadEffects(){
+
+ // load
     startBuffer.loadFromFile("Assets/Audio/Effect/Mac_Startup.wav");
 
-    teleportBuffer.loadFromFile("Assets/Audio/Effect/XP_Dots.wav");
+    teleportBuffer.loadFromFile("Assets/Audio/Effect/XP_Teleport.wav");
 
-    dotBuffer.loadFromFile("Assets/Audio/Effect/XP_Teleport.wav");
+    dotBuffer.loadFromFile("Assets/Audio/Effect/XP_Dots.wav");
 
     gameOverBuffer.loadFromFile("Assets/Audio/Effect/XP_End.wav");
 
@@ -34,40 +55,25 @@ SoundManager::SoundManager()
     berryBuffer.loadFromFile("Assets/Audio/Effect/Fortnite_Clap.wav");
 
     // set
-    start_Game.setBuffer(startBuffer);
+    start_Game.emplace(startBuffer);
 
-    teleport_Game.setBuffer(teleportBuffer);
+    teleport_Game.emplace(teleportBuffer);
 
-    Dot_Chomp.setBuffer(dotBuffer);
+    Dot_Chomp.emplace(dotBuffer);
 
-    gameOver.setBuffer(gameOverBuffer);
+    gameOver.emplace(gameOverBuffer);
 
-    Button_click.setBuffer(clickBuffer);
+    Button_click.emplace(clickBuffer);
 
-    Button_select.setBuffer(hoverBuffer);
+    Button_select.emplace(hoverBuffer);
 
-    Dead.setBuffer(deadBuffer);
+    Dead.emplace(deadBuffer);
 
-    Power_Chomp.setBuffer(powerBuffer);
+    Power_Chomp.emplace(powerBuffer);
 
-    Eat_Ghost.setBuffer(eatBuffer);
+    Eat_Ghost.emplace(eatBuffer);
 
-    Berry_Chomp.setBuffer(berryBuffer);
+    Berry_Chomp.emplace(berryBuffer);
 
 
-    BackG_Wii.setLoop(true);
-    BackG_Pizza.setLoop(true);
-    BackG_Subwooder.setLoop(true);
-    BackG_Sweden.setLoop(true);
-
-    BackG_Wii.setVolume(60.f);
-    teleport_Game.setVolume(50.f);
-    start_Game.setVolume(50.f);
-    BackG_Pizza.setVolume(10.f);
-    Power_Chomp.setVolume(30.f);
-}
-
-SoundManager::~SoundManager()
-{
-    //dtor
 }

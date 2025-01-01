@@ -8,7 +8,7 @@
 class Pellet
 {
     public:
-        Pellet();
+        Pellet(sf::Texture &texture);
         virtual ~Pellet();
         void reset();
         void animate(int &glowTimer);

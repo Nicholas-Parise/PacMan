@@ -6,7 +6,7 @@
 class Settings
 {
     public:
-        Settings();
+        Settings(sf::Texture &trackTextures, sf::Texture &YNtextures, sf::Texture &settingsTextures, sf::Texture &returnTextures, sf::Texture &helpTextures);
         virtual ~Settings();
         void readInSettings(std::string filename);
         void saveSettings(std::string filename);
@@ -29,12 +29,12 @@ class Settings
         int returnOffset;
         int helpOffset;
 
-        sf::Sprite tracks[3];
-        sf::Sprite setYN[3];
+        std::optional<sf::Sprite> tracks[3];
+        std::optional<sf::Sprite> setYN[3];
 
-        sf::Sprite settingBTN;
-        sf::Sprite returnBTN;
-        sf::Sprite helpBTN;
+        std::optional<sf::Sprite> settingBTN;
+        std::optional<sf::Sprite> returnBTN;
+        std::optional<sf::Sprite> helpBTN;
 
     protected:
 

@@ -15,17 +15,18 @@ class SoundManager
         sf::Music BackG_Sweden;
 
         // effects
-        sf::Sound start_Game;
-        sf::Sound teleport_Game;
-        sf::Sound gameOver;
-        sf::Sound Button_click;
-        sf::Sound Button_select;
-        sf::Sound Dead;
-        sf::Sound Eat_Ghost;
 
-        sf::Sound Dot_Chomp;
-        sf::Sound Power_Chomp;
-        sf::Sound Berry_Chomp;
+        std::optional<sf::Sound> start_Game;
+        std::optional<sf::Sound> teleport_Game;
+        std::optional<sf::Sound> gameOver;
+        std::optional<sf::Sound> Button_click;
+        std::optional<sf::Sound> Button_select;
+        std::optional<sf::Sound> Dead;
+        std::optional<sf::Sound> Eat_Ghost;
+
+        std::optional<sf::Sound> Dot_Chomp;
+        std::optional<sf::Sound> Power_Chomp;
+        std::optional<sf::Sound> Berry_Chomp;
 
 
     protected:
@@ -44,6 +45,9 @@ class SoundManager
 
         sf::SoundBuffer clickBuffer;
         sf::SoundBuffer hoverBuffer;
+
+        void loadMusic();
+        void loadEffects();
 };
 
 #endif // SOUNDMANAGER_H

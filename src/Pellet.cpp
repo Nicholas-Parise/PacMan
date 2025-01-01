@@ -1,15 +1,16 @@
 #include "Pellet.h"
 
-Pellet::Pellet()
+Pellet::Pellet(sf::Texture &texture) : Berry(texture)
 {
+
     sf::RectangleShape tempDot;
     sf::CircleShape tempPowerUp;
 
     for (int i = 0; i < DOTS; i++){
 
         tempDot.setFillColor(sf::Color::White);
-        tempDot.setSize(sf::Vector2f(5, 5));
-        tempDot.setOrigin(2.5,2.5);
+        tempDot.setSize(sf::Vector2f(5.0, 5.0));
+        tempDot.setOrigin(sf::Vector2f(2.5, 2.5));
         Dot.push_back(tempDot);
     }
 
@@ -18,13 +19,13 @@ Pellet::Pellet()
 
         tempPowerUp.setFillColor(sf::Color::White);
         tempPowerUp.setRadius(10);
-        tempPowerUp.setOrigin(10,10);
+        tempDot.setOrigin(sf::Vector2f(10.0, 10.0));
         tempPowerUp.setOutlineColor(sf::Color(250, 150, 100));
         PowerUp.push_back(tempPowerUp);
     }
 
-    Berry.setScale(2.f, 2.f);
-    Berry.setPosition(1000,1000);
+    Berry.setScale(sf::Vector2f(2.0, 2.0));
+    Berry.setPosition(sf::Vector2f(1000,1000));
 
     reset();
 }
@@ -44,12 +45,12 @@ void Pellet::reset(){
         for(int j = 0; j<conf::SIZEX; j++){
 
             if(conf::GameMatrix[i][j] == 0){
-                Dot[dotplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
+                Dot[dotplace].setPosition(sf::Vector2f(conf::TILESIZE*j+(conf::TILESIZE/2), conf::TILESIZE*i+(conf::TILESIZE/2)));
                 dotplace++;
 
             }
             if(conf::GameMatrix[i][j] == 8){
-                PowerUp[PowerUpplace].setPosition(sf::Vector2f(18.78571429*j+(18.78571429/2), 18.61290323*i+(18.61290323/2)));
+                PowerUp[PowerUpplace].setPosition(sf::Vector2f(conf::TILESIZE*j+(conf::TILESIZE/2), conf::TILESIZE*i+(conf::TILESIZE/2)));
                 PowerUpplace++;
 
             }
@@ -80,9 +81,9 @@ void Pellet::animate(int &glowTimer){
 bool Pellet::dotHit(sf::Sprite pac){
 
     for (int i = 0; i < DOTS; i++){
-        if(pac.getGlobalBounds().intersects(Dot[i].getGlobalBounds())){
+        if(pac.getGlobalBounds().findIntersection(Dot[i].getGlobalBounds())){
 
-            Dot[i].setPosition(Dot[i].getPosition().x+1000,0);
+            Dot[i].setPosition(sf::Vector2f(Dot[i].getPosition().x+1000,0));
 
             dotsEaten ++;
             //score +=5;
@@ -96,9 +97,9 @@ bool Pellet::dotHit(sf::Sprite pac){
 bool Pellet::powerHit(sf::Sprite pac){
 
     for (int i = 0; i < POWERUPS; i++){
-        if(pac.getGlobalBounds().intersects(PowerUp[i].getGlobalBounds())){
+        if(pac.getGlobalBounds().findIntersection(PowerUp[i].getGlobalBounds())){
 
-            PowerUp[i].setPosition(PowerUp[i].getPosition().x+1000,0);
+            PowerUp[i].setPosition(sf::Vector2f(PowerUp[i].getPosition().x+1000,0));
 
             PowerUpEaten ++;
             return true;
@@ -110,9 +111,9 @@ bool Pellet::powerHit(sf::Sprite pac){
 
 bool Pellet::berryHit(sf::Sprite pac){
 
-    if(pac.getGlobalBounds().intersects(Berry.getGlobalBounds())){
+    if(pac.getGlobalBounds().findIntersection(Berry.getGlobalBounds())){
 
-            Berry.setPosition(1000,1000);
+            Berry.setPosition(sf::Vector2f(1000,1000));
             return true;
     }
     return false;
@@ -128,7 +129,7 @@ void Pellet::spawnBerry(sf::Texture *berryTextures, int Berrytimer){
 
         Berry.setTexture(berryTextures[randtemp]);
 
-        Berry.setPosition(522/2,620/2);
+        Berry.setPosition(sf::Vector2f(522/2,620/2));
     }
 
 }

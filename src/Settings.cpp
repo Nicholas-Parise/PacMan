@@ -1,8 +1,22 @@
 #include "Settings.h"
 
-Settings::Settings()
+Settings::Settings(sf::Texture &trackTextures, sf::Texture &YNtextures, sf::Texture &settingsTextures, sf::Texture &returnTextures, sf::Texture &helpTextures)
 {
     readInSettings("Assets/Other/Settings.txt");
+
+    tracks[0].emplace(trackTextures);
+    tracks[1].emplace(trackTextures);
+    tracks[2].emplace(trackTextures);
+
+    setYN[0].emplace(YNtextures);
+    setYN[1].emplace(YNtextures);
+    setYN[2].emplace(YNtextures);
+
+    settingBTN.emplace(settingsTextures);
+    returnBTN.emplace(returnTextures);
+    helpBTN.emplace(helpTextures);
+
+
     initSprite();
 
     aOptions[0] = &Master;
@@ -51,25 +65,25 @@ void Settings::hoverHelp(){
 void Settings::initSprite(){
 
     for(int i = 0; i<3; i++){
-        tracks[i].setOrigin(65,47);
-        tracks[i].setPosition(sf::Vector2f(150 + 100*i,450.f));
-        tracks[i].setScale(.6f,.6f);
+        tracks[i]->setOrigin(sf::Vector2f(65,47));
+        tracks[i]->setPosition(sf::Vector2f(150 + 100*i,450.f));
+        tracks[i]->setScale(sf::Vector2f(0.6f,0.6f));
 
-        setYN[i].setScale(.7f,.7f);
-        setYN[i].setPosition(400,i*90+10);
+        setYN[i]->setScale(sf::Vector2f(0.7f,0.7f));
+        setYN[i]->setPosition(sf::Vector2f(400,i*90+10));
     }
 
-    settingBTN.setOrigin(312,47);
-    settingBTN.setPosition(sf::Vector2f(522/2.f,388.f));
-    settingBTN.setScale(.7f,.7f);
+    settingBTN->setOrigin(sf::Vector2f(312,47));
+    settingBTN->setPosition(sf::Vector2f(522/2.f,388.f));
+    settingBTN->setScale(sf::Vector2f(0.7f,0.7f));
 
-    returnBTN.setOrigin(136,47);
-    returnBTN.setPosition(sf::Vector2f(522/2.f,550.f));
-    returnBTN.setScale(.6f,.6f);
+    returnBTN->setOrigin(sf::Vector2f(136,47));
+    returnBTN->setPosition(sf::Vector2f(522/2.f,550.f));
+    returnBTN->setScale(sf::Vector2f(0.6f,0.6f));
 
-    helpBTN.setOrigin(111,47);
-    helpBTN.setPosition(sf::Vector2f(522/2.f,488.f));
-    helpBTN.setScale(.6f,.6f);
+    helpBTN->setOrigin(sf::Vector2f(111,47));
+    helpBTN->setPosition(sf::Vector2f(522/2.f,488.f));
+    helpBTN->setScale(sf::Vector2f(0.6f,0.6f));
 }
 
 
@@ -77,21 +91,21 @@ void Settings::textureSwitcher(sf::Texture *trackTextures, sf::Texture *YNtextur
 
     for(int i = 0; i<3; i++){
         if(Track == i+1){
-            tracks[i].setTexture(trackTextures[i*2+1]);
+            tracks[i]->setTexture(trackTextures[i*2+1]);
         }else{
-            tracks[i].setTexture(trackTextures[i*2+hoverOffsets[i+3]]);
+            tracks[i]->setTexture(trackTextures[i*2+hoverOffsets[i+3]]);
         }
 
         if(*aOptions[i]){
-            setYN[i].setTexture(YNtextures[hoverOffsets[i]]);
+            setYN[i]->setTexture(YNtextures[hoverOffsets[i]]);
         }else{
-            setYN[i].setTexture(YNtextures[2+hoverOffsets[i]]);
+            setYN[i]->setTexture(YNtextures[2+hoverOffsets[i]]);
         }
     }
 
-    settingBTN.setTexture(settingsTextures[settingOffset]);
-    returnBTN.setTexture(returnTextures[returnOffset]);
-    helpBTN.setTexture(helpTextures[helpOffset]);
+    settingBTN->setTexture(settingsTextures[settingOffset]);
+    returnBTN->setTexture(returnTextures[returnOffset]);
+    helpBTN->setTexture(helpTextures[helpOffset]);
 }
 
 

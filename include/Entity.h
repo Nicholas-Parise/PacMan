@@ -3,12 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Directions.h"
-
+#include "configuration.h"
 
 class Entity
 {
     public:
-        Entity();
+        Entity(sf::Texture &texture);
         virtual ~Entity();
         void setSpeed(int x, int y);
         bool changedPosition();

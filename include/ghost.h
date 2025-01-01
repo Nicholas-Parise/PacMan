@@ -2,6 +2,8 @@
 #include "Entity.h"
 #include "Node.h"
 #include <vector>
+#include <cmath>
+
 
 enum States
 {
@@ -14,7 +16,7 @@ enum States
 class Ghost: public Entity
 {
 public:
-    Ghost();
+    Ghost(sf::Texture &texture);
     virtual ~Ghost();
     void reset();
 
@@ -27,6 +29,7 @@ public:
     bool isOppositeDirection(Directions a, Directions b);
     //sf::Texture &textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);
     void textureSwitcher(sf::Texture *ghostTextures, sf::Texture *scaredTextures, sf::Texture *eyeTextures, int FeetTimer, int powerUpTimer);
+    void moveSprite(float deltaTime);
 
     int scatterRow;
     int scatterCol;
